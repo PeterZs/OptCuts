@@ -728,7 +728,9 @@ namespace FracCuts {
     
     void SymStretchEnergy::initStepSize(const TriangleSoup& data, const Eigen::VectorXd& searchDir, double& stepSize) const
     {
-        double left = 1.0, right = 0.0;
+        assert(searchDir.size() == data.V.rows() * 2);
+        assert(stepSize > 0.0);
+        
         for(int triI = 0; triI < data.F.rows(); triI++)
         {
             const Eigen::Vector3i& triVInd = data.F.row(triI);
@@ -751,38 +753,39 @@ namespace FracCuts {
             const double c = U2m1[0] * U3m1[1] - U2m1[1] * U3m1[0];
             assert(c > 0.0);
             const double delta = b * b - 4.0 * a * c;
+            
             double bound = stepSize;
             if(a > 0.0) {
-                if((b < 0.0) && (delta > 0.0)) {
-                    const double r_left = (-b - sqrt(delta)) / 2.0 / a;
-                    assert(r_left > 0.0);
-                    const double r_right = (-b + sqrt(delta)) / 2.0 / a;
-                    if(r_left < left) {
-                        left = r_left;
-                    }
-                    if(r_right > right) {
-                        right = r_right;
-                    }
+                if((b < 0.0) && (delta >= 0.0)) {
+                    bound = 2.0 * c / (-b + sqrt(delta));
+                    // (same in math as (-b - sqrt(delta)) / 2.0 / a
+                    //  but smaller numerical error when b < 0.0)
+                    assert(bound > 0.0);
                 }
             }
             else if(a < 0.0) {
                 assert(delta > 0.0);
-                bound = (-b - sqrt(delta)) / 2.0 / a;
+                if(b < 0.0) {
+                    bound = 2.0 * c / (-b + sqrt(delta));
+                    // (same in math as (-b - sqrt(delta)) / 2.0 / a
+                    //  but smaller numerical error when b < 0.0)
+                }
+                else {
+                    bound = (-b - sqrt(delta)) / 2.0 / a;
+                }
+                assert(bound > 0.0);
             }
             else {
                 if(b < 0.0) {
                     bound = -c / b;
+                    assert(bound > 0.0);
                 }
             }
+            
             if(bound < stepSize) {
                 stepSize = bound;
             }
         }
-        
-        if((stepSize < right) && (stepSize > left)) {
-            stepSize = left;
-        }
-        assert(stepSize > 0.0);
     }
     
     void SymStretchEnergy::checkEnergyVal(const TriangleSoup& data) const
