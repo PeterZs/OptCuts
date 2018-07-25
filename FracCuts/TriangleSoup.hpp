@@ -85,6 +85,7 @@ namespace FracCuts{
         void computeFeatures(bool multiComp = false, bool resetFixedV = false);
         void updateFeatures(void);
         void resetFixedVert(const std::set<int>& p_fixedVert);
+        void buildCohEfromRecord(const Eigen::MatrixXi& cohERecord);
         
         bool separateTriangle(const Eigen::VectorXd& measure, double thres);
         bool splitVertex(const Eigen::VectorXd& measure, double thres);

@@ -11,6 +11,8 @@
 #include "Diagnostic.hpp"
 #include "MeshProcessing.hpp"
 
+#include "cut_to_disk.hpp" // hasn't been pulled into libigl
+#include <igl/cut_mesh.h>
 #include <igl/readOFF.h>
 #include <igl/boundary_loop.h>
 #include <igl/map_vertices_to_circle.h>
@@ -1484,36 +1486,107 @@ int main(int argc, char *argv[])
             // closed surface
             if(igl::euler_characteristic(V, F) != 2) {
                 std::cout << "Input surface genus > 0 or has multiple connected components!" << std::endl;
-                return -1;
-            }
-            
-            if(startWithTriSoup) {
-                // rigid initialization, the most stable initialization for AutoCuts...
-                assert((lambda > 0.0) && startWithTriSoup);
-                triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd()));
-                outputFolderPath += meshName + "_rigid_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
-                    "_" + startDS + folderTail;
+                
+                std::vector<std::vector<int>> cuts;
+                igl::cut_to_disk(F, cuts);
+                
+                // record cohesive edge information,
+                // transfer information format for cut_mesh
+                FracCuts::TriangleSoup temp(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                Eigen::MatrixXi cutFlags(F.rows(), 3);
+                Eigen::MatrixXi cohEdgeRecord;
+                cutFlags.setZero();
+                for(const auto& seamI : cuts) {
+                    for(int segI = 0; segI + 1 < seamI.size(); segI++) {
+                        std::pair<int, int> edge(seamI[segI], seamI[segI + 1]);
+                        auto finder = temp.edge2Tri.find(edge);
+                        assert(finder != temp.edge2Tri.end());
+                        int i = 0;
+                        for(; i < 3; i++) {
+                            if(temp.F(finder->second, i) == edge.first) {
+                                cutFlags(finder->second, i) = 1;
+                                break;
+                            }
+                        }
+                        
+                        int cohERI = cohEdgeRecord.rows();
+                        cohEdgeRecord.conservativeResize(cohERI + 1, 4);
+                        cohEdgeRecord(cohERI, 0) = finder->second;
+                        cohEdgeRecord(cohERI, 1) = i;
+                        
+                        edge.second = seamI[segI];
+                        edge.first = seamI[segI + 1];
+                        finder = temp.edge2Tri.find(edge);
+                        assert(finder != temp.edge2Tri.end());
+                        for(i = 0; i < 3; i++) {
+                            if(temp.F(finder->second, i) == edge.first) {
+                                cutFlags(finder->second, i) = 1;
+                                break;
+                            }
+                        }
+                        
+                        cohEdgeRecord(cohERI, 2) = finder->second;
+                        cohEdgeRecord(cohERI, 3) = i;
+                    }
+                }
+                
+                Eigen::MatrixXd Vcut;
+                Eigen::MatrixXi Fcut;
+                igl::cut_mesh(temp.V_rest, temp.F, cutFlags, Vcut, Fcut);
+                igl::writeOBJ(outputFolderPath + meshName + "_disk.obj", Vcut, Fcut); //DEBUG
+                V = Vcut;
+                F = Fcut;
+                
+                igl::boundary_loop(F, bnd); // Find the open boundary
+                assert(bnd.size());
+                
+                Eigen::MatrixXd bnd_uv;
+                //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
+                FracCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
+                
+                Eigen::MatrixXd UV_Tutte;
+                
+                // Harmonic map with uniform weights
+                Eigen::SparseMatrix<double> A, M;
+                FracCuts::IglUtils::computeUniformLaplacian(F, A);
+                igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
+                //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
+                //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
+                
+                FracCuts::TriangleSoup* ptr = new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), startWithTriSoup);
+                ptr->buildCohEfromRecord(cohEdgeRecord);
+                triSoup.emplace_back(ptr);
+                outputFolderPath += meshName + "_HighGenus_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) + "_" + startDS + folderTail;
             }
             else {
-                FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
-//                temp->farthestPointCut(); // open up a boundary for Tutte embedding
-//                temp->highCurvOnePointCut();
-                temp->onePointCut();
-                rand1PInitCut = true;
-                
-                igl::boundary_loop(temp->F, bnd);
-                assert(bnd.size());
-                Eigen::MatrixXd bnd_uv;
-                FracCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
-                Eigen::SparseMatrix<double> A, M;
-                FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
-                Eigen::MatrixXd UV_Tutte;
-                igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
-                triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, temp->F, startWithTriSoup, temp->initSeamLen));
-                
-                delete temp;
-                outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
-                                "_" + startDS + folderTail;
+                if(startWithTriSoup) {
+                    // rigid initialization, the most stable initialization for AutoCuts...
+                    assert((lambda > 0.0) && startWithTriSoup);
+                    triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd()));
+                    outputFolderPath += meshName + "_rigid_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
+                        "_" + startDS + folderTail;
+                }
+                else {
+                    FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+    //                temp->farthestPointCut(); // open up a boundary for Tutte embedding
+    //                temp->highCurvOnePointCut();
+                    temp->onePointCut();
+                    rand1PInitCut = true;
+                    
+                    igl::boundary_loop(temp->F, bnd);
+                    assert(bnd.size());
+                    Eigen::MatrixXd bnd_uv;
+                    FracCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
+                    Eigen::SparseMatrix<double> A, M;
+                    FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+                    Eigen::MatrixXd UV_Tutte;
+                    igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
+                    triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, temp->F, startWithTriSoup, temp->initSeamLen));
+                    
+                    delete temp;
+                    outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
+                                    "_" + startDS + folderTail;
+                }
             }
         }
     }

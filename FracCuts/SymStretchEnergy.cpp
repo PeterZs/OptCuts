@@ -728,7 +728,6 @@ namespace FracCuts {
     
     void SymStretchEnergy::initStepSize(const TriangleSoup& data, const Eigen::VectorXd& searchDir, double& stepSize) const
     {
-        assert(searchDir.size() == data.V.rows() * 2);
         assert(stepSize > 0.0);
         
         for(int triI = 0; triI < data.F.rows(); triI++)

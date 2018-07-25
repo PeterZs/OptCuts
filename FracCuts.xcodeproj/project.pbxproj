@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-        980180BC1F552CDA00C64B43 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 980180BB1F552CDA00C64B43 /* main.cpp */; };
+		980180BC1F552CDA00C64B43 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 980180BB1F552CDA00C64B43 /* main.cpp */; };
 		982CE6131F5DB358004176A8 /* Energy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 982CE6121F5DB358004176A8 /* Energy.cpp */; };
 		987382D12076F49A0040BBCE /* Scaffold.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 987382CF2076F49A0040BBCE /* Scaffold.cpp */; };
 		988D81A720AA7FFE0037737D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 988ED1271F57211500B21181 /* OpenGL.framework */; };
@@ -48,6 +48,7 @@
 		982CE6121F5DB358004176A8 /* Energy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Energy.cpp; sourceTree = "<group>"; };
 		983E7DB3202240D900412128 /* Diagnostic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Diagnostic.hpp; sourceTree = "<group>"; };
 		983E7DB62022421400412128 /* MeshProcessing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MeshProcessing.hpp; sourceTree = "<group>"; };
+		98471EF72108FC00009B79BC /* cut_to_disk.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cut_to_disk.hpp; sourceTree = "<group>"; };
 		987382CB202902590040BBCE /* Types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Types.hpp; sourceTree = "<group>"; };
 		987382CD2076EE9D0040BBCE /* libtriangle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtriangle.a; path = ../../../../usr/local/lib/libtriangle.a; sourceTree = "<group>"; };
 		987382CF2076F49A0040BBCE /* Scaffold.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scaffold.cpp; sourceTree = "<group>"; };
@@ -150,6 +151,7 @@
 				983E7DB3202240D900412128 /* Diagnostic.hpp */,
 				983E7DB62022421400412128 /* MeshProcessing.hpp */,
 				987382CB202902590040BBCE /* Types.hpp */,
+				98471EF72108FC00009B79BC /* cut_to_disk.hpp */,
 			);
 			path = FracCuts;
 			sourceTree = "<group>";
@@ -237,7 +239,7 @@
 				98A5A32B1F5F5BB900584EFD /* ARAPEnergy.cpp in Sources */,
 				98C2D8F41F6348820048B18A /* SeparationEnergy.cpp in Sources */,
 				988ED12F1F5727F400B21181 /* TriangleSoup.cpp in Sources */,
-                980180BC1F552CDA00C64B43 /* main.cpp in Sources */,
+				980180BC1F552CDA00C64B43 /* main.cpp in Sources */,
 				987382D12076F49A0040BBCE /* Scaffold.cpp in Sources */,
 				98D3E7D51F75AEC6000DA61D /* CohesiveEnergy.cpp in Sources */,
 			);

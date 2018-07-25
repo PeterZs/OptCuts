@@ -550,6 +550,24 @@ namespace FracCuts {
         computeLaplacianMtr();
     }
     
+    void TriangleSoup::buildCohEfromRecord(const Eigen::MatrixXi& cohERecord)
+    {
+        assert(cohERecord.cols() == 4);
+        
+        cohE.resize(cohERecord.rows(), 4);
+        for(int cohEI = 0; cohEI < cohERecord.rows(); cohEI++) {
+            int triI1 = cohERecord(cohEI, 0);
+            int vI11 = F(triI1, cohERecord(cohEI, 1));
+            int vI12 = F(triI1, (cohERecord(cohEI, 1) + 1) % 3);
+            int triI2 = cohERecord(cohEI, 2);
+            int vI21 = F(triI2, cohERecord(cohEI, 3));
+            int vI22 = F(triI2, (cohERecord(cohEI, 3) + 1) % 3);
+            cohE.row(cohEI) << vI11, vI12, vI22, vI21;
+        }
+        
+        computeFeatures();
+    }
+    
     bool TriangleSoup::separateTriangle(const Eigen::VectorXd& measure, double thres)
     {
         assert(measure.size() == F.rows());
