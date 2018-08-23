@@ -28,6 +28,9 @@
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
+
+% strike out old text for revision
+\usepackage[normalem]{ulem}
  
 % Metadata Information
 \acmJournal{TOG}
@@ -142,6 +145,12 @@
 \newcommand{\alla}[1]{\textcolor{orange}{\textbf{Alla: #1}}}
 \newcommand{\danny}[1]{\textcolor{purple}{\textbf{Danny: #1}}}
 \newcommand{\vova}[1]{\textcolor{green}{\textbf{Vova: #1}}}
+% for revision:
+\newcommand{\revised}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\old}[1]{\textcolor{green}{\sout{#1}}}
+% after revision finalized, use:
+% \newcommand{\revised}[1]{{#1}}
+% \newcommand{\old}[1]{} 
 
 \begin{teaserfigure} 
 \centering
