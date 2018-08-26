@@ -89,7 +89,7 @@ splitting, an initial location for the newly merged vertex must be selected. Na\
 
 \subsection{Topology Search Candidates}
 \label{sec:descent_op}
-In analogy to computing a continuous search direction, at the start of each new primal solve we search for a candidate mesh operation to propagate descent. 
+In analogy to computing a continuous search direction, at the start of each new primal solve we search for a candidate mesh operation to propagate descent \revised{(Algorithm 1 line 9-12)}. 
 %
 We first consider boundary vertex splits originating at one of $m$ boundary vertices in the current topology $T^k$. 
 To reduce unnecessary computational overhead we select a subset of $m_\text{boundary}=m^{0.8}$ boundary vertices that might have the largest effect on the energy. To estimate the priority, we compute the standard deviation over all the distortion energy gradients acting on the boundary vertex contributed from incident elements. We then pick boundary vertices with largest deviation, i.e. where distortion might best be alleviated by cutting. We use the selected vertices to initiate boundary vertex splits, and consider all current seams for a corner merge, building a set $O^k$ of potential topological operations.
@@ -126,7 +126,7 @@ Here we then pick a $d$-minimizing operation from this small set of candidate op
 o^{i,i+1} = \argmin_{o \in \mathcal{E}(o^{i-1, i}, T^i)} d(o).
 \end{align}
 
-Since each change in topology alternates with smooth coordinate descent and we wish to come close to a local minimized of distortion in each primal solve, we work to avoid introducing too many topological changes as long as the coordinate update provides significant energy improvement. We denote the threshold for desired estimated decrease by $\delta^{i}$. It is initialized to $\delta^0=0$ in the first iteration, and then set to the distortion energy improvement from each successive coordinate update. At any iteration, if $d(o^{i,i+1}) < \delta^{i}$ we update the topology based on the best operation $T^{i+1} \leftarrow o^{i, i+1}(T^{i})$ and keep it unchanged otherwise, $T^{i+1} \leftarrow T^i$.
+Since each change in topology alternates with smooth coordinate descent and we wish to come close to a local minimized of distortion in each primal solve, we work to avoid introducing too many topological changes as long as the coordinate update provides significant energy improvement \revised{(Algorithm 1 line 17-23)}. We denote the threshold for desired estimated decrease by $\delta^{i}$. It is initialized to $\delta^0=0$ in the first iteration, and then set to the distortion energy improvement from each successive coordinate update. At any iteration, if $d(o^{i,i+1}) < \delta^{i}$ we update the topology based on the best operation $T^{i+1} \leftarrow o^{i, i+1}(T^{i})$ and keep it unchanged otherwise, $T^{i+1} \leftarrow T^i$.
 
 %If this minimizer provides sufficient estimated decrease, so that $d(o^{i,i+1}) < \delta^{i}$, we accept the topology update setting $T^{i+1} \leftarrow o^{i, i+1}(T^{i})$; otherwise, we keep topology unchanged with $T^{i+1} \leftarrow T^i.$
 

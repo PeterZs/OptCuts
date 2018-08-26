@@ -66,9 +66,9 @@ giving us iterate $k$'s newly updated geometry $(T^{k}, U^{k})$; see Algorithm 1
 %\label{alg:DCSearch}
 %\end{algorithm}
 
-Each vertex step of the primal update performs a single iteration of Newton-type, smooth descent with line-search towards minimizing our distortion energies over vertices $U$ while holding topology, $T$, fixed. As our distortion energies, including symmetric Dirichlet, are generally nonconvex we employ the projected-Newton\ \cite{Teran2005Robust} approximation of the Hessian. This is then coupled with 
+Each vertex step of the primal update performs a single iteration of Newton-type, smooth descent with line-search towards minimizing our distortion energies over vertices $U$ while holding topology, $T$, fixed \revised{(Algorithm 1 line 26-38)}. As our distortion energies, including symmetric Dirichlet, are generally nonconvex we employ the projected-Newton\ \cite{Teran2005Robust} approximation of the Hessian. This is then coupled with 
 %For more details see Section \ref{sec:imp}.
-search of topology changes to form a customized discrete-continuous topology search method. We defer discussion of the details of this component to Section~\ref{sec:topologySearch}.
+search of topology changes \revised{(Algorithm 1 line 9-24)} to form a customized discrete-continuous topology search method. We defer discussion of the details of this component to Section~\ref{sec:topologySearch}.
 %
 
 %Each vertex update step performs a single iteration of Newton-type, smooth descent with line-search towards minimizing our distortion energies over vertices $U$ while holding topology, $T$, fixed. As our distortion energies, including symmetric Dirichlet, are generally nonconvex we employ the projected-Newton\ \cite{Teran2005Robust} approximation of the Hessian here. For more details see Section \ref{sec:imp}.
