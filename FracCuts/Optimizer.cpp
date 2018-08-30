@@ -33,10 +33,13 @@ namespace FracCuts {
     Optimizer::Optimizer(const TriangleSoup& p_data0,
                          const std::vector<Energy*>& p_energyTerms, const std::vector<double>& p_energyParams,
                          int p_propagateFracture, bool p_mute, bool p_scaffolding,
-                         const Eigen::MatrixXd& UV_bnds, const Eigen::MatrixXi& E, const Eigen::VectorXi& bnd) :
+                         const Eigen::MatrixXd& UV_bnds, const Eigen::MatrixXi& E, const Eigen::VectorXi& bnd,
+                         bool p_useDense) :
         data0(p_data0), energyTerms(p_energyTerms), energyParams(p_energyParams)
     {
         assert(energyTerms.size() == energyParams.size());
+        
+        useDense = p_useDense;
         
         energyParamSum = 0.0;
         for(const auto& ePI : energyParams) {
@@ -156,23 +159,31 @@ namespace FracCuts {
             }
         }
         else {
-            if(!mute) { timer_step.start(1); }
-            pardisoSolver.set_type(pardisoThreadAmt, -2);
-//            pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
-            pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr, scaffolding ? vNeighbor_withScaf : result.vNeighbor,
-                                      scaffolding ? fixedV_withScaf : result.fixedVert);
-            if(!mute) { timer_step.stop(); timer_step.start(2); }
-            pardisoSolver.analyze_pattern();
-            if(!mute) { timer_step.stop(); }
-            if(!needRefactorize) {
-                try {
-                    if(!mute) { timer_step.start(3); }
-                    pardisoSolver.factorize();
-                    if(!mute) { timer_step.stop(); }
+            if(useDense) {
+                if(!needRefactorize) {
+                    denseSolver = Hessian.ldlt();
                 }
-                catch(std::exception e) {
-                    IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr_factorizeFail", I_mtr, J_mtr, V_mtr, true);
-                    exit(-1);
+            }
+            else {
+                if(!mute) { timer_step.start(1); }
+                pardisoSolver.set_type(pardisoThreadAmt, -2);
+    //            pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
+                pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr,
+                                          scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                                          scaffolding ? fixedV_withScaf : result.fixedVert);
+                if(!mute) { timer_step.stop(); timer_step.start(2); }
+                pardisoSolver.analyze_pattern();
+                if(!mute) { timer_step.stop(); }
+                if(!needRefactorize) {
+                    try {
+                        if(!mute) { timer_step.start(3); }
+                        pardisoSolver.factorize();
+                        if(!mute) { timer_step.stop(); }
+                    }
+                    catch(std::exception e) {
+                        IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr_factorizeFail", I_mtr, J_mtr, V_mtr, true);
+                        exit(-1);
+                    }
                 }
             }
         }
@@ -276,12 +287,17 @@ namespace FracCuts {
             }
         }
         else {
-            if(!mute) { timer_step.start(1); }
-//            pardisoSolver.update_a(V_mtr);
-            pardisoSolver.update_a(I_mtr, J_mtr, V_mtr);
-            if(!mute) { timer_step.stop(); timer_step.start(3); }
-            pardisoSolver.factorize();
-            if(!mute) { timer_step.stop(); }
+            if(useDense) {
+                denseSolver = Hessian.ldlt();
+            }
+            else {
+                if(!mute) { timer_step.start(1); }
+    //            pardisoSolver.update_a(V_mtr);
+                pardisoSolver.update_a(I_mtr, J_mtr, V_mtr);
+                if(!mute) { timer_step.stop(); timer_step.start(3); }
+                pardisoSolver.factorize();
+                if(!mute) { timer_step.stop(); }
+            }
         }
     }
     
@@ -314,6 +330,11 @@ namespace FracCuts {
             scaffold.mergeVNeighbor(result.vNeighbor, vNeighbor_withScaf);
             scaffold.mergeFixedV(result.fixedVert, fixedV_withScaf);
         }
+    }
+    
+    void Optimizer::setUseDense(bool p_useDense)
+    {
+        useDense = p_useDense;
     }
     
     void Optimizer::updateEnergyData(bool updateEVal, bool updateGradient, bool updateHessian)
@@ -354,17 +375,25 @@ namespace FracCuts {
                 }
             }
             else {
-                if(!mute) { timer_step.start(1); }
-//                pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
-                pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr, scaffolding ? vNeighbor_withScaf : result.vNeighbor,
-                                          scaffolding ? fixedV_withScaf : result.fixedVert);
-                if(!mute) { timer_step.stop(); timer_step.start(2); }
-                pardisoSolver.analyze_pattern();
-                if(!mute) { timer_step.stop(); }
-                if(!needRefactorize) {
-                    if(!mute) { timer_step.start(3); }
-                    pardisoSolver.factorize();
+                if(useDense) {
+                    if(!needRefactorize) {
+                        denseSolver = Hessian.ldlt();
+                    }
+                }
+                else {
+                    if(!mute) { timer_step.start(1); }
+    //                pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
+                    pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr,
+                                              scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                                              scaffolding ? fixedV_withScaf : result.fixedVert);
+                    if(!mute) { timer_step.stop(); timer_step.start(2); }
+                    pardisoSolver.analyze_pattern();
                     if(!mute) { timer_step.stop(); }
+                    if(!needRefactorize) {
+                        if(!mute) { timer_step.start(3); }
+                        pardisoSolver.factorize();
+                        if(!mute) { timer_step.stop(); }
+                    }
                 }
             }
         }
@@ -563,29 +592,40 @@ namespace FracCuts {
             }
             else {
                 if(!fractureInitiated) {
-                    if(scaffolding) {
-                        if(!mute) { timer_step.start(1); }
-//                        pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
-                        pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr, scaffolding ? vNeighbor_withScaf : result.vNeighbor,
-                                                  scaffolding ? fixedV_withScaf : result.fixedVert);
-                        if(!mute) { timer_step.stop(); timer_step.start(2); }
-                        pardisoSolver.analyze_pattern();
-                        if(!mute) { timer_step.stop(); }
-                    }
-                    else {
-                        if(!mute) { timer_step.start(1); }
-//                        pardisoSolver.update_a(V_mtr);
-                        pardisoSolver.update_a(I_mtr, J_mtr, V_mtr);
-                        if(!mute) { timer_step.stop(); }
+                    if(!useDense) {
+                        if(scaffolding) {
+                            if(!mute) { timer_step.start(1); }
+    //                        pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
+                            pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr,
+                                                      scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                                                      scaffolding ? fixedV_withScaf : result.fixedVert);
+                            if(!mute) { timer_step.stop(); timer_step.start(2); }
+                            pardisoSolver.analyze_pattern();
+                            if(!mute) { timer_step.stop(); }
+                        }
+                        else {
+                            if(!mute) { timer_step.start(1); }
+    //                        pardisoSolver.update_a(V_mtr);
+                            pardisoSolver.update_a(I_mtr, J_mtr, V_mtr);
+                            if(!mute) { timer_step.stop(); }
+                        }
                     }
                 }
                 try {
                     if(!mute) { timer_step.start(3); }
-                    pardisoSolver.factorize();
+                    if(useDense) {
+                        denseSolver = Hessian.ldlt();
+                    }
+                    else {
+                        pardisoSolver.factorize();
+                    }
                     if(!mute) { timer_step.stop(); }
                 }
                 catch(std::exception e) {
-                    IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr", I_mtr, J_mtr, V_mtr, true);
+                    if(!useDense) {
+                        IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr",
+                                                          I_mtr, J_mtr, V_mtr, true);
+                    }
                     exit(-1);
                 }
             }
@@ -600,7 +640,12 @@ namespace FracCuts {
         else {
             Eigen::VectorXd minusG = -gradient;
             if(!mute) { timer_step.start(4); }
-            pardisoSolver.solve(minusG, searchDir);
+            if(useDense) {
+                searchDir = denseSolver.solve(minusG);
+            }
+            else {
+                pardisoSolver.solve(minusG, searchDir);
+            }
             if(!mute) { timer_step.stop(); }
         }
         fractureInitiated = false;
@@ -853,67 +898,85 @@ namespace FracCuts {
     void Optimizer::computePrecondMtr(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr)
     {
         if(!mute) { timer_step.start(0); }
-        if(pardisoThreadAmt) {
-            I_mtr.resize(0);
-            J_mtr.resize(0);
-            V_mtr.resize(0);
-            //!!! should consider add first and then do projected Newton if multiple energies are used
-            for(int eI = 0; eI < energyTerms.size(); eI++) {
-                Eigen::VectorXi I, J;
-                Eigen::VectorXd V;
-                energyTerms[eI]->computePrecondMtr(data, &V, &I, &J);
-                V *= energyParams[eI];
-                I_mtr.conservativeResize(I_mtr.size() + I.size());
-                I_mtr.bottomRows(I.size()) = I;
-                J_mtr.conservativeResize(J_mtr.size() + J.size());
-                J_mtr.bottomRows(J.size()) = J;
-                V_mtr.conservativeResize(V_mtr.size() + V.size());
-                V_mtr.bottomRows(V.size()) = V;
+        if(useDense) {
+            energyTerms[0]->computeHessian(data, Hessian);
+            Hessian *= energyParams[0];
+            for(int eI = 1; eI < energyTerms.size(); eI++) {
+                Eigen::MatrixXd HessianI;
+                energyTerms[eI]->computeHessian(data, HessianI);
+                Hessian += energyParams[eI] * HessianI;
             }
             
             if(scaffolding) {
                 SymStretchEnergy SD;
-                Eigen::VectorXi I, J;
-                Eigen::VectorXd V;
-                SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);
-                scaffoldData.augmentProxyMatrix(I_mtr, J_mtr, V_mtr, I, J, V, w_scaf / scaffold.airMesh.F.rows());
+                Eigen::MatrixXd Hessian_scaf;
+                SD.computeHessian(scaffoldData.airMesh, Hessian_scaf, true);
+                scaffoldData.augmentProxyMatrix(Hessian, Hessian_scaf, w_scaf / scaffold.airMesh.F.rows());
             }
-//            IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/FracCuts/mtr", I_mtr, J_mtr, V_mtr, true);
         }
         else {
-            //TODO: triplet representation for eigen matrices
-            //TODO: SCAFFOLDING
-            precondMtr.setZero();
-            energyTerms[0]->computePrecondMtr(data, precondMtr);
-            precondMtr *= energyParams[0];
-            for(int eI = 1; eI < energyTerms.size(); eI++) {
-                Eigen::SparseMatrix<double> precondMtrI;
-                energyTerms[eI]->computePrecondMtr(data, precondMtrI);
-                if(precondMtrI.rows() == precondMtr.rows() * 2) {
-                    precondMtrI *= energyParams[eI];
-                    for (int k = 0; k < precondMtr.outerSize(); ++k)
-                    {
-                        for (Eigen::SparseMatrix<double>::InnerIterator it(precondMtr, k); it; ++it)
+            if(pardisoThreadAmt) {
+                I_mtr.resize(0);
+                J_mtr.resize(0);
+                V_mtr.resize(0);
+                //!!! should consider add first and then do projected Newton if multiple energies are used
+                for(int eI = 0; eI < energyTerms.size(); eI++) {
+                    Eigen::VectorXi I, J;
+                    Eigen::VectorXd V;
+                    energyTerms[eI]->computePrecondMtr(data, &V, &I, &J);
+                    V *= energyParams[eI];
+                    I_mtr.conservativeResize(I_mtr.size() + I.size());
+                    I_mtr.bottomRows(I.size()) = I;
+                    J_mtr.conservativeResize(J_mtr.size() + J.size());
+                    J_mtr.bottomRows(J.size()) = J;
+                    V_mtr.conservativeResize(V_mtr.size() + V.size());
+                    V_mtr.bottomRows(V.size()) = V;
+                }
+                
+                if(scaffolding) {
+                    SymStretchEnergy SD;
+                    Eigen::VectorXi I, J;
+                    Eigen::VectorXd V;
+                    SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);
+                    scaffoldData.augmentProxyMatrix(I_mtr, J_mtr, V_mtr, I, J, V, w_scaf / scaffold.airMesh.F.rows());
+                }
+    //            IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/FracCuts/mtr", I_mtr, J_mtr, V_mtr, true);
+            }
+            else {
+                //TODO: triplet representation for eigen matrices
+                //TODO: SCAFFOLDING
+                precondMtr.setZero();
+                energyTerms[0]->computePrecondMtr(data, precondMtr);
+                precondMtr *= energyParams[0];
+                for(int eI = 1; eI < energyTerms.size(); eI++) {
+                    Eigen::SparseMatrix<double> precondMtrI;
+                    energyTerms[eI]->computePrecondMtr(data, precondMtrI);
+                    if(precondMtrI.rows() == precondMtr.rows() * 2) {
+                        precondMtrI *= energyParams[eI];
+                        for (int k = 0; k < precondMtr.outerSize(); ++k)
                         {
-                            precondMtrI.coeffRef(it.row() * 2, it.col() * 2) += it.value();
-                            precondMtrI.coeffRef(it.row() * 2 + 1, it.col() * 2 + 1) += it.value();
+                            for (Eigen::SparseMatrix<double>::InnerIterator it(precondMtr, k); it; ++it)
+                            {
+                                precondMtrI.coeffRef(it.row() * 2, it.col() * 2) += it.value();
+                                precondMtrI.coeffRef(it.row() * 2 + 1, it.col() * 2 + 1) += it.value();
+                            }
+                        }
+                        precondMtr = precondMtrI;
+                    }
+                    else if(precondMtrI.rows() * 2 == precondMtr.rows()) {
+                        for (int k = 0; k < precondMtrI.outerSize(); ++k)
+                        {
+                            for (Eigen::SparseMatrix<double>::InnerIterator it(precondMtrI, k); it; ++it)
+                            {
+                                precondMtr.coeffRef(it.row() * 2, it.col() * 2) += energyParams[eI] * it.value();
+                                precondMtr.coeffRef(it.row() * 2 + 1, it.col() * 2 + 1) += energyParams[eI] * it.value();
+                            }
                         }
                     }
-                    precondMtr = precondMtrI;
-                }
-                else if(precondMtrI.rows() * 2 == precondMtr.rows()) {
-                    for (int k = 0; k < precondMtrI.outerSize(); ++k)
-                    {
-                        for (Eigen::SparseMatrix<double>::InnerIterator it(precondMtrI, k); it; ++it)
-                        {
-                            precondMtr.coeffRef(it.row() * 2, it.col() * 2) += energyParams[eI] * it.value();
-                            precondMtr.coeffRef(it.row() * 2 + 1, it.col() * 2 + 1) += energyParams[eI] * it.value();
-                        }
+                    else {
+                        assert(precondMtrI.rows() == precondMtr.rows());
+                        precondMtr += energyParams[eI] * precondMtrI;
                     }
-                }
-                else {
-                    assert(precondMtrI.rows() == precondMtr.rows());
-                    precondMtr += energyParams[eI] * precondMtrI;
                 }
             }
         }

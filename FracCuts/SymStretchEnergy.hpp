@@ -18,10 +18,16 @@ namespace FracCuts {
     public:
         virtual void getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight = false) const;
         virtual void getEnergyValByElemID(const TriangleSoup& data, int elemI, double& energyVal, bool uniformWeight = false) const;
+        
         virtual void computeGradient(const TriangleSoup& data, Eigen::VectorXd& gradient, bool uniformWeight = false) const;
+        
         virtual void computePrecondMtr(const TriangleSoup& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight = false) const;
         virtual void computePrecondMtr(const TriangleSoup& data, Eigen::VectorXd* V,
                                        Eigen::VectorXi* I = NULL, Eigen::VectorXi* J = NULL, bool uniformWeight = false) const;
+        virtual void computeHessian(const TriangleSoup& data,
+                                    Eigen::MatrixXd& Hessian,
+                                    bool uniformWeight = false) const;
+        
         virtual void computeHessian(const TriangleSoup& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight = false) const;
         
         virtual void getEnergyValPerVert(const TriangleSoup& data, Eigen::VectorXd& energyValPerVert) const;

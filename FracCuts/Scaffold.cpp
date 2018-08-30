@@ -227,8 +227,8 @@ namespace FracCuts {
     }
     
     void Scaffold::augmentProxyMatrix(Eigen::VectorXi& I, Eigen::VectorXi& J, Eigen::VectorXd& V,
-                            const Eigen::VectorXi& I_scaf, const Eigen::VectorXi& J_scaf, const Eigen::VectorXd& V_scaf,
-                            double w_scaf) const
+                                      const Eigen::VectorXi& I_scaf, const Eigen::VectorXi& J_scaf,
+                                      const Eigen::VectorXd& V_scaf, double w_scaf) const
     {
         assert(w_scaf > 0.0);
         
@@ -242,6 +242,25 @@ namespace FracCuts {
         for(int tupleI = 0; tupleI < I_scaf.size(); tupleI++) {
             I[tupleI + tupleSize0] = localVI2Global[I_scaf[tupleI] / 2] * 2 + I_scaf[tupleI] % 2;
             J[tupleI + tupleSize0] = localVI2Global[J_scaf[tupleI] / 2] * 2 + J_scaf[tupleI] % 2;
+        }
+    }
+    void Scaffold::augmentProxyMatrix(Eigen::MatrixXd& P,
+                                      const Eigen::MatrixXd& P_scaf,
+                                      double w_scaf) const
+    {
+        assert(w_scaf > 0.0);
+        
+        int P_oldRows = static_cast<int>(P.rows());
+        P.conservativeResize(wholeMeshSize * 2, wholeMeshSize * 2);
+        P.rightCols(P.rows() - P_oldRows).setZero();
+        P.block(P_oldRows, 0, P.rows() - P_oldRows, P_oldRows).setZero();
+        for(int localVI = 0; localVI < localVI2Global.size(); localVI++) {
+            int _2globalVI = localVI2Global[localVI] * 2;
+            for(int localVJ = 0; localVJ < localVI2Global.size(); localVJ++) {
+                int _2globalVJ = localVI2Global[localVJ] * 2;
+                P.block(_2globalVI, _2globalVJ, 2, 2) +=
+                    w_scaf * P_scaf.block(localVI * 2, localVJ * 2, 2, 2);
+            }
         }
     }
     

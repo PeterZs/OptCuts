@@ -30,6 +30,7 @@ namespace FracCuts {
         // E = \Sigma_i a_i E_i
         
     protected: // owned data
+        bool useDense = false;
         int propagateFracture;
         bool fractureInitiated = false;
         bool allowEDecRelTol;
@@ -48,9 +49,11 @@ namespace FracCuts {
         Eigen::SparseMatrix<double> precondMtr;
         Eigen::VectorXi I_mtr, J_mtr; // triplet representation
         Eigen::VectorXd V_mtr;
+        Eigen::MatrixXd Hessian; // when using dense representation
         // cholesky solver for solving the linear system for search directions
         Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> cholSolver;
         PardisoSolver<Eigen::VectorXi, Eigen::VectorXd> pardisoSolver;
+        Eigen::LDLT<Eigen::MatrixXd> denseSolver;
         Eigen::VectorXd gradient; // energy gradient computed in each iteration
         Eigen::VectorXd searchDir; // search direction comptued in each iteration
         double lastEnergyVal; // for output and line search
@@ -77,7 +80,8 @@ namespace FracCuts {
                   int p_propagateFracture = 1, bool p_mute = false, bool p_scaffolding = false,
                   const Eigen::MatrixXd& UV_bnds = Eigen::MatrixXd(),
                   const Eigen::MatrixXi& E = Eigen::MatrixXi(),
-                  const Eigen::VectorXi& bnd = Eigen::VectorXi());
+                  const Eigen::VectorXi& bnd = Eigen::VectorXi(),
+                  bool p_useDense = false);
         ~Optimizer(void);
         
     public: // API
@@ -97,6 +101,7 @@ namespace FracCuts {
         void setConfig(const TriangleSoup& config, int iterNum, int p_topoIter);
         void setPropagateFracture(bool p_prop);
         void setScaffolding(bool p_scaffolding);
+        void setUseDense(bool p_useDense = true);
         
         void computeLastEnergyVal(void);
         

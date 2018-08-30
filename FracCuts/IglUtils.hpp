@@ -47,6 +47,12 @@ namespace FracCuts {
                                      Eigen::VectorXd* V, Eigen::VectorXi* I = NULL, Eigen::VectorXi* J = NULL);
         static void addDiagonalToMatrix(const Eigen::VectorXd& diagonal, const Eigen::VectorXi& index, int dim,
                                      Eigen::VectorXd* V, Eigen::VectorXi* I = NULL, Eigen::VectorXi* J = NULL);
+        static void addBlockToMatrix(const Eigen::MatrixXd& block,
+                                     const Eigen::VectorXi& index, int dim,
+                                     Eigen::MatrixXd& mtr);
+        static void addDiagonalToMatrix(const Eigen::VectorXd& diagonal,
+                                        const Eigen::VectorXi& index, int dim,
+                                        Eigen::MatrixXd& mtr);
         
         template<typename Scalar, int rows, int cols>
         static void symmetrizeMatrix(Eigen::Matrix<Scalar, rows, cols>& mtr) {

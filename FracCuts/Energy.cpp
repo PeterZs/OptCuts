@@ -51,6 +51,13 @@ namespace FracCuts {
         assert(0 && "please implement this method in your subclass!");
     }
     
+    void Energy::computeHessian(const TriangleSoup& data,
+                                Eigen::MatrixXd& Hessian,
+                                bool uniformWeight) const
+    {
+        assert(0 && "please implement this method in your subclass!");
+    }
+    
     void Energy::checkGradient(const TriangleSoup& data) const
     {
         std::cout << "checking energy gradient computation..." << std::endl;

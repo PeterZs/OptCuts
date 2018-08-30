@@ -1484,8 +1484,9 @@ int main(int argc, char *argv[])
         }
         else {
             // closed surface
-            if(igl::euler_characteristic(V, F) != 2) {
-                std::cout << "Input surface genus > 0 or has multiple connected components!" << std::endl;
+            int genus = 1 - igl::euler_characteristic(V, F) / 2;
+            if(genus != 0) {
+                std::cout << "Input surface genus = " + std::to_string(genus) + " or has multiple connected components!" << std::endl;
                 
                 std::vector<std::vector<int>> cuts;
                 igl::cut_to_disk(F, cuts);
@@ -1541,7 +1542,7 @@ int main(int argc, char *argv[])
                 assert(bnd.size());
                 
                 Eigen::MatrixXd bnd_uv;
-                //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
+//                igl::map_vertices_to_circle(V, bnd, bnd_uv);
                 FracCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
                 
                 Eigen::MatrixXd UV_Tutte;
@@ -1651,6 +1652,7 @@ int main(int argc, char *argv[])
     }
     optimizer = new FracCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, bijectiveParam && !rand1PInitCut); // for random one point initial cut, don't need air meshes in the beginning since it's impossible for a quad to intersect itself
     //TODO: bijectivity for other mode?
+//    optimizer->setUseDense(); //DEBUG
     optimizer->precompute();
     triSoup.emplace_back(&optimizer->getResult());
     triSoup_backup = optimizer->getResult();

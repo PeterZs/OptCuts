@@ -445,6 +445,65 @@ namespace FracCuts {
         assert(tripletInd == V->size());
     }
     
+    void IglUtils::addBlockToMatrix(const Eigen::MatrixXd& block,
+                                    const Eigen::VectorXi& index, int dim,
+                                    Eigen::MatrixXd& mtr)
+    {
+        int num_free = 0;
+        for(int indI = 0; indI < index.size(); indI++) {
+            if(index[indI] >= 0) {
+                num_free++;
+            }
+        }
+        if(!num_free) {
+            return;
+        }
+        
+        assert(block.rows() == block.cols());
+        assert(index.size() * dim == block.rows());
+        assert(mtr.rows() == mtr.cols());
+        assert(mtr.rows() % dim == 0);
+        
+        for(int indI = 0; indI < index.size(); indI++) {
+            if(index[indI] < 0) {
+                continue;
+            }
+            int startIndI = index[indI] * dim;
+            int startIndI_block = indI * dim;
+            
+            for(int indJ = 0; indJ < index.size(); indJ++) {
+                if(index[indJ] < 0) {
+                    continue;
+                }
+                int startIndJ = index[indJ] * dim;
+                int startIndJ_block = indJ * dim;
+                
+                mtr.block(startIndI, startIndJ, dim, dim) +=
+                    block.block(startIndI_block, startIndJ_block, dim, dim);
+            }
+        }
+    }
+    void IglUtils::addDiagonalToMatrix(const Eigen::VectorXd& diagonal,
+                                       const Eigen::VectorXi& index, int dim,
+                                       Eigen::MatrixXd& mtr)
+    {
+        assert(index.size() * dim == diagonal.size());
+        assert(mtr.rows() == mtr.cols());
+        assert(mtr.rows() % dim == 0);
+        
+        for(int indI = 0; indI < index.size(); indI++) {
+            if(index[indI] < 0) {
+                assert(0 && "currently doesn't support fixed vertices here!");
+                continue;
+            }
+            int startIndI = index[indI] * dim;
+            int startIndI_diagonal = indI * dim;
+            
+            mtr(startIndI, startIndI) = diagonal(startIndI_diagonal);
+            mtr(startIndI + 1, startIndI + 1) = diagonal(startIndI_diagonal + 1);
+        }
+    }
+    
     void IglUtils::writeSparseMatrixToFile(const std::string& filePath, const Eigen::VectorXi& I, const Eigen::VectorXi& J,
                                         const Eigen::VectorXd& V, bool MATLAB)
     {
