@@ -626,8 +626,6 @@ namespace FracCuts {
         }
         
         double lastEnergyVal_scaffold = 0.0;
-        const double m = searchDir.dot(gradient);
-        const double c1m = 1.0e-4 * m;
         Eigen::MatrixXd resultV0 = result.V;
 //        TriangleSoup temp = result; //TEST
         Eigen::MatrixXd scaffoldV0;
@@ -645,14 +643,14 @@ namespace FracCuts {
         
 //        while((testingE > lastEnergyVal + stepSize * c1m) ||
 //              (searchDir.dot(testingG) < c2m)) // Wolfe condition
-        while(testingE > lastEnergyVal + stepSize * c1m) // Armijo condition
+        while(testingE > lastEnergyVal) // Armijo condition
 //        while(0)
         {
             stepSize /= 2.0;
             if(stepSize == 0.0) {
                 stopped = true;
                 if(!mute) {
-                    logFile << "testingE" << globalIterNum << " " << testingE << " > " << lastEnergyVal << " " << stepSize * c1m << std::endl;
+                    logFile << "testingE" << globalIterNum << " " << testingE << " > " << lastEnergyVal << std::endl;
 //                    logFile << "testingG" << globalIterNum << " " << searchDir.dot(testingG) << " < " << c2m << std::endl;
                 }
                 break;
@@ -687,7 +685,7 @@ namespace FracCuts {
             lastEDec += (-lastEnergyVal_scaffold + energyVal_scaffold);
         }
 //        lastEDec = (lastEnergyVal - testingE) / stepSize;
-        if(allowEDecRelTol && (lastEDec / lastEnergyVal / stepSize < 1.0e-6)) {
+        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (gradient.squaredNorm() < 1.0e8 * targetGRes)) {
 //        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6)) {
             // no prominent energy decrease, stop for accelerating the process
             stopped = true;
