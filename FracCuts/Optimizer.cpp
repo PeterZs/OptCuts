@@ -730,7 +730,7 @@ namespace FracCuts {
             lastEDec += (-lastEnergyVal_scaffold + energyVal_scaffold);
         }
 //        lastEDec = (lastEnergyVal - testingE) / stepSize;
-        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (gradient.squaredNorm() < 1.0e8 * targetGRes)) {
+        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (stepSize > 1.0e-3)) {
 //        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6)) {
             // no prominent energy decrease, stop for accelerating the process
             stopped = true;

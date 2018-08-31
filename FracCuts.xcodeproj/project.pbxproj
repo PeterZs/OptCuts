@@ -126,8 +126,8 @@
 			isa = PBXGroup;
 			children = (
 				987382CF2076F49A0040BBCE /* Scaffold.cpp */,
-				98B57EA0207C748600F238C0 /* Timer.hpp */,
 				987382D02076F49A0040BBCE /* Scaffold.hpp */,
+				98B57EA0207C748600F238C0 /* Timer.hpp */,
 				98D3E7D31F75AEC6000DA61D /* CohesiveEnergy.cpp */,
 				98D3E7D41F75AEC6000DA61D /* CohesiveEnergy.hpp */,
 				98CE476D1F71E66300627725 /* PardisoSolver.cpp */,
