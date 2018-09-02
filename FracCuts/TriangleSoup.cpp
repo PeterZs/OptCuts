@@ -1050,7 +1050,7 @@ namespace FracCuts {
             return true;
         }
         else {
-            std::cout << "max E_dec = " << EwDec_max << " < thres" << std::endl;
+            std::cout << "max E_dec = " << EwDec_max << " < thres " << thres << std::endl;
             return false;
         }
     }
@@ -1227,7 +1227,7 @@ namespace FracCuts {
             return true;
         }
         else {
-            std::cout << "max E_dec = " << localEwDec_max << " < thres" << std::endl;
+            std::cout << "max E_dec = " << localEwDec_max << " < thres " << EDecThres << std::endl;
             return false;
         }
     }
@@ -1303,7 +1303,7 @@ namespace FracCuts {
             return true;
         }
         else {
-            std::cout << "max E_dec = " << EwDec_max << " < thres" << std::endl;
+            std::cout << "max E_dec = " << EwDec_max << " < thres " << EDecThres << std::endl;
             return false;
         }
     }

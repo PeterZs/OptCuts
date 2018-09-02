@@ -656,6 +656,27 @@ int computeBestCand(const std::vector<std::pair<double, double>>& energyChanges,
     return id_minEChange;
 }
 
+bool checkCand(const std::vector<std::pair<double, double>>& energyChanges)
+{
+    for(const auto& candI : energyChanges) {
+        if((candI.first < 0.0) || (candI.second < 0.0)) {
+            return true;
+        }
+    }
+    
+    double minEChange = __DBL_MAX__;
+    for(const auto& candI : energyChanges) {
+        if(candI.first < minEChange) {
+            minEChange = candI.first;
+        }
+        if(candI.second < minEChange) {
+            minEChange = candI.second;
+        }
+    }
+    std::cout << "candidates not valid, minEChange: " << minEChange << std::endl;
+    return false;
+}
+
 double updateLambda(double measure_bound, double lambda_SD = energyParams[0], double kappa = 1.0, double kappa2 = 1.0)
 {
     lambda_SD = std::max(0.0, kappa * (measure_bound - (upperBound - convTol_upperBound / 2.0)) + kappa2 * lambda_SD / (1.0 - lambda_SD));
@@ -856,6 +877,8 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
                 logFile << "iterativelyUpdated = " << energyParams[0] << ", increase for switch" << std::endl;
             }
             
+            checkCand(energyChanges_bSplit); //DEBUG
+            checkCand(energyChanges_iSplit); //DEBUG
             double eDec_b, eDec_i;
             int id_pickingBSplit = computeBestCand(energyChanges_bSplit, 1.0 - energyParams[0], eDec_b);
             int id_pickingISplit = computeBestCand(energyChanges_iSplit, 1.0 - energyParams[0], eDec_i);

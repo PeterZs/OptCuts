@@ -30,6 +30,7 @@ namespace FracCuts {
         Eigen::MatrixXd H;
         bool fixAMBoundary = false;
         bool countTime = false;
+        double edgeLen_eps = mesh.avgEdgeLen * 0.5; //NOTE: different from what's used in [Jiang et al. 2017]
         if(E.rows() == 0) {
             countTime = true;
             timer.start(2);
@@ -151,6 +152,7 @@ namespace FracCuts {
         else {
             assert(p_bnd.rows() > 0);
             
+            edgeLen_eps *= 0.1;
             fixAMBoundary = true;
             bnd = p_bnd;
             for(int bndI = 0; bndI < bnd.size(); bndI++) {
@@ -170,7 +172,6 @@ namespace FracCuts {
         
         airMesh.V_rest.resize(airMesh.V.rows(), 3);
         airMesh.V_rest << airMesh.V, Eigen::VectorXd::Zero(airMesh.V.rows());
-        const double edgeLen_eps = mesh.avgEdgeLen * 0.5; //NOTE: different from what's used in [Jiang et al. 2017]
         airMesh.areaThres_AM = std::sqrt(3.0) / 4.0 * edgeLen_eps * edgeLen_eps; // for preventing degenerate air mesh triangles
         airMesh.computeFeatures();
         

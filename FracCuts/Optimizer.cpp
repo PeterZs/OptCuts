@@ -671,6 +671,8 @@ namespace FracCuts {
         }
         
         double lastEnergyVal_scaffold = 0.0;
+//        const double m = searchDir.dot(gradient);
+//        const double c1m = 1.0e-4 * m;
         Eigen::MatrixXd resultV0 = result.V;
 //        TriangleSoup temp = result; //TEST
         Eigen::MatrixXd scaffoldV0;
@@ -731,7 +733,7 @@ namespace FracCuts {
         }
 //        lastEDec = (lastEnergyVal - testingE) / stepSize;
         if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (stepSize > 1.0e-3)) {
-//        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6)) {
+//        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize)) {
             // no prominent energy decrease, stop for accelerating the process
             stopped = true;
         }
