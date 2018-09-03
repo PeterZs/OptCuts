@@ -635,6 +635,83 @@ namespace FracCuts{
                         break;
                     }
                         
+                    case 9: {
+                        // output average running time
+                        const std::string resultsFolderPath(argv[3]);
+                        FILE *dirList = fopen((resultsFolderPath + "/folderList.txt").c_str(), "r");
+                        assert(dirList);
+                        
+                        std::string resultsFolderName;
+                        int endI_substr = resultsFolderPath.find_last_of('/');
+                        if(endI_substr == std::string::npos) {
+                            resultsFolderName = resultsFolderPath;
+                        }
+                        else {
+                            if(endI_substr == resultsFolderPath.length() - 1) {
+                                endI_substr = resultsFolderPath.find_last_of('/', endI_substr - 1);
+                                resultsFolderName = resultsFolderPath.substr(endI_substr + 1,
+                                                                             resultsFolderPath.length() - endI_substr - 2);
+                            }
+                            else {
+                                resultsFolderName = resultsFolderPath.substr(endI_substr + 1,
+                                                                             resultsFolderPath.length() - endI_substr - 1);
+                            }
+                        }
+                        
+                        double time_sum = 0.0, time_min = __DBL_MAX__, time_max = -1.0;
+                        int expCount = 0;
+                        char buf[BUFSIZ];
+                        while((!feof(dirList)) && fscanf(dirList, "%s", buf)) {
+                            std::string resultName(buf);
+                            std::string infoFilePath(resultsFolderPath + '/' + resultName + "/info.txt");
+                            std::ifstream infoFile(infoFilePath);
+                            if(infoFile.is_open()) {
+                                std::string bypass;
+                                int vertAmt, faceAmt;
+                                infoFile >> vertAmt >> faceAmt;
+                                
+                                int innerIterNum, outerIterNum;
+                                double lambda_init, lambda_end;
+                                infoFile >> innerIterNum >> outerIterNum >>
+                                bypass >> bypass >>
+                                lambda_init >> lambda_end;
+                                
+                                double time, duration;
+                                infoFile >> bypass >> bypass >> time >> duration;
+                                for(int wordI = 0; wordI < 13; wordI++) {
+                                    infoFile >> bypass;
+                                }
+                                
+                                double E_d, E_s;
+                                infoFile >> E_d >> E_s;
+                                
+                                double l2Stretch, lInfStretch, l2Shear, lInfCompress;
+                                infoFile >> l2Stretch >> lInfStretch >> l2Shear >> lInfCompress;
+                                
+                                infoFile.close();
+                                
+                                time_sum += time;
+                                expCount++;
+                                if(time < time_min) {
+                                    time_min = time;
+                                }
+                                if(time > time_max) {
+                                    time_max = time;
+                                }
+                            }
+                            else {
+                                std::cout << "can't open " << infoFilePath << std::endl;
+                            }
+                        }
+                        
+                        fclose(dirList);
+                        std::cout << "avgTime = " << time_sum / expCount << "s" << std::endl;
+                        std::cout << "minTime = " << time_min << "s" << std::endl;
+                        std::cout << "maxTime = " << time_max << "s" << std::endl;
+                        
+                        break;
+                    }
+                        
                     default:
                         std::cout << "No diagMode " << diagMode << std::endl;
                         break;
