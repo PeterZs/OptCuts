@@ -40,7 +40,7 @@ FracCuts::Optimizer* optimizer;
 std::vector<FracCuts::Energy*> energyTerms;
 std::vector<double> energyParams;
 //bool bijectiveParam = false;
-bool bijectiveParam = true; //TODO: set as arguments!
+bool bijectiveParam = true;
 bool rand1PInitCut = false;
 //bool rand1PInitCut = true; //!!! for fast prototyping
 double lambda_init;
@@ -1390,12 +1390,28 @@ int main(int argc, char *argv[])
             break;
     }
     
-    std::string folderTail = "";
     if(argc > 6) {
-        if(argv[6][0] != '_') {
+        upperBound = std::stod(argv[6]);
+        if(upperBound <= 4.0) {
+            std::cout << "input b_d <= 4.0! use 4.05 instead." << std::endl;
+            upperBound = 4.05;
+        }
+        else {
+            std::cout << "use b_d = " << upperBound << std::endl;
+        }
+    }
+    
+    if(argc > 7) {
+        bijectiveParam = std::stoi(argv[7]);
+        std::cout << "bijectivity " << (bijectiveParam ? "ON" : "OFF") << std::endl;
+    }
+    
+    std::string folderTail = "";
+    if(argc > 8) {
+        if(argv[8][0] != '_') {
             folderTail += '_';
         }
-        folderTail += argv[6];
+        folderTail += argv[8];
     }
     
     if(UV.rows() != 0) {

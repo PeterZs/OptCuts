@@ -31,39 +31,26 @@ FracCutsPath = '/Users/mincli/Library/Developer/Xcode/DerivedData/FracCuts-agmha
 # runCommand = priority + FracCutsPath + ' 1 2 /Users/mincli/Desktop/output_AutoCuts/'
 
 for inputModelNameI in onlyfiles:
-	# no prop, no filter
-	runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 502 0'
+	runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1000 0 4.05 1'
 	if subprocess.call([runCommand], shell=True):
 		continue
 
-	# # compute initial embedding and output for AutoCuts
-	# runCommand = priority + FracCutsPath + ' 2 ' + meshFolderPath + inputModelNameI + ' 4'
+	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1001 0 4.1 1'
 	# if subprocess.call([runCommand], shell=True):
 	# 	continue
 
-	# # prop, no filter
-	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.001 35 0'
+	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1002 0 4.2 1'
 	# if subprocess.call([runCommand], shell=True):
 	# 	continue
 
-	# # prop, no filter
-	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.001 102 2'
+	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1003 0 4.05 0'
 	# if subprocess.call([runCommand], shell=True):
 	# 	continue
 
-	# # standard alt
-	# runCommand = FracCutsPath + ' 100 ' + inputModelNameI + ' 0.2 0 0'
-	# subprocess.call([runCommand], shell=True)
-	# runCommand = FracCutsPath + ' 100 ' + inputModelNameI + ' 0.1 0 0'
-	# subprocess.call([runCommand], shell=True)
-	# runCommand = FracCutsPath + ' 100 ' + inputModelNameI + ' 0.05 0 0'
-	# subprocess.call([runCommand], shell=True)
-
-	# # AutoCuts
-	# runCommand = FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.05 4 1'
+	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1004 0 4.1 0'
 	# if subprocess.call([runCommand], shell=True):
 	# 	continue
-	# runCommand = FracCutsPath + ' 100 ' + inputModelNameI + ' 0.1 4 1'
-	# subprocess.call([runCommand], shell=True)
-	# runCommand = FracCutsPath + ' 100 ' + inputModelNameI + ' 0.05 4 1'
-	# subprocess.call([runCommand], shell=True)
+
+	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1005 0 4.2 0'
+	# if subprocess.call([runCommand], shell=True):
+	# 	continue
