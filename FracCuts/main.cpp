@@ -1300,27 +1300,6 @@ int main(int argc, char *argv[])
 //    V = squareMesh.V_rest;
 //    F = squareMesh.F;
     
-//    //!!! for AutoCuts comparison
-//    std::ifstream distFile(outputFolderPath + "distortion.txt");
-//    assert(distFile.is_open());
-//    std::string resultName; double resultDistortion;
-//    bool distFound = false;
-//    while(!distFile.eof()) {
-//        distFile >> resultName >> resultDistortion;
-//        if(resultName.find(meshName) != std::string::npos) {
-//            distFound = true;
-//            upperBound = resultDistortion;
-//            break;
-//        }
-//    }
-//    distFile.close();
-//    if(distFound) {
-//        std::cout << "AutoCuts comparison: reset distortion bound to " << upperBound << std::endl;
-//    }
-//    else {
-//        exit(0);
-//    }
-    
     // Set lambda
     double lambda = 0.5;
     if(argc > 3) {
@@ -1392,12 +1371,39 @@ int main(int argc, char *argv[])
     
     if(argc > 6) {
         upperBound = std::stod(argv[6]);
-        if(upperBound <= 4.0) {
-            std::cout << "input b_d <= 4.0! use 4.05 instead." << std::endl;
-            upperBound = 4.05;
+        if(upperBound == 0.0) {
+            // read in b_d for comparing to other methods
+            bool useScriptedBound = false;
+            std::ifstream distFile(outputFolderPath + "distortion.txt");
+            assert(distFile.is_open());
+            
+            std::string resultName; double resultDistortion;
+            while(!distFile.eof()) {
+                distFile >> resultName >> resultDistortion;
+                if((resultName.find(meshName + "_Tutte_") != std::string::npos) ||
+                   (resultName.find(meshName + "_input_") != std::string::npos) ||
+                   (resultName.find(meshName + "_HighGenus_") != std::string::npos) ||
+                   (resultName.find(meshName + "_rigid_") != std::string::npos))
+                {
+                    useScriptedBound = true;
+                    upperBound = resultDistortion;
+                    assert(upperBound > 4.0);
+                    break;
+                }
+            }
+            distFile.close();
+            
+            assert(useScriptedBound);
+            std::cout << "Use scripted b_d = " << upperBound << std::endl;
         }
         else {
-            std::cout << "use b_d = " << upperBound << std::endl;
+            if(upperBound <= 4.0) {
+                std::cout << "input b_d <= 4.0! use 4.05 instead." << std::endl;
+                upperBound = 4.05;
+            }
+            else {
+                std::cout << "use b_d = " << upperBound << std::endl;
+            }
         }
     }
     

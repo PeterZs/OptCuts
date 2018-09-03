@@ -31,9 +31,15 @@ FracCutsPath = '/Users/mincli/Library/Developer/Xcode/DerivedData/FracCuts-agmha
 # runCommand = priority + FracCutsPath + ' 1 2 /Users/mincli/Desktop/output_AutoCuts/'
 
 for inputModelNameI in onlyfiles:
-	runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1000 0 4.05 1'
+	# AutoCuts comparison
+	runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1100 0 0 1'
 	if subprocess.call([runCommand], shell=True):
 		continue
+
+	# 6 batches of OptCuts evaluation:
+	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1001 0 4.1 1'
+	# if subprocess.call([runCommand], shell=True):
+	# 	continue
 
 	# runCommand = priority + FracCutsPath + ' 100 ' + meshFolderPath + inputModelNameI + ' 0.999 1001 0 4.1 1'
 	# if subprocess.call([runCommand], shell=True):

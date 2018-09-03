@@ -712,6 +712,75 @@ namespace FracCuts{
                         break;
                     }
                         
+                    case 10: {
+                        // output distortion as b_d input for comparison
+                        const std::string resultsFolderPath(argv[3]);
+                        FILE *dirList = fopen((resultsFolderPath + "/folderList.txt").c_str(), "r");
+                        assert(dirList);
+                        
+                        std::string resultsFolderName;
+                        int endI_substr = resultsFolderPath.find_last_of('/');
+                        if(endI_substr == std::string::npos) {
+                            resultsFolderName = resultsFolderPath;
+                        }
+                        else {
+                            if(endI_substr == resultsFolderPath.length() - 1) {
+                                endI_substr = resultsFolderPath.find_last_of('/', endI_substr - 1);
+                                resultsFolderName = resultsFolderPath.substr(endI_substr + 1,
+                                                                             resultsFolderPath.length() - endI_substr - 2);
+                            }
+                            else {
+                                resultsFolderName = resultsFolderPath.substr(endI_substr + 1,
+                                                                             resultsFolderPath.length() - endI_substr - 1);
+                            }
+                        }
+                        
+                        FILE *distFile = fopen((resultsFolderPath + "/distortion.txt").c_str(), "w");
+                        assert(distFile);
+                        
+                        char buf[BUFSIZ];
+                        while((!feof(dirList)) && fscanf(dirList, "%s", buf)) {
+                            std::string resultName(buf);
+                            std::string infoFilePath(resultsFolderPath + '/' + resultName + "/info.txt");
+                            std::ifstream infoFile(infoFilePath);
+                            if(infoFile.is_open()) {
+                                std::string bypass;
+                                int vertAmt, faceAmt;
+                                infoFile >> vertAmt >> faceAmt;
+                                
+                                int innerIterNum, outerIterNum;
+                                double lambda_init, lambda_end;
+                                infoFile >> innerIterNum >> outerIterNum >>
+                                bypass >> bypass >>
+                                lambda_init >> lambda_end;
+                                
+                                double time, duration;
+                                infoFile >> bypass >> bypass >> time >> duration;
+                                for(int wordI = 0; wordI < 13; wordI++) {
+                                    infoFile >> bypass;
+                                }
+                                
+                                double E_d, E_s;
+                                infoFile >> E_d >> E_s;
+                                
+                                double l2Stretch, lInfStretch, l2Shear, lInfCompress;
+                                infoFile >> l2Stretch >> lInfStretch >> l2Shear >> lInfCompress;
+                                
+                                infoFile.close();
+                                
+                                fprintf(distFile, (resultName + " " + std::to_string(E_d) + "\n").c_str());
+                            }
+                            else {
+                                std::cout << "can't open " << infoFilePath << std::endl;
+                            }
+                        }
+                        
+                        fclose(dirList);
+                        fclose(distFile);
+                        
+                        break;
+                    }
+                        
                     default:
                         std::cout << "No diagMode " << diagMode << std::endl;
                         break;
