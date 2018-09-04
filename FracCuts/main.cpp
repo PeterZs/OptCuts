@@ -1383,7 +1383,9 @@ int main(int argc, char *argv[])
                 if((resultName.find(meshName + "_Tutte_") != std::string::npos) ||
                    (resultName.find(meshName + "_input_") != std::string::npos) ||
                    (resultName.find(meshName + "_HighGenus_") != std::string::npos) ||
-                   (resultName.find(meshName + "_rigid_") != std::string::npos))
+                   (resultName.find(meshName + "_rigid_") != std::string::npos) ||
+                   (resultName.find(meshName + "_zbrush_") != std::string::npos) ||
+                   (resultName.find(meshName + "_unwrella_") != std::string::npos))
                 {
                     useScriptedBound = true;
                     upperBound = resultDistortion;
