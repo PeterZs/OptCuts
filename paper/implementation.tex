@@ -108,7 +108,8 @@ To initialize our UV map, $(T^0,U^0)$, for an input surface, we map its initial 
 % Danny: we don't currently do higher genus yet - nothing stopping us but unless we get it in, in time the following needs to go and move to the future work section.
 %We compute initial seams for surfaces according to topology and geometry. 
 For disk-topology surfaces, we simply pick the longest boundary as an initial seam while for genus-0 closed surfaces, we randomly pick two connected edges as an initial seam. 
-%For higher-genus surfaces, we follow Crane et al.~\shortcite{Crane:2013:DGP} to detect homology generators, and connect all of them as an initial seam.
+% For higher-genus surfaces, we follow Crane et al.~\shortcite{Crane:2013:DGP} to detect homology generators, and connect all of them as an initial seam.
+\revised{For higher-genus surfaces, we use \textit{cut\_to\_disk} function in libigl\ \cite{libigl} to detect homology generators, and connect all of them as an initial seam.}
 %%
 We then set $(T^0,U^0)$ to this initial topology with vertex positions minimizing distortion, $E_d$, on the initial embedding, and start OptCuts by initializing $\lambda^0 = 0$. This sets the first iteration to initially ignore distortion and to begin by exploring a shortening of seam lengths first.
 
