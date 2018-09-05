@@ -658,6 +658,9 @@ namespace FracCuts{
                             }
                         }
                         
+                        FILE *timeList = fopen((resultsFolderPath + "/timing.txt").c_str(), "w");
+                        assert(timeList);
+                        
                         double time_sum = 0.0, time_min = __DBL_MAX__, time_max = -1.0;
                         int expCount = 0;
                         char buf[BUFSIZ];
@@ -698,6 +701,8 @@ namespace FracCuts{
                                 if(time > time_max) {
                                     time_max = time;
                                 }
+                                
+                                fprintf(timeList, "%d %lf\n", vertAmt, time);
                             }
                             else {
                                 std::cout << "can't open " << infoFilePath << std::endl;
@@ -705,6 +710,7 @@ namespace FracCuts{
                         }
                         
                         fclose(dirList);
+                        fclose(timeList);
                         std::cout << "avgTime = " << time_sum / expCount << "s" << std::endl;
                         std::cout << "minTime = " << time_min << "s" << std::endl;
                         std::cout << "maxTime = " << time_max << "s" << std::endl;
