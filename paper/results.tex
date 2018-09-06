@@ -38,12 +38,12 @@ All our evaluations in the following sections employ our implementation of OptCu
 \hline
 \multirow{2}{*}{$b_d$} & \multirow{2}{*}{bijectivity} & \multicolumn{3}{c|}{$E_{s}$} & \multicolumn{3}{c|}{time (s)} \\ \cline{3-8} 
                        &                         & avg      & min     & max      & avg       & min    & max      \\ \hline
-\multirow{2}{*}{4.2}   & OFF                    & 3.819   & 0.080  & 14.545  & \old{87.0}\revised{40.0}   & \old{0.3}\revised{0.2} & \old{417.8}\revised{235.6} \\
-                       & ON                & 4.087   & 0.289  & 17.063  & \old{190.3}\revised{72.4}   & \old{3.8}\revised{0.5} & \old{983.3}\revised{438.5}  \\ \hline
-\multirow{2}{*}{4.1}   & OFF                    & 4.709   & 0.752  & 17.980  & \old{137.5}\revised{44.3}  & \old{0.9}\revised{0.4} & \old{886.9}\revised{206.2} \\
-                       & ON                & 5.324   & 0.860  & 21.595  & \old{271.1}\revised{91.7}   & \old{6.9}\revised{0.8} & \old{1767.8}\revised{458.4}  \\ \hline
-\multirow{2}{*}{4.05}  & OFF                    & 6.142   & 0.277  & 21.566  & \old{213.2}\revised{59.2}  & \old{3.9}\revised{0.4} & \old{1398.1}\revised{245.9}   \\
-                       & ON                & 7.195   & 0.932  & 29.596  & \old{412.9}\revised{126.9}   & \old{7.2}\revised{0.9} & \old{2859.5}\revised{942.4} \\ \hline
+\multirow{2}{*}{4.2}   & OFF                    & \shortstack{\old{3.819}\\\corr{3.936}\\\revised{3.934}}   & \shortstack{\old{0.080}\\\cor{0.289}}  & \shortstack{\old{14.545}\\\revised{14.579}}  & \shortstack{\old{87.0}\\\corr{92.5}\\\revised{40.0}}   & \shortstack{\old{0.3}\\\revised{0.2}} & \shortstack{\old{417.8}\\\revised{235.6}} \\
+                       & ON                & \shortstack{\old{4.087}\\\corr{4.006}\\\revised{4.060}}   & 0.289  & \shortstack{\old{17.063}\\\revised{17.243}}  & \shortstack{\old{190.3}\\\corr{187.0}\\\revised{72.4}}   & \shortstack{\old{3.8}\\\corr{0.6}\\\revised{0.5}} & \shortstack{\old{983.3}\\\revised{438.5}}  \\ \hline
+\multirow{2}{*}{4.1}   & OFF                    & \shortstack{\old{4.709}\\\corr{4.919}\\\revised{4.942}}   & 0.752  & \shortstack{\old{17.980}\\\revised{17.786}}  & \shortstack{\old{137.5}\\\corr{144.6}\\\revised{44.3}}  & \shortstack{\old{0.9}\\\corr{4.0}\\\revised{0.4}} & \shortstack{\old{886.9}\\\revised{206.2}} \\
+                       & ON                & \shortstack{\old{5.324}\\\corr{5.346}\\\revised{5.343}}   & 0.860  & \shortstack{\old{21.595}\\\revised{22.009}}  & \shortstack{\old{271.1}\\\corr{274.6}\\\revised{91.7}}   & \shortstack{\old{6.9}\\\revised{0.8}} & \shortstack{\old{1767.8}\\\revised{458.4}}  \\ \hline
+\multirow{2}{*}{4.05}  & OFF                    & \shortstack{\old{6.142}\\\corr{6.416}\\\revised{6.409}}   & \shortstack{\old{0.277}\\\cor{1.035}}  & 21.566  & \shortstack{\old{213.2}\\\corr{223.3}\\\revised{59.2}}  & \shortstack{\old{3.9}\\\revised{0.4}} & \shortstack{\old{1398.1}\\\revised{245.9}}   \\
+                       & ON                & \shortstack{\old{7.195}\\\corr{7.256}\\\revised{7.228}}   & 0.932  & \shortstack{\old{29.596}\\\revised{30.156}}  & \shortstack{\old{412.9}\\\corr{479.5}\\\revised{126.9}}   & \shortstack{\old{7.2}\\\revised{0.9}} & \shortstack{\old{2859.5}\\\corr{5141.2}\\\revised{942.4}} \\ \hline
 \end{tabular}
 \vspace{-0.3cm}
 \end{table}
@@ -129,9 +129,9 @@ Distortion, seam length, and performance statistics comparing automated-mode Aut
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 method                   & bijectivity & avg. $E_{d}$ & avg. $E_{s}$ & avg. time (s) \\ \hline
-AutoCuts                 & N/A         & 4.074        & 7.5789       & 499.9         \\ \hline
-\multirow{2}{*}{OptCuts} & ON          & 4.073        & 5.8114       & \old{304.0}\revised{107.7}         \\
-                         & OFF         & 4.073        & 5.3065       & \old{148.7}\revised{50.6}         \\ \hline
+AutoCuts                 & N/A         & \old{4.074}\cor{4.077}        & \old{7.5789}\cor{7.9572}       & \old{499.9}\cor{592.6}         \\ \hline
+\multirow{2}{*}{OptCuts} & ON          & \old{4.073}\cor{4.075}        & \old{5.8114}\corr{5.9182}\revised{5.9354}       & \old{304.0}\corr{344.4}\revised{107.7}         \\
+                         & OFF         & \old{4.073}\cor{4.075}        & \old{5.3065}\corr{5.4450}\revised{5.4427}       & \old{148.7}\corr{156.5}\revised{50.6}         \\ \hline
 \end{tabular}
 \vspace{-0.3cm}
 \end{table}
@@ -393,12 +393,12 @@ Here we summarize statistics for our benchmark set comparing performance and res
 \hline
 \multirow{2}{*}{$b_d$} & \multirow{2}{*}{OptCuts} & \multicolumn{3}{c|}{$E_{s}$} & \multicolumn{3}{c|}{time (s)} \\ \cline{3-8} 
                        &                         & avg      & min     & max      & avg       & min    & max      \\ \hline
-\multirow{2}{*}{4.2}   & Standard                    & 3.819   & 0.080  & 14.545  & \old{87.0}\revised{40.0}   & \old{0.3}\revised{0.2} & \old{417.8}\revised{235.6} \\
-                       & EB                & 3.868   & 0.159  & 14.929  & 13.0   & 0.1 & 72.1  \\ \hline
-\multirow{2}{*}{4.1}   & Standard                    & 4.709   & 0.752  & 17.980  & \old{137.5}\revised{44.3}  & \old{0.9}\revised{0.4} & \old{886.9}\revised{206.2} \\
-                       & EB               & 4.795   & 1.207  & 16.895  & 17.0   & 0.1 & 87.2  \\ \hline
-\multirow{2}{*}{4.05}  & Standard                    & 6.142   & 0.277  & 21.566  & \old{213.2}\revised{59.2}  & \old{3.9}\revised{0.4} & \old{1398.1}\revised{245.9}   \\
-                       & EB                & 6.335   & 0.328  & 23.051  & 24.1   & 0.1 & 115.4 \\ \hline
+\multirow{2}{*}{4.2}   & Standard                    & \shortstack{\old{3.819}\\\corr{3.936}\\\revised{3.934}}   & \shortstack{\old{0.080}\\\cor{0.289}}  & \shortstack{\old{14.545}\\\revised{14.579}}  & \shortstack{\old{87.0}\\\corr{92.5}\\\revised{40.0}}   & \shortstack{\old{0.3}\\\revised{0.2}} & \shortstack{\old{417.8}\\\revised{235.6}} \\
+                       & EB                & \shortstack{\old{3.868}\\\cor{3.971}}   & \shortstack{\old{0.159}\\\cor{0.754}}  & 14.929  & \shortstack{\old{13.0}\\\cor{13.6}}   & 0.1 & 72.1  \\ \hline
+\multirow{2}{*}{4.1}   & Standard                    & \shortstack{\old{4.709}\\\corr{4.919}\\\revised{4.942}}   & 0.752  & \shortstack{\old{17.980}\\\revised{17.786}}  & \shortstack{\old{137.5}\\\corr{144.6}\\\revised{44.3}}  & \shortstack{\old{0.9}\\\corr{4.0}\\\revised{0.4}} & \shortstack{\old{886.9}\\\revised{206.2}} \\
+                       & EB               & \shortstack{\old{4.795}\\\cor{5.026}}   & 1.207  & 16.895  & \shortstack{\old{17.0}\\\cor{17.9}}   & 0.1 & 87.2  \\ \hline
+\multirow{2}{*}{4.05}  & Standard                    & \shortstack{\old{6.142}\\\corr{6.416}\\\revised{6.409}}   & \shortstack{\old{0.277}\\\cor{1.035}}  & 21.566  & \shortstack{\old{213.2}\\\corr{223.3}\\\revised{59.2}}  & \shortstack{\old{3.9}\\\revised{0.4}} & \shortstack{\old{1398.1}\\\revised{245.9}}   \\
+                       & EB                & \shortstack{\old{6.335}\\\cor{6.608}}   & \shortstack{\old{0.328}\\\cor{1.207}}  & 23.051  & \shortstack{\old{24.1}\\\cor{25.3}}   & 0.1 & 115.4 \\ \hline
 \end{tabular}
 \vspace{-0.3cm}
 \end{table}
