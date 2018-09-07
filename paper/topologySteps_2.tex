@@ -21,7 +21,7 @@ enumerate the topology operations used in our algorithm (Section~\ref{sec:topolo
 \label{sec:topology_energy}
 We next devise an approximate energy model to efficiently estimate the effect of a potential topological change. 
 To keep our notation simplified, in the following we use $i$ or $j$ to index the inner loop of the primal update and $k$ for indexing the outer loop.
-At each outer iterate $k$, the optimal Lagrangian for any proposed topology $T^i$ is  
+At each outer iterate $k$, the Lagrangian for any proposed topology $T^i$ is  
 \begin{align}
 \ell(T^i) = \min_{U} L(T^i, U) = E_s(T^i) + \lambda^k \min_{U} E_d(T^i, U).
 \end{align}
