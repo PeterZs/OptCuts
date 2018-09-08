@@ -31,19 +31,19 @@ All our evaluations in the following sections employ our implementation of OptCu
 \begin{table}[t]
 \small
 \centering
-\caption{Seam length and performance statistics for our OptCuts algorithm applied to our benchmark of 71 surfaces as we decrease the distortion bound, $b_d$; each example is run with and without our additional enforcement of global bijectivity enabled. All examples converge satisfying the requested distortion bound.}
+\caption{Seam length and performance statistics for our OptCuts algorithm applied to our benchmark of 71 surfaces as we decrease the distortion bound, $b_d$; each example is run with and without our additional enforcement of global bijectivity enabled. All examples converge satisfying the requested distortion bound. \minchen{Note that min $E_s$ refers to the minimum nonzero seam length.}}
 \vspace{-0.3cm}
 \label{tb:stats_OptCuts}
 \begin{tabular}{|c|c|ccc|ccc|}
 \hline
 \multirow{2}{*}{$b_d$} & \multirow{2}{*}{bijectivity} & \multicolumn{3}{c|}{$E_{s}$} & \multicolumn{3}{c|}{time (s)} \\ \cline{3-8} 
                        &                         & avg      & min     & max      & avg       & min    & max      \\ \hline
-\multirow{2}{*}{4.2}   & OFF                    & \shortstack{\old{3.819}\\\corr{3.936}\\\revised{3.934}}   & \shortstack{\old{0.080}\\\cor{0.289}}  & \shortstack{\old{14.545}\\\revised{14.579}}  & \shortstack{\old{87.0}\\\corr{92.5}\\\revised{40.0}}   & \shortstack{\old{0.3}\\\revised{0.2}} & \shortstack{\old{417.8}\\\revised{235.6}} \\
-                       & ON                & \shortstack{\old{4.087}\\\corr{4.006}\\\revised{4.060}}   & 0.289  & \shortstack{\old{17.063}\\\revised{17.243}}  & \shortstack{\old{190.3}\\\corr{187.0}\\\revised{72.4}}   & \shortstack{\old{3.8}\\\corr{0.6}\\\revised{0.5}} & \shortstack{\old{983.3}\\\revised{438.5}}  \\ \hline
-\multirow{2}{*}{4.1}   & OFF                    & \shortstack{\old{4.709}\\\corr{4.919}\\\revised{4.942}}   & 0.752  & \shortstack{\old{17.980}\\\revised{17.786}}  & \shortstack{\old{137.5}\\\corr{144.6}\\\revised{44.3}}  & \shortstack{\old{0.9}\\\corr{4.0}\\\revised{0.4}} & \shortstack{\old{886.9}\\\revised{206.2}} \\
-                       & ON                & \shortstack{\old{5.324}\\\corr{5.346}\\\revised{5.343}}   & 0.860  & \shortstack{\old{21.595}\\\revised{22.009}}  & \shortstack{\old{271.1}\\\corr{274.6}\\\revised{91.7}}   & \shortstack{\old{6.9}\\\revised{0.8}} & \shortstack{\old{1767.8}\\\revised{458.4}}  \\ \hline
-\multirow{2}{*}{4.05}  & OFF                    & \shortstack{\old{6.142}\\\corr{6.416}\\\revised{6.409}}   & \shortstack{\old{0.277}\\\cor{1.035}}  & 21.566  & \shortstack{\old{213.2}\\\corr{223.3}\\\revised{59.2}}  & \shortstack{\old{3.9}\\\revised{0.4}} & \shortstack{\old{1398.1}\\\revised{245.9}}   \\
-                       & ON                & \shortstack{\old{7.195}\\\corr{7.256}\\\revised{7.228}}   & 0.932  & \shortstack{\old{29.596}\\\revised{30.156}}  & \shortstack{\old{412.9}\\\corr{479.5}\\\revised{126.9}}   & \shortstack{\old{7.2}\\\revised{0.9}} & \shortstack{\old{2859.5}\\\corr{5141.2}\\\revised{942.4}} \\ \hline
+\multirow{2}{*}{4.2}   & OFF                    & \shortstack{\old{3.819}\\\corr{3.936}\\\revised{3.816}}   & \shortstack{\old{0.080}\\\cor{0.289}}  & \shortstack{\old{14.545}\\\revised{14.579}}  & \shortstack{\old{87.0}\\\corr{92.5}\\\revised{38.4}}   & \shortstack{\old{0.3}\\\revised{0.2}} & \shortstack{\old{417.8}\\\revised{235.6}} \\
+                       & ON                & \shortstack{\old{4.087}\\\corr{4.006}\\\revised{3.915}}   & 0.289  & \shortstack{\old{17.063}\\\revised{17.243}}  & \shortstack{\old{190.3}\\\corr{187.0}\\\revised{69.5}}   & \shortstack{\old{3.8}\\\corr{0.6}\\\revised{0.5}} & \shortstack{\old{983.3}\\\revised{438.5}}  \\ \hline
+\multirow{2}{*}{4.1}   & OFF                    & \shortstack{\old{4.709}\\\corr{4.919}\\\revised{4.783}}   & 0.752  & \shortstack{\old{17.980}\\\revised{17.786}}  & \shortstack{\old{137.5}\\\corr{144.6}\\\revised{42.5}}  & \shortstack{\old{0.9}\\\corr{4.0}\\\revised{0.4}} & \shortstack{\old{886.9}\\\revised{206.2}} \\
+                       & ON                & \shortstack{\old{5.324}\\\corr{5.346}\\\revised{5.147}}   & 0.860  & \shortstack{\old{21.595}\\\revised{22.009}}  & \shortstack{\old{271.1}\\\corr{274.6}\\\revised{88.1}}   & \shortstack{\old{6.9}\\\revised{0.8}} & \shortstack{\old{1767.8}\\\revised{458.4}}  \\ \hline
+\multirow{2}{*}{4.05}  & OFF                    & \shortstack{\old{6.142}\\\corr{6.416}\\\revised{6.190}}   & 0.277  & 21.566  & \shortstack{\old{213.2}\\\corr{223.3}\\\revised{57.0}}  & \shortstack{\old{3.9}\\\revised{0.4}} & \shortstack{\old{1398.1}\\\revised{245.9}}   \\
+                       & ON                & \shortstack{\old{7.195}\\\corr{7.256}\\\revised{6.980}}   & \shortstack{\old{0.932}\\\revised{0.781}}  & \shortstack{\old{29.596}\\\revised{30.156}}  & \shortstack{\old{412.9}\\\corr{479.5}\\\revised{119.7}}   & \shortstack{\old{7.2}\\\revised{0.9}} & \shortstack{\old{2859.5}\\\corr{5141.2}\\\revised{758.8}} \\ \hline
 \end{tabular}
 \vspace{-0.3cm}
 \end{table}
@@ -129,9 +129,9 @@ Distortion, seam length, and performance statistics comparing automated-mode Aut
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 method                   & bijectivity & avg. $E_{d}$ & avg. $E_{s}$ & avg. time (s) \\ \hline
-AutoCuts                 & N/A         & \old{4.074}\cor{4.077}        & \old{7.5789}\cor{7.9572}       & \old{499.9}\cor{592.6}         \\ \hline
-\multirow{2}{*}{OptCuts} & ON          & \old{4.073}\cor{4.075}        & \old{5.8114}\corr{5.9182}\revised{5.9354}       & \old{304.0}\corr{344.4}\revised{107.7}         \\
-                         & OFF         & \old{4.073}\cor{4.075}        & \old{5.3065}\corr{5.4450}\revised{5.4427}       & \old{148.7}\corr{156.5}\revised{50.6}         \\ \hline
+AutoCuts                 & N/A         & \old{4.074}\cor{4.075}        & \old{7.5789}\cor{7.704}       & \old{499.9}\cor{498.7}         \\ \hline
+\multirow{2}{*}{OptCuts} & ON          & 4.073       & \old{5.8114}\corr{5.9182}\revised{5.743}       & \old{304.0}\corr{344.4}\revised{105.7}         \\
+                         & OFF         & \old{4.073}\cor{4.074}        & \old{5.3065}\corr{5.4450}\revised{5.265}       & \old{148.7}\corr{156.5}\revised{50.2}         \\ \hline
 \end{tabular}
 \vspace{-0.3cm}
 \end{table}
@@ -386,19 +386,19 @@ Middle: a user-painted salience map goes from blue (no seams) to green (seams al
 \small
 \centering
 \caption{
-Here we summarize statistics for our benchmark set comparing performance and resulting seam-lengths obtained by our standard OptCuts topology operations as compared with an alternative version of OptCuts employing the more aggressive topology operation of cutting from extrema-to-boundary (EB) from Geometry Images~\cite{Gu2002Geometry}. We run all examples both with and without bijectivity enforcement. As the EB strategy is more aggressive, we observe faster runtimes at the cost of longer seam-lengths.} 
+Here we summarize statistics for our benchmark set comparing performance and resulting seam-lengths obtained by our standard OptCuts topology operations as compared with an alternative version of OptCuts employing the more aggressive topology operation of cutting from extrema-to-boundary (EB) from Geometry Images~\cite{Gu2002Geometry}. We run all examples both with and without bijectivity enforcement. As the EB strategy is more aggressive, we observe faster runtimes at the cost of longer seam-lengths. \minchen{Note that min $E_s$ refers to the minimum nonzero seam length.}} 
 \label{tb:comp_GI}
 \vspace{-0.3cm}
 \begin{tabular}{|c|c|ccc|ccc|}
 \hline
 \multirow{2}{*}{$b_d$} & \multirow{2}{*}{OptCuts} & \multicolumn{3}{c|}{$E_{s}$} & \multicolumn{3}{c|}{time (s)} \\ \cline{3-8} 
                        &                         & avg      & min     & max      & avg       & min    & max      \\ \hline
-\multirow{2}{*}{4.2}   & Standard                    & \shortstack{\old{3.819}\\\corr{3.936}\\\revised{3.934}}   & \shortstack{\old{0.080}\\\cor{0.289}}  & \shortstack{\old{14.545}\\\revised{14.579}}  & \shortstack{\old{87.0}\\\corr{92.5}\\\revised{40.0}}   & \shortstack{\old{0.3}\\\revised{0.2}} & \shortstack{\old{417.8}\\\revised{235.6}} \\
-                       & EB                & \shortstack{\old{3.868}\\\cor{3.971}}   & \shortstack{\old{0.159}\\\cor{0.754}}  & 14.929  & \shortstack{\old{13.0}\\\cor{13.6}}   & 0.1 & 72.1  \\ \hline
-\multirow{2}{*}{4.1}   & Standard                    & \shortstack{\old{4.709}\\\corr{4.919}\\\revised{4.942}}   & 0.752  & \shortstack{\old{17.980}\\\revised{17.786}}  & \shortstack{\old{137.5}\\\corr{144.6}\\\revised{44.3}}  & \shortstack{\old{0.9}\\\corr{4.0}\\\revised{0.4}} & \shortstack{\old{886.9}\\\revised{206.2}} \\
-                       & EB               & \shortstack{\old{4.795}\\\cor{5.026}}   & 1.207  & 16.895  & \shortstack{\old{17.0}\\\cor{17.9}}   & 0.1 & 87.2  \\ \hline
-\multirow{2}{*}{4.05}  & Standard                    & \shortstack{\old{6.142}\\\corr{6.416}\\\revised{6.409}}   & \shortstack{\old{0.277}\\\cor{1.035}}  & 21.566  & \shortstack{\old{213.2}\\\corr{223.3}\\\revised{59.2}}  & \shortstack{\old{3.9}\\\revised{0.4}} & \shortstack{\old{1398.1}\\\revised{245.9}}   \\
-                       & EB                & \shortstack{\old{6.335}\\\cor{6.608}}   & \shortstack{\old{0.328}\\\cor{1.207}}  & 23.051  & \shortstack{\old{24.1}\\\cor{25.3}}   & 0.1 & 115.4 \\ \hline
+\multirow{2}{*}{4.2}   & Standard                    & \shortstack{\old{3.819}\\\corr{3.936}\\\revised{3.816}}   & \shortstack{\old{0.080}\\\cor{0.289}}  & \shortstack{\old{14.545}\\\revised{14.579}}  & \shortstack{\old{87.0}\\\corr{92.5}\\\revised{38.4}}   & \shortstack{\old{0.3}\\\revised{0.2}} & \shortstack{\old{417.8}\\\revised{235.6}} \\
+                       & EB                & \shortstack{\old{3.868}\\\cor{3.837}}   & \shortstack{\old{0.159}\\\cor{0.754}}  & \shortstack{\old{14.929}\\\revised{15.035}}  & \shortstack{\old{13.0}\\\cor{15.2}}   & 0.1 & \shortstack{\old{72.1}\\\revised{98.3}}  \\ \hline
+\multirow{2}{*}{4.1}   & Standard                    & \shortstack{\old{4.709}\\\corr{4.919}\\\revised{4.783}}   & 0.752  & \shortstack{\old{17.980}\\\revised{17.786}}  & \shortstack{\old{137.5}\\\corr{144.6}\\\revised{42.5}}  & \shortstack{\old{0.9}\\\corr{4.0}\\\revised{0.4}} & \shortstack{\old{886.9}\\\revised{206.2}} \\
+                       & EB               & \shortstack{\old{4.795}\\\cor{4.845}}   & 1.207  & 16.895  & \shortstack{\old{17.0}\\\cor{20.0}}   & 0.1 & \shortstack{\old{87.2}\\\revised{108.2}}  \\ \hline
+\multirow{2}{*}{4.05}  & Standard                    & \shortstack{\old{6.142}\\\corr{6.416}\\\revised{6.190}}   & 0.277  & 21.566  & \shortstack{\old{213.2}\\\corr{223.3}\\\revised{57.0}}  & \shortstack{\old{3.9}\\\revised{0.4}} & \shortstack{\old{1398.1}\\\revised{245.9}}   \\
+                       & EB                & \shortstack{\old{6.335}\\\cor{6.383}}   & 0.328  & 23.051  & \shortstack{\old{24.1}\\\cor{28.1}}   & 0.1 & \shortstack{\old{115.4}\\\revised{131.9}} \\ \hline
 \end{tabular}
 \vspace{-0.3cm}
 \end{table}
