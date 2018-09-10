@@ -1,4 +1,5 @@
 % !TeX root = OptCuts.tex
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig/our_impressive_results_left.pdf}
@@ -18,7 +19,8 @@ In the following sections we evaluate OptCuts and a range of other UV parameteri
 
 For all examples reported in all of the following sections we note that OptCuts always successfully converges to a solution achieving the targeted symmetric Dirichlet energy distortion bound $b_d$ (see our discussion in Section~\ref{sec:term}). Thus, in many experiments we will focus on evaluating the seam length measure, $E_{s}$, as an evaluation metric with the goal being to achieve any set target distortion bound with the shortest possible seam lengths. Recall that our seam-length measure, $E_{s}$, is normalized by square root of mesh area and so provides a consistent and comparable measure across examples and methods. 
 
-All our evaluations in the following sections employ our implementation of OptCuts using the libigl~\cite{libigl} library for rapid prototyping and testing. Implementation details are reported above in Section~\ref{sec:imp}. We \old{will} release our implementation publicly for future development and application. All experiments presented in this paper were executed on a Macbook Pro with \old{3.1 GHz quad-core Intel Core i7 CPU and 16 GB 2133 MHz LPDDR3 memory}\revised{2.5 GHz quad-core Intel Core i7 CPU and 16 GB 1600 MHz DDR3 memory}.
+All our evaluations in the following sections employ our implementation of OptCuts using the libigl~\cite{libigl} library for rapid prototyping and testing. Implementation details are reported above in Section~\ref{sec:imp}. We \old{will} release our implementation publicly for future development and application. All experiments presented in this paper were executed on a Macbook Pro with 3.1 GHz quad-core Intel Core i7 CPU and 16 GB 2133 MHz LPDDR3 memory.
+%\revised{2.5 GHz quad-core Intel Core i7 CPU and 16 GB 1600 MHz DDR3 memory}.
 
 %We implement our methods based on libigl\ \cite{libigl} and test it on a Macbook Pro with 3.1 GHz quad-core Intel Core i7 CPU and 16 GB 2133 MHz LPDDR3 memory.
 % @misc{libigl,
@@ -31,7 +33,7 @@ All our evaluations in the following sections employ our implementation of OptCu
 \begin{table}[t]
 \small
 \centering
-\caption{Seam length and performance statistics for our OptCuts algorithm applied to our benchmark of 71 surfaces as we decrease the distortion bound, $b_d$; each example is run with and without our additional enforcement of global bijectivity enabled. All examples converge satisfying the requested distortion bound. \minchen{Note that min $E_s$ refers to the minimum nonzero seam length.}}
+\caption{Seam length and performance statistics for our OptCuts algorithm applied to our benchmark of 71 surfaces as we decrease the distortion bound, $b_d$; each example is run with and without our additional enforcement of global bijectivity enabled. All examples converge satisfying the requested distortion bound. \revised{Note that here min $E_s$ gives the minimum nonzero seam length.}}
 \vspace{-0.3cm}
 \label{tb:stats_OptCuts}
 \begin{tabular}{|c|c|ccc|ccc|}
@@ -60,14 +62,14 @@ All our evaluations in the following sections employ our implementation of OptCu
 %vertices; all are topological disks or spheres \vova{add higher genus if we have it}. In addition, we stress-test the scalability of various methods on a Lucy model that has 48k vertices at the highest resolution.
 
 We first execute OptCuts on our full set of benchmark examples over a range of decreasing target distortion bounds, $b_d \in \{4.2, 4.1, 4.05\}$. For each bound we run OptCuts twice---in each of its modes: once with the global bijectivity constraint enabled, and once with just local-injectivity, i.e. with bijection disabled. As discussed, for all examples in the benchmark, at all three distortion bounds, and both with and without bijectivity constraints, OptCuts always converges to a locally minimal seam length satisfying the prescribed distortion bound. See Figures\ \ref{fig:ours_various_bounds} and \ref{fig:our_impressive_results} for examples of our results as we vary these terms and see our Supplemental materials for a detailed table and visualization of all our OptCuts results, as well as animations of the OptCuts iterations, on the benchmark set. In Table~\ref{tb:stats_OptCuts} we summarize statistics for OptCuts on the benchmark set and observe that as we increase constraint on the examples by tightening distortion bounds and/or enforcing additional bijectivity constraints, longer seams at convergence and comparably longer running times result as expected; see also Figure~\ref{fig:ours_various_bounds}.
-\revised{In Figure\ \ref{fig:highGenus} we additionally run OptCuts to convergence on two higher-genus surfaces (buddha with genus 6 and feline with genus 2), enforcing global bijectivity constraints and a distortion bound constraint of $b_d = 4.1$.}
+\revised{In Figure\ \ref{fig:highGenus} we additionally run OptCuts to convergence on two higher-genus surfaces (buddha with genus 6 and feline with genus 2), enforcing global bijectivity constraints and distortion constraint of $b_d = 4.1$.}
 %\revised{Since our benchmark lacks high-genus surfaces, we test OptCuts on two extra high-genus surfaces (Figure\ \ref{fig:highGenus}). We enforce global bijectivity constraints and use $b_d = 4.1$. OptCuts robustly converges to high-quality results satisfying the distortion bounds.}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig/highGenus.pdf}
 \vspace{-0.6cm}
-\caption{\revised{UV maps generated by OptCuts on high-genus input surfaces. Here bijectivity enforcement is enabled and the distortion bound is set to $b_d$ = $4.1$.}}
+\caption{\revised{UV maps generated by OptCuts on higher-genus input surfaces. Bijectivity enforcement is enabled and the distortion bound is $b_d$ = $4.1$.}}
 \vspace{-0.1cm}
 \label{fig:highGenus}
 \end{figure}
@@ -93,7 +95,7 @@ We first execute OptCuts on our full set of benchmark examples over a range of d
 \centering
 \includegraphics[width=\linewidth]{fig/comp_AutoCuts.pdf}
 \vspace{-0.3cm}
-\caption{\old{[updated]}Comparisons between parameterizations generated by AutoCuts (top) and OptCuts with bijectivity enabled (bottom) on Armadillo (left) and Camel (right) model. Here OptCuts obtains improved  seam length measures for the same distortion bound while maintaining additional bijectivity constraints.}
+\caption{Comparisons between parameterizations generated by AutoCuts (top) and OptCuts with bijectivity enabled (bottom) on Armadillo (left) and Camel (right) model. Here OptCuts obtains improved  seam length measures for the same distortion bound while maintaining additional bijectivity constraints.}
 \vspace{-0.3cm}
 \label{fig:comp_AutoCuts}
 \end{figure}
@@ -141,7 +143,7 @@ AutoCuts                 & N/A         & \old{4.074}\cor{4.077}        & \old{7.
 \includegraphics[width=\linewidth]{fig/ESLBar_compAutoCuts.png}
 \vspace{-0.5cm}
 \caption{
-\old{[plots updated]}A per-example comparison of seam lengths achieved by 
+\revised{[Chart updated]}A per-example comparison of seam lengths achieved by 
 AutoCuts and OptCuts sorted by total seam length. OptCuts without bijectivity constraints in red achieves shorter seams than AutoCuts in blue for all except for two inputs (see text for details on these two examples) while OptCuts with additional bijectivity constraints in green (AutoCuts does not apply bijectvity constraints) still performs favorably in seam length despite the added bijectivity constraints.
 %
 %\danny{Update caption}Normalized seam length $E_{s}$ bar chart of each example generated by AutoCuts and OptCuts. We (red) achieve shorter seams than AutoCuts (blue) for all except for two inputs, while reaching the same levels of distortion. Our method still performs favorably even with global bijectivity constraints (green).
@@ -229,7 +231,7 @@ AutoCuts in both automated and user-guided modes duplicates all vertices in the 
 \centering
 \includegraphics[width=\linewidth]{fig/time_res_compAutoCuts.png}
 \vspace{-0.5cm}
-\caption{\old{[plots updated]}Runtime scatterplots for AutoCuts (blue) and OptCuts with bijectivity enforcement (green) and OptCuts without bijectivity (red) across all examples in our benchmark set (left) and for increasing resolutions of the Lucy model (right). Here (left and right) we observe that as mesh resolution increases, the performance gap between AuotCuts and OptCuts increases while (right) for moderately large examples, e.g., the two higher resolution Lucy models, at 24k and 48k vertices respectively, there is no data points for AutoCuts as the official implementation is already out of memory; see our discussion below.
+\caption{\revised{[Plot updated]} Runtime scatterplots for AutoCuts (blue) and OptCuts with bijectivity enforcement (green) and OptCuts without bijectivity (red) across all examples in our benchmark set (left) and for increasing resolutions of the Lucy model (right). Here (left and right) we observe that as mesh resolution increases, the performance gap between AuotCuts and OptCuts increases while (right) for moderately large examples, e.g., the two higher resolution Lucy models, at 24k and 48k vertices respectively, there is no data points for AutoCuts as the official implementation is already out of memory; see our discussion below.
 %Both versions of OptCuts require less computation on higher resolution meshes. OptCuts also achieve shorter average seams ($9.236$ with, and $8.816$  without bijectivity) than AutoCuts (13.052), while reaching same target distortion.
 }
 \label{fig:time_res_compAutoCuts}
@@ -386,7 +388,7 @@ Middle: a user-painted salience map goes from blue (no seams) to green (seams al
 \small
 \centering
 \caption{
-Here we summarize statistics for our benchmark set comparing performance and resulting seam-lengths obtained by our standard OptCuts topology operations as compared with an alternative version of OptCuts employing the more aggressive topology operation of cutting from extrema-to-boundary (EB) from Geometry Images~\cite{Gu2002Geometry}. We run all examples both with and without bijectivity enforcement. As the EB strategy is more aggressive, we observe faster runtimes at the cost of longer seam-lengths. \minchen{Note that min $E_s$ refers to the minimum nonzero seam length.}} 
+Here we summarize statistics for our benchmark set comparing performance and resulting seam-lengths obtained by our standard OptCuts topology operations as compared with an alternative version of OptCuts employing the more aggressive topology operation of cutting from extrema-to-boundary (EB) from Geometry Images~\cite{Gu2002Geometry}. We run all examples both with and without bijectivity enforcement. As the EB strategy is more aggressive, we observe faster runtimes at the cost of longer seam-lengths. \revised{Note that here min $E_s$ gives the minimum nonzero seam length.}} 
 \label{tb:comp_GI}
 \vspace{-0.3cm}
 \begin{tabular}{|c|c|ccc|ccc|}
