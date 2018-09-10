@@ -229,7 +229,7 @@ AutoCuts in both automated and user-guided modes duplicates all vertices in the 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{fig/time_res_compAutoCuts.png}
+\includegraphics[width=\linewidth]{fig/time_res_compAutoCuts.pdf}
 \vspace{-0.5cm}
 \caption{\revised{[Plot updated]} Runtime scatterplots for AutoCuts (blue) and OptCuts with bijectivity enforcement (green) and OptCuts without bijectivity (red) across all examples in our benchmark set (left) and for increasing resolutions of the Lucy model (right). Here (left and right) we observe that as mesh resolution increases, the performance gap between AuotCuts and OptCuts increases while (right) for moderately large examples, e.g., the two higher resolution Lucy models, at 24k and 48k vertices respectively, there is no data points for AutoCuts as the official implementation is already out of memory; see our discussion below.
 %Both versions of OptCuts require less computation on higher resolution meshes. OptCuts also achieve shorter average seams ($9.236$ with, and $8.816$  without bijectivity) than AutoCuts (13.052), while reaching same target distortion.
