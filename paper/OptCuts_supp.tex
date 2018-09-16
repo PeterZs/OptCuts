@@ -1,0 +1,189 @@
+\documentclass[acmtog]{acmart}
+% \documentclass[acmtog]{acmart}
+
+\usepackage{booktabs} % For formal tables
+\usepackage{multirow}
+\usepackage{wrapfig}
+
+\usepackage{makecell}
+
+\renewcommand\theadalign{bc}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+\renewcommand\cellgape{\Gape[4pt]}
+
+% TOG prefers author-name bib system with square brackets
+\citestyle{acmauthoryear}
+\setcitestyle{square}
+
+
+\usepackage[ruled, linesnumbered]{algorithm2e} % For algorithms
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+\SetKwRepeat{Do}{do}{while}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+% strike out old text for revision
+\usepackage[normalem]{ulem}
+ 
+% Metadata Information
+\acmJournal{TOG}
+\acmVolume{37}
+\acmNumber{6}
+\acmArticle{247} 
+\acmYear{2018}
+\acmMonth{11}
+
+% Copyright
+\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+% \setcopyright{usgovmixed} 
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+% DOI
+\acmDOI{10.1145/3272127.3275042}
+
+% Paper history
+% \received{February 2007}
+% \received{March 2009}
+% \received[final version]{June 2009}
+% \received[accepted]{July 2009}
+
+% Document starts
+\begin{document}
+% Title portion
+%\title{OptCuts: Joint Cutting and Parameterization of 3D Surfaces} 
+\title{Supplement to OptCuts: Joint Optimization of Surface Cuts and Parameterization
+% \\ {\small (Paper ID: 243)}
+} 
+
+\author{Minchen Li}
+% \orcid{1234-5678-9012-3456}
+\affiliation{%
+  \institution{University of British Columbia \& Adobe Research}
+%   \streetaddress{104 Jamestown Rd}
+%   \city{Williamsburg}
+%   \state{VA}
+%   \postcode{23185}
+%   \country{USA}
+}
+% \email{minchernl@gmail.com}
+
+\author{Danny M. Kaufman}
+\affiliation{%
+   \institution{Adobe Research}
+%   \city{Rocquencourt}
+%   \country{France}
+}
+% \email{beranger@inria.fr}
+
+\author{Vladimir G. Kim} 
+\affiliation{%
+ \institution{Adobe Research}
+%  \streetaddress{Rono-Hills}
+%  \city{Doimukh} 
+%  \state{Arunachal Pradesh}
+%  \country{India}
+}
+% \email{aprna_patel@rguhs.ac.in}
+
+\author{Justin Solomon}
+\affiliation{%
+  \institution{Massachusetts Institute of Technology}
+%   \streetaddress{30 Shuangqing Rd}
+%   \city{Haidian Qu} 
+%   \state{Beijing Shi}
+%   \country{China}
+}
+% \email{chan0345@tsinghua.edu.cn}
+
+\author{Alla Sheffer}
+\affiliation{%
+  \institution{University of British Columbia}
+%   \city{Prague}
+%   \country{Czech Republic}
+}
+% \email{yanting02@gmail.com}
+% \author{Tian He}
+% \affiliation{%
+%   \institution{University of Virginia}
+%   \department{School of Engineering}
+%   \city{Charlottesville}
+%   \state{VA}
+%   \postcode{22903}
+%   \country{USA}
+% }
+% \affiliation{%
+%   \institution{University of Minnesota}
+%   \country{USA}}
+% \email{tinghe@uva.edu}
+% \author{Chengdu Huang}
+% \author{John A. Stankovic}
+% \author{Tarek F. Abdelzaher}
+% \affiliation{%
+%   \institution{University of Virginia}
+%   \department{School of Engineering}
+%   \city{Charlottesville}
+%   \state{VA}
+%   \postcode{22903}
+%   \country{USA}
+% }
+
+\renewcommand\shortauthors{Li, M. et al}
+
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{green}{rgb}{0, 0.6, 0}
+\definecolor{orange}{rgb}{1, 0.5, 0}
+\definecolor{mahogany}{rgb}{0.75, 0.25, 0.0}
+\definecolor{purple}{rgb}{0.6, 0.1, 0.6}
+\definecolor{darkgreen}{rgb}{0, 0.3, 0}
+\definecolor{orange}{rgb}{1, 0.5, 0.}
+\newcommand{\minchen}[1]{\textcolor{blue}{\textbf{Minchen: #1}}}
+\newcommand{\justin}[1]{\textcolor{red}{\textbf{Justin: #1}}}
+\newcommand{\alla}[1]{\textcolor{orange}{\textbf{Alla: #1}}}
+\newcommand{\danny}[1]{\textcolor{purple}{\textbf{Danny: #1}}}
+\newcommand{\vova}[1]{\textcolor{green}{\textbf{Vova: #1}}}
+% for revision (our ref):
+% \newcommand{\revised}[1]{\textcolor{red}{\textbf{#1}}}
+% \newcommand{\corr}[1]{\textcolor{blue}{\sout{#1}}}
+% \newcommand{\cor}[1]{\textcolor{blue}{\textbf{#1}}}
+% \newcommand{\old}[1]{\textcolor{green}{\sout{#1}}}
+% for revision (reviewer view):
+\newcommand{\revised}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\corr}[1]{}
+\newcommand{\cor}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\old}[1]{\textcolor{green}{\sout{#1}}}
+\newcommand{\todo}[1]{\textcolor{blue}{\textbf{TODO: #1}}}
+% after revision finalized, use:
+% \newcommand{\revised}[1]{{#1}}
+% \newcommand{\corr}[1]{} 
+% \newcommand{\cor}[1]{{#1}}
+% \newcommand{\old}[1]{}
+
+
+
+
+
+%
+% End generated code
+%
+
+
+
+
+
+\maketitle
+
+\input{appendix}
+
+\end{document}
