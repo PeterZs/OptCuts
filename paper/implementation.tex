@@ -102,6 +102,7 @@ Importantly, our OptCuts algorithm and its implementation \emph{do not} apply a 
 First, while we converge with respect to the mesh operations we make available, we of course do not cover all possible topological operations on a mesh. Our choice of propagated cutting and merging operations was selected to cover the basic topology changes that we find suitably expressive for our parameterization task. However, we expect many others to be useful; indeed, below in Section~\ref{sec:var} we also consider and compare with another interesting mesh operation subset and remark that there is interesting future work to find improved mesh operation subsets for OptCuts. In the meantime, for \emph{any} discrete subset of topological operations that do not fully cover all possible mesh changes, \old{there can and will be, a number of neighboring topologies connected by valid mesh operations that are all numerically close to stationarity}\revised{there can and will be discrete sets of points that are stationary with respect to variations of the available mesh operations. In turn, while some of these points will satisfy the imposed distortion bound, they may not match the bound.} In such cases, without additional handling and preparation for cycling behavior, OptCuts would oscillate without stopping between a number of high-quality, close-to-optimal solutions. To handle this condition, we employ a simple cycle detection strategy, where \revised{after each primal solve} we save hashes \revised{$(E_s, E_d, \lambda)$} of \old{previous-iteration} solution triplets, and the best visited solution\old{ from the previous iteration}. When we detect that a duplicate solution is being revisited, we terminate with the best visited solution\old{ from the last iteration}. Of the 254 examples computed with OptCuts in Section~\ref{sec:results}, 171 terminate with cycling about stationarity, while the remainder converge to a stationary point. 
 %in 171 and converge to  . As we tighten the distortion bound, cycling behavior decreases as stationary points become denser near isometric maps.
 
+\vspace{-0.1cm}
 \subsection{Initialization}
 %\minchen{to $E_d$ stationary point}% huh?
 To initialize our UV map, $(T^0,U^0)$, for an input surface, we map its initial seam to a circle preserving edge lengths and parameterize the remaining vertices with Tutte's embedding~\shortcite{tutte1963draw} using uniform weights to ensure bijectivity.
@@ -120,6 +121,7 @@ We then set $(T^0,U^0)$ to this initial topology with vertex positions minimizin
 %For closed surfaces, the initial seam choice is one of many possibilities. To demonstrate insensitivity of our final embedding to this choice, %show that we can always find a local optimum with respect to both the UV topology and coordinates regardless of initial embedding, 
 %we run our method on a closed input surface with several randomly picked initial seams, as well as a heuristic initial seam that splits the shortest path between two farthest points on the surface. As demonstrated in \minchen{Figure~\ref{fig:any_init_ends_well}}, we produce high quality UV maps under the given distortion bound for all initializations.
 
+\vspace{-0.1cm}
 \subsection{Minimizing Distortion}
 \label{sec:descentStep}
 
@@ -152,7 +154,7 @@ As our distortion energies $E_{d}$ are generally nonconvex, we apply Teran et al
 %
 %Besides a relatively small tolerance on $g$ for convergence detection, we apply another relative energy decrease criteria to appropriately stop the process while necessary.
 %This can stop our continuous search at the true local optimum infinitesimal better than setting a larger gradient tolerance since our energy is highly nonlinear. \justin{I didn't follow this paragraph.}
-
+\vspace{-0.1cm}
 \subsection{Global Bijectivity}
 \label{sec:bijectivity}
 
