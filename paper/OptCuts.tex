@@ -160,15 +160,15 @@
 % \newcommand{\old}[1]{\textcolor{green}{\sout{#1}}}
 % for revision (reviewer view):
 \newcommand{\revised}[1]{\textcolor{red}{\textbf{#1}}}
-\newcommand{\corr}[1]{}
-\newcommand{\cor}[1]{\textcolor{red}{\textbf{#1}}}
-\newcommand{\old}[1]{\textcolor{green}{\sout{#1}}}
+%\newcommand{\corr}[1]{}
+%\newcommand{\cor}[1]{\textcolor{red}{\textbf{#1}}}
+%\newcommand{\old}[1]{\textcolor{green}{\sout{#1}}}
 \newcommand{\todo}[1]{\textcolor{blue}{\textbf{TODO: #1}}}
 % after revision finalized, use:
 % \newcommand{\revised}[1]{{#1}}
-% \newcommand{\corr}[1]{} 
-% \newcommand{\cor}[1]{{#1}}
-% \newcommand{\old}[1]{}
+\newcommand{\corr}[1]{} 
+\newcommand{\cor}[1]{{#1}}
+\newcommand{\old}[1]{}
 
 \begin{teaserfigure} 
 \centering
@@ -176,13 +176,13 @@
   \includegraphics[width=\linewidth]{fig/teaser/teaser.pdf}
   \vspace{-0.6cm}
   \caption{Starting from an initial embedding (left), we show the iteration process of our OptCuts algorithm jointly optimizing surface cuts and mapping distortion while enforcing global bijectivity. OptCuts iteratively updates
-  continuous changes in the embedding vertices, as well as discrete topological changes in the UV mesh by propagating simple and local topology splitting and merging operations. In this example the bound is set to $4.1$, measured using the symmetric Dirichlet distortion energy~\cite{Smith2015Bijective}, with total inner iterations reported at each rendered frame. }
+  continuous changes in the embedding vertices and discrete topological changes in the UV mesh by propagating simple and local topology splitting and merging operations. In this example a distortion bound of $4.1$ is enforced, measured by the symmetric Dirichlet distortion energy~\cite{Smith2015Bijective}; we report total inner iterations at each rendered frame. }
   \label{fig:teaser}
 \end{teaserfigure}
 
 \begin{abstract}
 % context and need
-Low-distortion mapping of three-dimensional surfaces to the plane is a critical problem in geometry processing. The intrinsic distortion introduced by such UV mappings is highly dependent on the choice of surface cuts that form seamlines 
+Low-distortion mapping of three-dimensional surfaces to the plane is a critical problem in geometry processing. The intrinsic distortion introduced by these UV mappings is highly dependent on the choice of surface cuts that form seamlines 
 which break mapping continuity.
 %across which the mapping is not continuous.  
 %Most such surfaces require cutting and distortion to produce a valid map. 
@@ -192,7 +192,7 @@ which break mapping continuity.
 Parameterization applications typically require UV maps with an application-specific upper bound on distortion to avoid mapping artifacts; at the same time they seek to reduce cut lengths to minimize discontinuity artifacts. 
 %Motivated by these observations,
 %
-We propose {\em OptCuts}, an algorithm for jointly optimizing the parameterization and cutting of a three-dimensional mesh. 
+We propose {\em OptCuts}, an algorithm that jointly optimizes the parameterization and cutting of a three-dimensional mesh. 
 %OptCuts automatically seeks to minimize seam lengths subject to satisfying a user-provided bound on the distortion of the mapping computed using these seams. 
 %\alla{what does topology or geometry descent mean?}
 %Starting with an arbitrary initial embedding, OptCuts alternates between discrete topology descent and smooth geometry descent to search for an optimal UV map strictly satisfying a specified distortion bound. 
@@ -259,11 +259,11 @@ We demonstrate the scalable performance of OptCuts on a wide range of challengin
 
 \input{conclusions}
 
-%\input{ack}
+\input{ack}
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{OptCuts} 
 
-\input{appendix}
+%\input{appendix}
 
 \end{document}

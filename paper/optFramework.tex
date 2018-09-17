@@ -2,7 +2,7 @@
 
 \section{Optimization Framework for OptCuts}
 
-We solve the constrained optimization problem (\ref{eq:p1}) by recasting it as a saddle-point problem (\ref{eq:p2}). 
+We solve our constrained optimization problem (\ref{eq:p1}) by recasting it as a the saddle-point problem in (\ref{eq:p2}). 
 We start from an initial, valid UV map $(T^0, U^0)$ and set our dual variable as $\lambda^0 = 0$. OptCuts then iteratively alternates between primal solves designed to improve geometry, $(T, U)$, and dual solves updating our multiplier, $\lambda$,  encoding the new balancing term between distortion and seam quality for the next primal solve we take. See Algorithm 1.
 
 %\begin{algorithm}[!h]

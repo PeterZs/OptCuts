@@ -6,7 +6,7 @@ To perform our primal update, we seek to minimize the Lagrangian over both conti
 %
 To optimize over topology we could potentially perform exhaustive search over the graph of all possible mesh changes. This approach, however, is intractable for any practical mesh size. 
 %
-Instead, we devise a local search algorithm for topological updates inspired by the standard descent process of optimizing a smooth energy over vertex positions. 
+Instead, we construct a local search algorithm for topological updates that is inspired by the standard descent process of optimizing a smooth energy over vertex positions. 
 
 %
 %Instead, we begin by recalling the standard process of optimizing a smooth energy solely over vertex DoFs. In such cases, each iterate generally forms a localized approximation of the minimized energy \justin{didn't understand previous phrase} and then uses it to propose a candidate direction for decrease. Then, since finding such a direction is expensive, we search along the proposed direction to ensure a significant decrease in energy (and not increase). 
@@ -21,16 +21,19 @@ enumerate the topology operations used in our algorithm (Section~\ref{sec:topolo
 \label{sec:topology_energy}
 We next devise an approximate energy model to efficiently estimate the effect of a potential topological change. 
 To keep our notation simplified, in the following we use $i$ or $j$ to index the inner loop of the primal update and $k$ for indexing the outer loop.
-At each outer iterate $k$, the Lagrangian for any proposed topology $T^i$ is  
+At each outer iterate $k$, the locally optimal Lagrangian for any proposed topology $T^i$ is  
 \begin{align}
 \ell(T^i) = \min_{U} L(T^i, U) = E_s(T^i) + \lambda^k \min_{U} E_d(T^i, U).
 \end{align}
 Then, for any valid topology-changing operation, $o^{i,j}:T^i \rightarrow T^j$, the resultant change in Lagrangian is $\Delta \ell(o^{i,j}) = \ell(T^j) - \ell(T^i)$. We seek a valid operation that will produce large decrease in the Lagrangian.
 
 
-Since minimizing over $U$ for every potential topology change is intractable for large meshes, we start from a known $(T^i, U^i)$, and approximate the change in the Lagrangian by restricting the distortion update to the locally changed vertex stencil $U^{i,j}$ of the applied topological operation $o^{i,j}$. We choose the stencil to include only the vertices affected by the topological operation and their immediate neighbors.
+Since minimizing over $U$ for every potential topology change is 
+%intractable 
+impractical
+for large meshes, we start from a known $(T^i, U^i)$, and approximate the change in Lagrangian by restricting the distortion update to the locally changed vertex stencil $U^{i,j}$ of the applied topological operation $o^{i,j}$. We construct this stencil to include only the vertices affected by the topological operation and their immediate neighbors.
 We hold all other vertices $U_s$, shared in common with $T^i$, fixed in the mesh
-to the same positions previously held in $U^i$, so that vertex positions after the update are $U^j = (U^{i,j}, U_s)$.  Our approximate change in Lagrangian is then 
+to the same positions previously held in $U^i$. Thus vertex positions after the update are $U^j = (U^{i,j}, U_s)$.  Our approximate change in Lagrangian is then 
 %\danny{TODO: Still need some syntatic sugar to make this decomposition of fixed and free new vertices clean.}
 \begin{align} 
 d(o^{i,j}) = E_s(T^i) + \lambda^k \min_{U^{i,j}} E_d \big( T^i, (U^{i,j}, U_s) \big) - L(T^i,U^i,\lambda^k).
@@ -134,7 +137,7 @@ Since each change in topology alternates with smooth coordinate descent and we w
 \centering
 \includegraphics[width=0.65\linewidth]{fig/propagation.pdf}
 \vspace{-0.3cm}
-\caption{Propagation of the boundary split (orange), corner merge (green), and interior split (blue) topology operations. When propagating a boundary split all edges that can continue the boundary splitting cut from the current cut's tail are set as propagation candidates (a). At corner merges we \old{we} have a single candidate to query---the new corner at the current tail (b). Finally, for propagating an interior split, first we choose an incident edge from either of the two possible seam tails; once split, propagation then follows in the same fashion as the boundary split for following propagation steps (c).}
+\caption{Propagation of the boundary split (orange), corner merge (green), and interior split (blue) topology operations. When propagating a boundary split all edges that can continue the boundary splitting from the current cut's tail are set as propagation candidates (a). At corner merges we have a single candidate to query---the new corner at the current tail (b). Finally, for propagating an interior split, first we choose an incident edge from either of the two possible seam tails; once split, propagation then follows in the same fashion as the boundary split for following propagation steps (c).}
 \vspace{-0.3cm}
 \label{fig:propagation}
 \end{figure}
