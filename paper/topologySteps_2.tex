@@ -36,7 +36,7 @@ We hold all other vertices $U_s$, shared in common with $T^i$, fixed in the mesh
 to the same positions previously held in $U^i$. Thus vertex positions after the update are $U^j = (U^{i,j}, U_s)$.  Our approximate change in Lagrangian is then 
 %\danny{TODO: Still need some syntatic sugar to make this decomposition of fixed and free new vertices clean.}
 \begin{align} 
-d(o^{i,j}) = E_s(T^i) + \lambda^k \min_{U^{i,j}} E_d \big( T^i, (U^{i,j}, U_s) \big) - L(T^i,U^i,\lambda^k).
+d(o^{i,j}) = E_s(T^j) + \lambda^k \min_{U^{i,j}} E_d \big( T^j, (U^{i,j}, U_s) \big) - L(T^i,U^i,\lambda^k).
 \end{align}
 %
 Evaluating $d$ requires solving continuous distortion optimization with respect to stencil vertices $U^{i,j}$. We use Newton-type smooth descent for this; see Section~\ref{sec:descentStep} for details.
