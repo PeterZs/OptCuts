@@ -63,6 +63,9 @@ std::vector<Eigen::MatrixXd> newVertPoses_bSplit, newVertPoses_iSplit, newVertPo
 int opType_queried = -1;
 std::vector<int> path_queried;
 Eigen::MatrixXd newVertPos_queried;
+bool reQuery = false;
+double filterExp_in = 0.6;
+int inSplitTotalAmt;
 
 std::ofstream logFile;
 std::string outputFolderPath = "/Users/mincli/Desktop/output_FracCuts/";
@@ -877,29 +880,35 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
                 logFile << "iterativelyUpdated = " << energyParams[0] << ", increase for switch" << std::endl;
             }
             
-            checkCand(energyChanges_bSplit); //DEBUG
-            checkCand(energyChanges_iSplit); //DEBUG
-            double eDec_b, eDec_i;
-            int id_pickingBSplit = computeBestCand(energyChanges_bSplit, 1.0 - energyParams[0], eDec_b);
-            int id_pickingISplit = computeBestCand(energyChanges_iSplit, 1.0 - energyParams[0], eDec_i);
-            while((eDec_b > 0.0) && (eDec_i > 0.0)) {
-                energyParams[0] = updateLambda(measure_bound);
-                id_pickingBSplit = computeBestCand(energyChanges_bSplit, 1.0 - energyParams[0], eDec_b);
-                id_pickingISplit = computeBestCand(energyChanges_iSplit, 1.0 - energyParams[0], eDec_i);
-            }
-            if(eDec_b <= 0.0) {
-                opType_queried = 0;
-                path_queried = paths_bSplit[id_pickingBSplit];
-                newVertPos_queried = newVertPoses_bSplit[id_pickingBSplit];
+            if((!checkCand(energyChanges_iSplit)) && (!checkCand(energyChanges_bSplit))) {
+                // if filtering too strong
+                reQuery = true;
+//                assert(0); // for checking other examples
+                logFile << "enlarge filtering!" << std::endl;
             }
             else {
-                opType_queried = 1;
-                path_queried = paths_iSplit[id_pickingISplit];
-                newVertPos_queried = newVertPoses_iSplit[id_pickingISplit];
+                double eDec_b, eDec_i;
+                int id_pickingBSplit = computeBestCand(energyChanges_bSplit, 1.0 - energyParams[0], eDec_b);
+                int id_pickingISplit = computeBestCand(energyChanges_iSplit, 1.0 - energyParams[0], eDec_i);
+                while((eDec_b > 0.0) && (eDec_i > 0.0)) {
+                    energyParams[0] = updateLambda(measure_bound);
+                    id_pickingBSplit = computeBestCand(energyChanges_bSplit, 1.0 - energyParams[0], eDec_b);
+                    id_pickingISplit = computeBestCand(energyChanges_iSplit, 1.0 - energyParams[0], eDec_i);
+                }
+                if(eDec_b <= 0.0) {
+                    opType_queried = 0;
+                    path_queried = paths_bSplit[id_pickingBSplit];
+                    newVertPos_queried = newVertPoses_bSplit[id_pickingBSplit];
+                }
+                else {
+                    opType_queried = 1;
+                    path_queried = paths_iSplit[id_pickingISplit];
+                    newVertPos_queried = newVertPoses_iSplit[id_pickingISplit];
+                }
+                
+                logFile << "iterativelyUpdated = " << energyParams[0] << ", increased, current eDec = " <<
+                    eDec_b << ", " << eDec_i << "; id: " << id_pickingBSplit << ", " << id_pickingISplit << std::endl;
             }
-            
-            logFile << "iterativelyUpdated = " << energyParams[0] << ", increased, current eDec = " <<
-                eDec_b << ", " << eDec_i << "; id: " << id_pickingBSplit << ", " << id_pickingISplit << std::endl;
         }
         else {
             bool noOp = true;
@@ -1180,7 +1189,21 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                                 }
                                 else {
                                     // split or merge after lambda update
-                                    optimizer->createFracture(opType_queried, path_queried, newVertPos_queried, !altBase);
+                                    if(reQuery) {
+                                        //TODO: reset filtering param
+                                        filterExp_in += std::log(2.0) / std::log(inSplitTotalAmt);
+                                        filterExp_in = std::min(1.0, filterExp_in);
+                                        while(!optimizer->createFracture(fracThres, false, !altBase, true))
+                                        {
+                                            filterExp_in += std::log(2.0) / std::log(inSplitTotalAmt);
+                                            filterExp_in = std::min(1.0, filterExp_in);
+                                        }
+                                        reQuery = false;
+                                        // set filtering param back?
+                                    }
+                                    else {
+                                        optimizer->createFracture(opType_queried, path_queried, newVertPos_queried, !altBase);
+                                    }
                                     opType_queried = -1;
                                     converged = false;
                                 }
@@ -1714,45 +1737,48 @@ int main(int argc, char *argv[])
         }
     }
     
-//    //TEST: regional seam placement
-//    std::ifstream vWFile("/Users/mincli/Desktop/output_FracCuts/" + meshName + "_selected.txt");
-//    if(vWFile.is_open()) {
-//        while(!vWFile.eof()) {
-//            int selected;
-//            vWFile >> selected;
-//            if(selected < optimizer->getResult().vertWeight.size()) {
-//                optimizer->getResult().vertWeight[selected] = 100.0;
-//            }
-//        }
-//        vWFile.close();
-//    }
-//    FracCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
-    //TEST: regional seam placement, Zhongshi
-    std::ifstream vWFile("/Users/mincli/Desktop/output_FracCuts/" + meshName + "_RSP.txt");
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //TEST: regional seam placement
+    std::ifstream vWFile("/Users/mincli/Desktop/output_FracCuts/" + meshName + "_selected.txt");
     if(vWFile.is_open()) {
-        double revLikelihood;
-        for(int vI = 0; vI < optimizer->getResult().vertWeight.size(); vI++) {
-            if(vWFile.eof()) {
-                std::cout << "# of weights less than # of V for regional seam placement, " <<
-                    "reset vertWeight to all 1.0" << std::endl;
-                optimizer->getResult().vertWeight = Eigen::VectorXd::Ones(optimizer->getResult().V.rows());
-                vWFile.close();
-                break;
-            }
-            else {
-                vWFile >> revLikelihood;
-                if(revLikelihood < 0.0) {
-                    revLikelihood = 0.0;
-                }
-                else if(revLikelihood > 1.0) {
-                    revLikelihood = 1.0;
-                }
-                optimizer->getResult().vertWeight[vI] = 1.0 + 10.0 * revLikelihood;
+        while(!vWFile.eof()) {
+            int selected;
+            vWFile >> selected;
+            if(selected < optimizer->getResult().vertWeight.size()) {
+                optimizer->getResult().vertWeight[selected] = 100.0;
             }
         }
         vWFile.close();
-        std::cout << "regional seam placement weight loaded" << std::endl;
     }
+    FracCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
+    
+//    //TEST: regional seam placement, Zhongshi
+//    std::ifstream vWFile("/Users/mincli/Desktop/output_FracCuts/" + meshName + "_RSP.txt");
+//    if(vWFile.is_open()) {
+//        double revLikelihood;
+//        for(int vI = 0; vI < optimizer->getResult().vertWeight.size(); vI++) {
+//            if(vWFile.eof()) {
+//                std::cout << "# of weights less than # of V for regional seam placement, " <<
+//                    "reset vertWeight to all 1.0" << std::endl;
+//                optimizer->getResult().vertWeight = Eigen::VectorXd::Ones(optimizer->getResult().V.rows());
+//                vWFile.close();
+//                break;
+//            }
+//            else {
+//                vWFile >> revLikelihood;
+//                if(revLikelihood < 0.0) {
+//                    revLikelihood = 0.0;
+//                }
+//                else if(revLikelihood > 1.0) {
+//                    revLikelihood = 1.0;
+//                }
+//                optimizer->getResult().vertWeight[vI] = 1.0 + 10.0 * revLikelihood;
+//            }
+//        }
+//        vWFile.close();
+//        std::cout << "regional seam placement weight loaded" << std::endl;
+//    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     
     // Setup viewer and launch
     viewer.core.background_color << 1.0f, 1.0f, 1.0f, 0.0f;

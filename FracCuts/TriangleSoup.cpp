@@ -29,6 +29,8 @@ extern Timer timer_step;
 extern std::vector<std::pair<double, double>> energyChanges_bSplit, energyChanges_iSplit, energyChanges_merge;
 extern std::vector<std::vector<int>> paths_bSplit, paths_iSplit, paths_merge;
 extern std::vector<Eigen::MatrixXd> newVertPoses_bSplit, newVertPoses_iSplit, newVertPoses_merge;
+extern double filterExp_in;
+extern int inSplitTotalAmt;
 
 namespace FracCuts {
     
@@ -807,7 +809,6 @@ namespace FracCuts {
         timer_step.start(6 + splitInterior);
         
         const double filterExp_b = 0.8, filterMult_b = 1.0; //TODO: better use ratio
-        const double filterExp_in = 0.6; // smaller than 0.5 is not recommanded
         
         std::vector<int> bestCandVerts;
         if(!propagate) {
@@ -843,6 +844,7 @@ namespace FracCuts {
                         }
                     }
                 }
+                inSplitTotalAmt = sortedCandVerts_in.size();
             }
             else {
                 for(int vI = 0; vI < V_rest.rows(); vI++) {
