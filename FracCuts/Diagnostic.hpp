@@ -294,7 +294,6 @@ namespace FracCuts{
                         
                     case 5: {
                         // output for visualization
-                        
                         const std::string resultsFolderPath(argv[3]);
                         FILE *dirList = fopen((resultsFolderPath + "/folderList.txt").c_str(), "r");
                         assert(dirList);
@@ -662,6 +661,8 @@ namespace FracCuts{
                         assert(timeList);
                         
                         double time_sum = 0.0, time_min = __DBL_MAX__, time_max = -1.0;
+                        double Ed_sum = 0.0, Ed_min = __DBL_MAX__, Ed_max = -1.0;
+                        double Es_sum = 0.0, Es_min = __DBL_MAX__, Es_max = -1.0;
                         int expCount = 0;
                         char buf[BUFSIZ];
                         while((!feof(dirList)) && fscanf(dirList, "%s", buf)) {
@@ -693,8 +694,25 @@ namespace FracCuts{
                                 
                                 infoFile.close();
                                 
-                                time_sum += time;
                                 expCount++;
+
+                                Ed_sum += E_d;
+                                if(E_d < Ed_min) {
+                                    Ed_min = E_d;
+                                }
+                                if(E_d > Ed_max) {
+                                    Ed_max = E_d;
+                                }
+                                
+                                Es_sum += E_s;
+                                if((E_s < Es_min) && (E_s > 0.0)) {
+                                    Es_min = E_s;
+                                }
+                                if(E_s > Es_max) {
+                                    Es_max = E_s;
+                                }
+                                
+                                time_sum += time;
                                 if(time < time_min) {
                                     time_min = time;
                                 }
@@ -702,7 +720,7 @@ namespace FracCuts{
                                     time_max = time;
                                 }
                                 
-                                fprintf(timeList, "%d %lf\n", vertAmt, time);
+                                fprintf(timeList, "%d %lf %lf %lf\n", vertAmt, E_d, E_s, time);
                             }
                             else {
                                 std::cout << "can't open " << infoFilePath << std::endl;
@@ -711,6 +729,17 @@ namespace FracCuts{
                         
                         fclose(dirList);
                         fclose(timeList);
+                        
+                        std::cout << "expCount = " << expCount << std::endl;
+                        
+                        std::cout << "avgEd = " << Ed_sum / expCount << std::endl;
+                        std::cout << "minEd = " << Ed_min << std::endl;
+                        std::cout << "maxEd = " << Ed_max << std::endl;
+                        
+                        std::cout << "avgEs = " << Es_sum / expCount << std::endl;
+                        std::cout << "minEs = " << Es_min << std::endl;
+                        std::cout << "maxEs = " << Es_max << std::endl;
+                        
                         std::cout << "avgTime = " << time_sum / expCount << "s" << std::endl;
                         std::cout << "minTime = " << time_min << "s" << std::endl;
                         std::cout << "maxTime = " << time_max << "s" << std::endl;
