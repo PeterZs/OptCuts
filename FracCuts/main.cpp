@@ -68,8 +68,7 @@ double filterExp_in = 0.6;
 int inSplitTotalAmt;
 
 std::ofstream logFile;
-std::string outputFolderPath = "/Users/mincli/Desktop/output_FracCuts/";
-const std::string meshFolder = "/Users/mincli/Desktop/meshes/";
+std::string outputFolderPath = "output/";
 
 // visualization
 igl::opengl::glfw::Viewer viewer;
@@ -1283,20 +1282,16 @@ int main(int argc, char *argv[])
     }
     
     // Optimization mode
+    mkdir(outputFolderPath.c_str(), 0777);
     
     std::string meshFileName("cone2.0.obj");
     if(argc > 2) {
         meshFileName = std::string(argv[2]);
     }
     std::string meshFilePath;
-    if(meshFileName.at(0) == '/') {
-        std::cout << "The input mesh file name is gloabl mesh file path." << std::endl;
-        meshFilePath = meshFileName;
-        meshFileName = meshFileName.substr(meshFileName.find_last_of('/') + 1);
-    }
-    else {
-        meshFilePath = meshFolder + meshFileName;
-    }
+    meshFilePath = meshFileName;
+    meshFileName = meshFileName.substr(meshFileName.find_last_of('/') + 1);
+    
     std::string meshName = meshFileName.substr(0, meshFileName.find_last_of('.'));
     // Load mesh
     Eigen::MatrixXd V, UV, N;
