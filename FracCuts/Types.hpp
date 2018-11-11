@@ -11,6 +11,10 @@
 
 #include <cstdio>
 
+#define DIM 2
+
+//#define LINSYSSOLVER_USE_CHOLMOD
+
 namespace FracCuts {
     enum MethodType {
         MT_OURS,

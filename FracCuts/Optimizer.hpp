@@ -13,7 +13,7 @@
 #include "Energy.hpp"
 #include "Scaffold.hpp"
 
-#include "PardisoSolver.hpp"
+#include "LinSysSolver.hpp"
 
 #include <fstream>
 
@@ -52,7 +52,7 @@ namespace FracCuts {
         Eigen::MatrixXd Hessian; // when using dense representation
         // cholesky solver for solving the linear system for search directions
         Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> cholSolver;
-        PardisoSolver<Eigen::VectorXi, Eigen::VectorXd> pardisoSolver;
+        LinSysSolver<Eigen::VectorXi, Eigen::VectorXd>* linSysSolver;
         Eigen::LDLT<Eigen::MatrixXd> denseSolver;
         Eigen::VectorXd gradient; // energy gradient computed in each iteration
         Eigen::VectorXd searchDir; // search direction comptued in each iteration

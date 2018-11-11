@@ -12,9 +12,15 @@
 #include "IglUtils.hpp"
 #include "Timer.hpp"
 
-#include <igl/avg_edge_length.h>
+#ifdef LINSYSSOLVER_USE_CHOLMOD
+#include "CHOLMODSolver.hpp"
+#elif defined(LINSYSSOLVER_USE_PARDISO)
+#include "PardisoSolver.hpp"
+#else
+#include "EigenLibSolver.hpp"
+#endif
 
-//#include <omp.h>
+#include <igl/avg_edge_length.h>
 
 #include <fstream>
 #include <iostream>
@@ -82,6 +88,14 @@ namespace FracCuts {
         E_scaffold = E;
         bnd_scaffold = bnd;
         w_scaf = energyParams[0] * 0.01;
+        
+#ifdef LINSYSSOLVER_USE_CHOLMOD
+        linSysSolver = new CHOLMODSolver<Eigen::VectorXi, Eigen::VectorXd>();
+#elif defined(LINSYSSOLVER_USE_PARDISO)
+        linSysSolver = new PardisoSolver<Eigen::VectorXi, Eigen::VectorXd>();
+#else
+        linSysSolver = new EigenLibSolver<Eigen::VectorXi, Eigen::VectorXd>();
+#endif
     }
     
     Optimizer::~Optimizer(void)
@@ -92,6 +106,7 @@ namespace FracCuts {
         if(file_gradientPerIter.is_open()) {
             file_gradientPerIter.close();
         }
+        delete linSysSolver;
     }
     
     void Optimizer::computeLastEnergyVal(void)
@@ -166,18 +181,18 @@ namespace FracCuts {
             }
             else {
                 if(!mute) { timer_step.start(1); }
-                pardisoSolver.set_type(pardisoThreadAmt, -2);
-    //            pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
-                pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr,
-                                          scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                linSysSolver->set_type(pardisoThreadAmt, -2);
+    //            linSysSolver->set_pattern(I_mtr, J_mtr, V_mtr);
+                linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
                                           scaffolding ? fixedV_withScaf : result.fixedVert);
+                linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
                 if(!mute) { timer_step.stop(); timer_step.start(2); }
-                pardisoSolver.analyze_pattern();
+                linSysSolver->analyze_pattern();
                 if(!mute) { timer_step.stop(); }
                 if(!needRefactorize) {
                     try {
                         if(!mute) { timer_step.start(3); }
-                        pardisoSolver.factorize();
+                        linSysSolver->factorize();
                         if(!mute) { timer_step.stop(); }
                     }
                     catch(std::exception e) {
@@ -292,10 +307,10 @@ namespace FracCuts {
             }
             else {
                 if(!mute) { timer_step.start(1); }
-    //            pardisoSolver.update_a(V_mtr);
-                pardisoSolver.update_a(I_mtr, J_mtr, V_mtr);
+    //            linSysSolver->update_a(V_mtr);
+                linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
                 if(!mute) { timer_step.stop(); timer_step.start(3); }
-                pardisoSolver.factorize();
+                linSysSolver->factorize();
                 if(!mute) { timer_step.stop(); }
             }
         }
@@ -382,16 +397,16 @@ namespace FracCuts {
                 }
                 else {
                     if(!mute) { timer_step.start(1); }
-    //                pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
-                    pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr,
-                                              scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+    //                linSysSolver->set_pattern(I_mtr, J_mtr, V_mtr);
+                    linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
                                               scaffolding ? fixedV_withScaf : result.fixedVert);
+                    linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
                     if(!mute) { timer_step.stop(); timer_step.start(2); }
-                    pardisoSolver.analyze_pattern();
+                    linSysSolver->analyze_pattern();
                     if(!mute) { timer_step.stop(); }
                     if(!needRefactorize) {
                         if(!mute) { timer_step.start(3); }
-                        pardisoSolver.factorize();
+                        linSysSolver->factorize();
                         if(!mute) { timer_step.stop(); }
                     }
                 }
@@ -595,18 +610,18 @@ namespace FracCuts {
                     if(!useDense) {
                         if(scaffolding) {
                             if(!mute) { timer_step.start(1); }
-    //                        pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr);
-                            pardisoSolver.set_pattern(I_mtr, J_mtr, V_mtr,
-                                                      scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+    //                        linSysSolver->set_pattern(I_mtr, J_mtr, V_mtr);
+                            linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
                                                       scaffolding ? fixedV_withScaf : result.fixedVert);
+                            linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
                             if(!mute) { timer_step.stop(); timer_step.start(2); }
-                            pardisoSolver.analyze_pattern();
+                            linSysSolver->analyze_pattern();
                             if(!mute) { timer_step.stop(); }
                         }
                         else {
                             if(!mute) { timer_step.start(1); }
-    //                        pardisoSolver.update_a(V_mtr);
-                            pardisoSolver.update_a(I_mtr, J_mtr, V_mtr);
+    //                        linSysSolver->update_a(V_mtr);
+                            linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
                             if(!mute) { timer_step.stop(); }
                         }
                     }
@@ -617,7 +632,7 @@ namespace FracCuts {
                         denseSolver = Hessian.ldlt();
                     }
                     else {
-                        pardisoSolver.factorize();
+                        linSysSolver->factorize();
                     }
                     if(!mute) { timer_step.stop(); }
                 }
@@ -644,7 +659,7 @@ namespace FracCuts {
                 searchDir = denseSolver.solve(minusG);
             }
             else {
-                pardisoSolver.solve(minusG, searchDir);
+                linSysSolver->solve(minusG, searchDir);
             }
             if(!mute) { timer_step.stop(); }
         }
@@ -732,7 +747,7 @@ namespace FracCuts {
             lastEDec += (-lastEnergyVal_scaffold + energyVal_scaffold);
         }
 //        lastEDec = (lastEnergyVal - testingE) / stepSize;
-        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (stepSize > 1.0e-3)) {
+        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (stepSize > 1.0e-3)) { // avoid stopping in hard situations
 //        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize)) {
             // no prominent energy decrease, stop for accelerating the process
             stopped = true;

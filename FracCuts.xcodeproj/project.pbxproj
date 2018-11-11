@@ -25,7 +25,10 @@
 		988ED1351F5871F200B21181 /* Optimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 988ED1331F5871F200B21181 /* Optimizer.cpp */; };
 		98A5A32B1F5F5BB900584EFD /* ARAPEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98A5A3291F5F5BB900584EFD /* ARAPEnergy.cpp */; };
 		98C2D8F41F6348820048B18A /* SeparationEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98C2D8F21F6348820048B18A /* SeparationEnergy.cpp */; };
-		98CE476F1F71E66300627725 /* PardisoSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CE476D1F71E66300627725 /* PardisoSolver.cpp */; };
+		98CBDA1F21973783003A35BD /* CHOLMODSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CBDA1821973783003A35BD /* CHOLMODSolver.cpp */; };
+		98CBDA2021973783003A35BD /* EigenLibSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CBDA1B21973783003A35BD /* EigenLibSolver.cpp */; };
+		98CBDA2121973783003A35BD /* PardisoSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CBDA1D21973783003A35BD /* PardisoSolver.cpp */; };
+		98CBDA2321973AEE003A35BD /* libcholmod.3.0.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 98CBDA2221973AEE003A35BD /* libcholmod.3.0.12.dylib */; };
 		98D10F2D1F5CA12C0010E1A6 /* SymStretchEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98D10F2B1F5CA12C0010E1A6 /* SymStretchEnergy.cpp */; };
 		98D3E7D51F75AEC6000DA61D /* CohesiveEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98D3E7D31F75AEC6000DA61D /* CohesiveEnergy.cpp */; };
 /* End PBXBuildFile section */
@@ -74,9 +77,15 @@
 		98BFBB1E1FA153EA00142E10 /* libtbb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtbb.dylib; path = ../../../../usr/local/lib/libtbb.dylib; sourceTree = "<group>"; };
 		98C2D8F21F6348820048B18A /* SeparationEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparationEnergy.cpp; sourceTree = "<group>"; };
 		98C2D8F31F6348820048B18A /* SeparationEnergy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SeparationEnergy.hpp; sourceTree = "<group>"; };
+		98CBDA1821973783003A35BD /* CHOLMODSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CHOLMODSolver.cpp; path = LinSysSolver/CHOLMODSolver.cpp; sourceTree = "<group>"; };
+		98CBDA1921973783003A35BD /* CHOLMODSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CHOLMODSolver.hpp; path = LinSysSolver/CHOLMODSolver.hpp; sourceTree = "<group>"; };
+		98CBDA1A21973783003A35BD /* LinSysSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LinSysSolver.hpp; path = LinSysSolver/LinSysSolver.hpp; sourceTree = "<group>"; };
+		98CBDA1B21973783003A35BD /* EigenLibSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EigenLibSolver.cpp; path = LinSysSolver/EigenLibSolver.cpp; sourceTree = "<group>"; };
+		98CBDA1C21973783003A35BD /* EigenLibSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EigenLibSolver.hpp; path = LinSysSolver/EigenLibSolver.hpp; sourceTree = "<group>"; };
+		98CBDA1D21973783003A35BD /* PardisoSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PardisoSolver.cpp; path = LinSysSolver/PardisoSolver.cpp; sourceTree = "<group>"; };
+		98CBDA1E21973783003A35BD /* PardisoSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = PardisoSolver.hpp; path = LinSysSolver/PardisoSolver.hpp; sourceTree = "<group>"; };
+		98CBDA2221973AEE003A35BD /* libcholmod.3.0.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcholmod.3.0.12.dylib; path = ../../../../usr/local/lib/libcholmod.3.0.12.dylib; sourceTree = "<group>"; };
 		98CE47671F71DF6200627725 /* libpardiso500-MACOS-X86-64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libpardiso500-MACOS-X86-64.dylib"; path = "../../../../usr/local/lib/libpardiso500-MACOS-X86-64.dylib"; sourceTree = "<group>"; };
-		98CE476D1F71E66300627725 /* PardisoSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PardisoSolver.cpp; sourceTree = "<group>"; };
-		98CE476E1F71E66300627725 /* PardisoSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PardisoSolver.hpp; sourceTree = "<group>"; };
 		98D10F2B1F5CA12C0010E1A6 /* SymStretchEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymStretchEnergy.cpp; sourceTree = "<group>"; };
 		98D10F2C1F5CA12C0010E1A6 /* SymStretchEnergy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SymStretchEnergy.hpp; sourceTree = "<group>"; };
 		98D3E7D31F75AEC6000DA61D /* CohesiveEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CohesiveEnergy.cpp; sourceTree = "<group>"; };
@@ -89,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98CBDA2321973AEE003A35BD /* libcholmod.3.0.12.dylib in Frameworks */,
 				988D81BF20AA99120037737D /* libglfw3.a in Frameworks */,
 				988D81BD20AA99060037737D /* libtriangle.a in Frameworks */,
 				988D81BC20AA98FA0037737D /* libtbb.dylib in Frameworks */,
@@ -125,13 +135,12 @@
 		980180BA1F552CDA00C64B43 /* FracCuts */ = {
 			isa = PBXGroup;
 			children = (
+				98CBDA172197376A003A35BD /* LinSysSolver */,
 				987382CF2076F49A0040BBCE /* Scaffold.cpp */,
 				987382D02076F49A0040BBCE /* Scaffold.hpp */,
 				98B57EA0207C748600F238C0 /* Timer.hpp */,
 				98D3E7D31F75AEC6000DA61D /* CohesiveEnergy.cpp */,
 				98D3E7D41F75AEC6000DA61D /* CohesiveEnergy.hpp */,
-				98CE476D1F71E66300627725 /* PardisoSolver.cpp */,
-				98CE476E1F71E66300627725 /* PardisoSolver.hpp */,
 				98D10F2B1F5CA12C0010E1A6 /* SymStretchEnergy.cpp */,
 				98D10F2C1F5CA12C0010E1A6 /* SymStretchEnergy.hpp */,
 				980180BB1F552CDA00C64B43 /* main.cpp */,
@@ -159,6 +168,7 @@
 		988ED1261F57211500B21181 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				98CBDA2221973AEE003A35BD /* libcholmod.3.0.12.dylib */,
 				988D81BE20AA99120037737D /* libglfw3.a */,
 				988D81BA20AA98ED0037737D /* libigl_stb_image.dylib */,
 				988D81B820AA98E10037737D /* libglad.a */,
@@ -172,6 +182,20 @@
 				988ED1271F57211500B21181 /* OpenGL.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		98CBDA172197376A003A35BD /* LinSysSolver */ = {
+			isa = PBXGroup;
+			children = (
+				98CBDA1821973783003A35BD /* CHOLMODSolver.cpp */,
+				98CBDA1921973783003A35BD /* CHOLMODSolver.hpp */,
+				98CBDA1A21973783003A35BD /* LinSysSolver.hpp */,
+				98CBDA1B21973783003A35BD /* EigenLibSolver.cpp */,
+				98CBDA1C21973783003A35BD /* EigenLibSolver.hpp */,
+				98CBDA1D21973783003A35BD /* PardisoSolver.cpp */,
+				98CBDA1E21973783003A35BD /* PardisoSolver.hpp */,
+			);
+			name = LinSysSolver;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,14 +256,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				988ED1321F575C3C00B21181 /* IglUtils.cpp in Sources */,
+				98CBDA2021973783003A35BD /* EigenLibSolver.cpp in Sources */,
 				982CE6131F5DB358004176A8 /* Energy.cpp in Sources */,
 				988ED1351F5871F200B21181 /* Optimizer.cpp in Sources */,
-				98CE476F1F71E66300627725 /* PardisoSolver.cpp in Sources */,
 				98D10F2D1F5CA12C0010E1A6 /* SymStretchEnergy.cpp in Sources */,
 				98A5A32B1F5F5BB900584EFD /* ARAPEnergy.cpp in Sources */,
 				98C2D8F41F6348820048B18A /* SeparationEnergy.cpp in Sources */,
 				988ED12F1F5727F400B21181 /* TriangleSoup.cpp in Sources */,
 				980180BC1F552CDA00C64B43 /* main.cpp in Sources */,
+				98CBDA2121973783003A35BD /* PardisoSolver.cpp in Sources */,
+				98CBDA1F21973783003A35BD /* CHOLMODSolver.cpp in Sources */,
 				987382D12076F49A0040BBCE /* Scaffold.cpp in Sources */,
 				98D3E7D51F75AEC6000DA61D /* CohesiveEnergy.cpp in Sources */,
 			);
@@ -348,6 +374,7 @@
 					/Users/mincli/Documents/tbb2018_20180312oss/include,
 					/Users/mincli/Documents/libigl/external/triangle,
 					/Users/mincli/Documents/libigl/external/glad/include,
+					/Users/mincli/Documents/SuiteSparse/include,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_LDFLAGS = "";
@@ -366,6 +393,7 @@
 					/Users/mincli/Documents/tbb2018_20180312oss/include,
 					/Users/mincli/Documents/libigl/external/triangle,
 					/Users/mincli/Documents/libigl/external/glad/include,
+					/Users/mincli/Documents/SuiteSparse/include,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_LDFLAGS = "";
