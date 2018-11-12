@@ -77,7 +77,8 @@ namespace FracCuts {
             }
             Eigen::DiagonalMatrix<Scalar, size> D(eigenSolver.eigenvalues());
             int rows = ((size == Eigen::Dynamic) ? symMtr.rows() : size);
-            for(int i = 0; i < rows; i++) {
+            int i = 0;
+            for(; i < rows; i++) {
                 if(D.diagonal()[i] < 0.0) {
                     D.diagonal()[i] = 0.0;
                 }
@@ -85,6 +86,7 @@ namespace FracCuts {
                     break;
                 }
             }
+//            D.diagonal().segment(0, i).array() += 1.0e-3 * D.diagonal()[i];
             symMtr = eigenSolver.eigenvectors() * D * eigenSolver.eigenvectors().transpose();
         }
         

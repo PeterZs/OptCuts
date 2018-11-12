@@ -50,6 +50,12 @@ namespace FracCuts {
                                         true, true, -1, CHOLMOD_REAL, &cm);
             // -1: upper right part will be ignored during computation
         }
+        else if(A->nrow != Base::numRows) {
+            cholmod_free_sparse(&A, &cm);
+            A = cholmod_allocate_sparse(Base::numRows, Base::numRows, Base::ja.size(),
+                                        true, true, -1, CHOLMOD_REAL, &cm);
+            // -1: upper right part will be ignored during computation
+        }
         Base::ia.array() -= 1; Base::ja.array() -= 1; // CHOLMOD's index starts from 0
         memcpy(A->i, Base::ja.data(), Base::ja.size() * sizeof(Base::ja[0]));
         memcpy(A->p, Base::ia.data(), Base::ia.size() * sizeof(Base::ia[0]));
@@ -60,6 +66,12 @@ namespace FracCuts {
         //TODO: extract, manage Base list
         Base::numRows = static_cast<int>(mtr.rows());
         if(!A) {
+            A = cholmod_allocate_sparse(Base::numRows, Base::numRows, mtr.nonZeros(),
+                                        true, true, -1, CHOLMOD_REAL, &cm);
+            // -1: upper right part will be ignored during computation
+        }
+        else if(A->nrow != Base::numRows) {
+            cholmod_free_sparse(&A, &cm);
             A = cholmod_allocate_sparse(Base::numRows, Base::numRows, mtr.nonZeros(),
                                         true, true, -1, CHOLMOD_REAL, &cm);
             // -1: upper right part will be ignored during computation
@@ -108,6 +120,10 @@ namespace FracCuts {
     {
         //TODO: directly point to rhs?
         if(!b) {
+            b = cholmod_allocate_dense(Base::numRows, 1, Base::numRows, CHOLMOD_REAL, &cm);
+        }
+        else if(b->nrow != Base::numRows) {
+            cholmod_free_dense(&b, &cm);
             b = cholmod_allocate_dense(Base::numRows, 1, Base::numRows, CHOLMOD_REAL, &cm);
         }
         memcpy(b->x, rhs.data(), rhs.size() * sizeof(rhs[0]));
