@@ -17,12 +17,12 @@ namespace OptCuts
     class ARAPEnergy : public Energy
     {
     public:
-        virtual void getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight = false) const;
-        virtual void computeGradient(const TriangleSoup& data, Eigen::VectorXd& gradient, bool uniformWeight = false) const;
-        virtual void computePrecondMtr(const TriangleSoup& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight = false) const;
-        virtual void computeHessian(const TriangleSoup& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight = false) const;
+        virtual void getEnergyValPerElem(const TriMesh& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight = false) const;
+        virtual void computeGradient(const TriMesh& data, Eigen::VectorXd& gradient, bool uniformWeight = false) const;
+        virtual void computePrecondMtr(const TriMesh& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight = false) const;
+        virtual void computeHessian(const TriMesh& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight = false) const;
         
-        virtual void checkEnergyVal(const TriangleSoup& data) const;
+        virtual void checkEnergyVal(const TriMesh& data) const;
         
     public:
         ARAPEnergy(void);

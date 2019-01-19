@@ -22,7 +22,7 @@ extern std::ofstream logFile;
 
 namespace OptCuts {
     
-    void SymDirichletEnergy::getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight) const
+    void SymDirichletEnergy::getEnergyValPerElem(const TriMesh& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight) const
     {
         const double normalizer_div = data.surfaceArea;
         
@@ -46,7 +46,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::getEnergyValByElemID(const TriangleSoup& data, int elemI, double& energyVal, bool uniformWeight) const
+    void SymDirichletEnergy::getEnergyValByElemID(const TriMesh& data, int elemI, double& energyVal, bool uniformWeight) const
     {
         const double normalizer_div = data.surfaceArea;
         
@@ -68,7 +68,7 @@ namespace OptCuts {
          U3m1.dot(U2m1) * data.e0dote1[triI] / 2 / data.triAreaSq[triI]);
     }
     
-    void SymDirichletEnergy::getEnergyValPerVert(const TriangleSoup& data, Eigen::VectorXd& energyValPerVert) const
+    void SymDirichletEnergy::getEnergyValPerVert(const TriMesh& data, Eigen::VectorXd& energyValPerVert) const
     {
         Eigen::VectorXd energyValPerElem;
         getEnergyValPerElem(data, energyValPerElem);
@@ -90,7 +90,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::getMaxUnweightedEnergyValPerVert(const TriangleSoup& data, Eigen::VectorXd& MaxUnweightedEnergyValPerVert) const
+    void SymDirichletEnergy::getMaxUnweightedEnergyValPerVert(const TriMesh& data, Eigen::VectorXd& MaxUnweightedEnergyValPerVert) const
     {
         Eigen::VectorXd energyValPerElem;
         getEnergyValPerElem(data, energyValPerElem, true);
@@ -106,7 +106,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::computeDivGradPerVert(const TriangleSoup& data, Eigen::VectorXd& divGradPerVert) const
+    void SymDirichletEnergy::computeDivGradPerVert(const TriMesh& data, Eigen::VectorXd& divGradPerVert) const
     {
         Eigen::MatrixXd localGradients;
         computeLocalGradient(data, localGradients);
@@ -194,7 +194,7 @@ namespace OptCuts {
 #endif
     }
     
-    void SymDirichletEnergy::getDivGradPerElem(const TriangleSoup& data, Eigen::VectorXd& divGradPerElem) const
+    void SymDirichletEnergy::getDivGradPerElem(const TriMesh& data, Eigen::VectorXd& divGradPerElem) const
     {
         Eigen::VectorXd divGrad_vert;
         computeDivGradPerVert(data, divGrad_vert);
@@ -214,7 +214,7 @@ namespace OptCuts {
     }
     
     // doesn't work well for topology filtering
-    void SymDirichletEnergy::computeLocalSearchDir(const TriangleSoup& data, Eigen::MatrixXd& localSearchDir) const
+    void SymDirichletEnergy::computeLocalSearchDir(const TriMesh& data, Eigen::MatrixXd& localSearchDir) const
     {
         const double normalizer_div = data.surfaceArea;
         
@@ -328,7 +328,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::computeLocalGradient(const TriangleSoup& data, Eigen::MatrixXd& localGradients) const
+    void SymDirichletEnergy::computeLocalGradient(const TriMesh& data, Eigen::MatrixXd& localGradients) const
     {
         const double normalizer_div = data.surfaceArea;
         
@@ -371,7 +371,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::computeGradient(const TriangleSoup& data, Eigen::VectorXd& gradient, bool uniformWeight) const
+    void SymDirichletEnergy::computeGradient(const TriMesh& data, Eigen::VectorXd& gradient, bool uniformWeight) const
     {
         const double normalizer_div = data.surfaceArea;
         
@@ -419,7 +419,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::computePrecondMtr(const TriangleSoup& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight) const
+    void SymDirichletEnergy::computePrecondMtr(const TriMesh& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight) const
     {
 //        precondMtr = data.LaplacianMtr;
         computeHessian(data, precondMtr, uniformWeight);
@@ -434,7 +434,7 @@ namespace OptCuts {
 //        std::cout << "det(precondMtr_ESD) = " << det << std::endl;
     }
     
-    void SymDirichletEnergy::computeHessian(const TriangleSoup& data,
+    void SymDirichletEnergy::computeHessian(const TriMesh& data,
                                           Eigen::MatrixXd& Hessian,
                                           bool uniformWeight) const
     {
@@ -557,7 +557,7 @@ namespace OptCuts {
                                       fixedVertInd, 2, Hessian);
     }
 
-    void SymDirichletEnergy::computePrecondMtr(const TriangleSoup& data, Eigen::VectorXd* V,
+    void SymDirichletEnergy::computePrecondMtr(const TriMesh& data, Eigen::VectorXd* V,
                                    Eigen::VectorXi* I, Eigen::VectorXi* J, bool uniformWeight) const
     {
         const double normalizer_div = data.surfaceArea;
@@ -679,7 +679,7 @@ namespace OptCuts {
                                       fixedVertInd, 2, V, I, J);
     }
     
-    void SymDirichletEnergy::computeHessian(const TriangleSoup& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight) const
+    void SymDirichletEnergy::computeHessian(const TriMesh& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight) const
     {
         const double normalizer_div = data.surfaceArea;
         
@@ -849,7 +849,7 @@ namespace OptCuts {
         hessian.makeCompressed();
     }
     
-    void SymDirichletEnergy::initStepSize(const TriangleSoup& data, const Eigen::VectorXd& searchDir, double& stepSize) const
+    void SymDirichletEnergy::initStepSize(const TriMesh& data, const Eigen::VectorXd& searchDir, double& stepSize) const
     {
         assert(stepSize > 0.0);
         
@@ -910,7 +910,7 @@ namespace OptCuts {
         }
     }
     
-    void SymDirichletEnergy::checkEnergyVal(const TriangleSoup& data) const
+    void SymDirichletEnergy::checkEnergyVal(const TriMesh& data) const
     {
         logFile << "check energyVal computation..." << std::endl;
         

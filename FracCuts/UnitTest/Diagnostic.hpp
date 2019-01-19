@@ -9,7 +9,7 @@
 #ifndef Diagnostic_hpp
 #define Diagnostic_hpp
 
-#include "TriangleSoup.hpp"
+#include "TriMesh.hpp"
 
 #include <igl/readOBJ.h>
 #include <igl/opengl/glfw/Viewer.h>
@@ -25,7 +25,7 @@ extern bool viewUV;
 extern bool showTexture;
 extern int showDistortion;
 extern double texScale;
-extern std::vector<const OptCuts::TriangleSoup*> triSoup;
+extern std::vector<const OptCuts::TriMesh*> triSoup;
 extern std::vector<OptCuts::Energy*> energyTerms;
 extern std::vector<double> energyParams;
 extern OptCuts::Optimizer* optimizer;
@@ -90,8 +90,8 @@ namespace OptCuts{
                             Eigen::MatrixXd V, UV, N;
                             Eigen::MatrixXi F, FUV, FN;
                             igl::readOBJ(meshPath, V, UV, N, F, FUV, FN);
-                            TriangleSoup resultMesh(V, F, UV, FUV, false, 0.0);
-                            TriangleSoup originalMesh(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false, 0.0);
+                            TriMesh resultMesh(V, F, UV, FUV, false, 0.0);
+                            TriMesh originalMesh(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false, 0.0);
                             double absGaussianCurve, absGaussianCurve_original;
                             resultMesh.computeAbsGaussianCurv(absGaussianCurve);
                             originalMesh.computeAbsGaussianCurv(absGaussianCurve_original);
@@ -149,7 +149,7 @@ namespace OptCuts{
                             Eigen::MatrixXi F, FUV, FN;
                             igl::readOBJ(meshPath, V, UV, N, F, FUV, FN);
                             UV.conservativeResize(UV.rows(), 2);
-                            TriangleSoup resultMesh(V, F, UV, FUV, false, 0.0);
+                            TriMesh resultMesh(V, F, UV, FUV, false, 0.0);
                             
                             std::ofstream file;
                             file.open(resultsFolderPath + '/' + std::string(buf) + "/info.txt");
@@ -230,7 +230,7 @@ namespace OptCuts{
                             Eigen::MatrixXi F, FUV, FN;
                             igl::readOBJ(meshPath, V, UV, N, F, FUV, FN);
                             UV.conservativeResize(UV.rows(), 2);
-                            TriangleSoup resultMesh(V, F, UV, FUV, false, 0.0);
+                            TriMesh resultMesh(V, F, UV, FUV, false, 0.0);
                             
                             if(!resultMesh.checkInversion()) {
                                 std::cout << buf << " inverted" << std::endl;
@@ -351,7 +351,7 @@ namespace OptCuts{
                                           V_UV, FUV, Eigen::MatrixXd(), Eigen::MatrixXi(), UV, FUV);
                             
                             
-                            OptCuts::TriangleSoup temp(V, F, UV, FUV, false);
+                            OptCuts::TriMesh temp(V, F, UV, FUV, false);
                             
                             std::vector<std::vector<int>> bnd_all;
                             igl::boundary_loop(temp.F, bnd_all);
@@ -602,7 +602,7 @@ namespace OptCuts{
                                           V_UV, FUV, Eigen::MatrixXd(), Eigen::MatrixXi(), UV, FUV);
                             
                             
-                            OptCuts::TriangleSoup temp(V, F, UV, FUV, false);
+                            OptCuts::TriMesh temp(V, F, UV, FUV, false);
                             
                             std::vector<std::vector<int>> bnd_all;
                             igl::boundary_loop(temp.F, bnd_all);

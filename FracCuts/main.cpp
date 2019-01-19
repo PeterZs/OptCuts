@@ -31,9 +31,9 @@
 
 // optimization
 OptCuts::MethodType methodType;
-std::vector<const OptCuts::TriangleSoup*> triSoup;
+std::vector<const OptCuts::TriMesh*> triSoup;
 int vertAmt_input;
-OptCuts::TriangleSoup triSoup_backup;
+OptCuts::TriMesh triSoup_backup;
 OptCuts::Optimizer* optimizer;
 std::vector<OptCuts::Energy*> energyTerms;
 std::vector<double> energyParams;
@@ -666,7 +666,7 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
     //TODO?: stop when first violates bounds from feasible, don't go to best feasible. check after each merge whether distortion is violated
     // oscillation detection
     static int iterNum_bestFeasible = -1;
-    static OptCuts::TriangleSoup triSoup_bestFeasible;
+    static OptCuts::TriMesh triSoup_bestFeasible;
     static double E_se_bestFeasible = __DBL_MAX__;
     static int lastStationaryIterNum = 0; //!!! still necessary because boundary and interior query are with same iterNum
     static std::map<double, std::vector<std::pair<double, double>>> configs_stationaryV; //!!! better also include topology information
@@ -1216,7 +1216,7 @@ int main(int argc, char *argv[])
     }
     vertAmt_input = V.rows();
 //    //DEBUG
-//    OptCuts::TriangleSoup squareMesh(OptCuts::P_SQUARE, 1.0, 0.1, false);
+//    OptCuts::TriMesh squareMesh(OptCuts::P_SQUARE, 1.0, 0.1, false);
 //    V = squareMesh.V_rest;
 //    F = squareMesh.F;
     
@@ -1347,7 +1347,7 @@ int main(int argc, char *argv[])
 //        igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
         
         // with input UV
-        OptCuts::TriangleSoup *temp = new OptCuts::TriangleSoup(V, F, UV, FUV, false);
+        OptCuts::TriMesh *temp = new OptCuts::TriMesh(V, F, UV, FUV, false);
         outputFolderPath += meshName + "_input_" + OptCuts::IglUtils::rtos(lambda) + "_" +
             OptCuts::IglUtils::rtos(delta) + "_" +startDS + folderTail;
         
@@ -1438,7 +1438,7 @@ int main(int argc, char *argv[])
 //            OptCuts::IglUtils::computeMVCMtr(V, F, A);
 //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
             
-            triSoup.emplace_back(new OptCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false));
+            triSoup.emplace_back(new OptCuts::TriMesh(V, F, UV_Tutte, Eigen::MatrixXi(), false));
             outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) +
                 "_" + startDS + folderTail;
         }
@@ -1453,7 +1453,7 @@ int main(int argc, char *argv[])
                 
                 // record cohesive edge information,
                 // transfer information format for cut_mesh
-                OptCuts::TriangleSoup temp(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                OptCuts::TriMesh temp(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
                 Eigen::MatrixXi cutFlags(F.rows(), 3);
                 Eigen::MatrixXi cohEdgeRecord;
                 cutFlags.setZero();
@@ -1514,13 +1514,13 @@ int main(int argc, char *argv[])
                 //            OptCuts::IglUtils::computeMVCMtr(V, F, A);
                 //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
                 
-                OptCuts::TriangleSoup* ptr = new OptCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false);
+                OptCuts::TriMesh* ptr = new OptCuts::TriMesh(V, F, UV_Tutte, Eigen::MatrixXi(), false);
                 ptr->buildCohEfromRecord(cohEdgeRecord);
                 triSoup.emplace_back(ptr);
                 outputFolderPath += meshName + "_HighGenus_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) + "_" + startDS + folderTail;
             }
             else {
-                OptCuts::TriangleSoup *temp = new OptCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                OptCuts::TriMesh *temp = new OptCuts::TriMesh(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
 //                temp->farthestPointCut(); // open up a boundary for Tutte embedding
 //                temp->highCurvOnePointCut();
                 temp->onePointCut();
@@ -1534,7 +1534,7 @@ int main(int argc, char *argv[])
                 OptCuts::IglUtils::computeUniformLaplacian(temp->F, A);
                 Eigen::MatrixXd UV_Tutte;
                 igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
-                triSoup.emplace_back(new OptCuts::TriangleSoup(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
+                triSoup.emplace_back(new OptCuts::TriMesh(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
                 
                 delete temp;
                 outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) +
@@ -1563,7 +1563,7 @@ int main(int argc, char *argv[])
 //    arap_precomputation(V[0], F[0], 2, b, arap_data);
 //    
 //    // Solve arap using the harmonic map as initial guess
-////    triSoup = OptCuts::TriangleSoup(V[0], F[0], UV[0]);
+////    triSoup = OptCuts::TriMesh(V[0], F[0], UV[0]);
 //    arap_solve(bc, arap_data, UV[0]);
     
     // setup timer

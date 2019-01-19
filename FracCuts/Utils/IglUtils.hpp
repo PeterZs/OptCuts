@@ -9,7 +9,7 @@
 #ifndef IglUtils_hpp
 #define IglUtils_hpp
 
-#include "TriangleSoup.hpp"
+#include "TriMesh.hpp"
 
 #include <Eigen/Eigen>
 
@@ -121,7 +121,7 @@ namespace OptCuts {
         static void saveMesh_Seamster(const std::string& filePath,
                                       const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
         
-        static void smoothVertField(const TriangleSoup& mesh, Eigen::VectorXd& field);
+        static void smoothVertField(const TriMesh& mesh, Eigen::VectorXd& field);
     };
     
 }

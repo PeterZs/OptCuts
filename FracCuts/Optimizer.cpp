@@ -35,7 +35,7 @@ extern Timer timer, timer_step;
 
 namespace OptCuts {
     
-    Optimizer::Optimizer(const TriangleSoup& p_data0,
+    Optimizer::Optimizer(const TriMesh& p_data0,
                          const std::vector<Energy*>& p_energyTerms, const std::vector<double>& p_energyParams,
                          int p_propagateFracture, bool p_mute, bool p_scaffolding,
                          const Eigen::MatrixXd& UV_bnds, const Eigen::MatrixXi& E, const Eigen::VectorXi& bnd,
@@ -113,7 +113,7 @@ namespace OptCuts {
         computeEnergyVal(result, scaffold, lastEnergyVal);
     }
     
-    TriangleSoup& Optimizer::getResult(void) {
+    TriMesh& Optimizer::getResult(void) {
         return result;
     }
     
@@ -121,7 +121,7 @@ namespace OptCuts {
         return scaffold;
     }
     
-    const TriangleSoup& Optimizer::getAirMesh(void) const {
+    const TriMesh& Optimizer::getAirMesh(void) const {
         return scaffold.airMesh;
     }
     
@@ -129,7 +129,7 @@ namespace OptCuts {
         return scaffolding;
     }
     
-    const TriangleSoup& Optimizer::getData_findExtrema(void) const {
+    const TriMesh& Optimizer::getData_findExtrema(void) const {
         return data_findExtrema;
     }
     
@@ -315,7 +315,7 @@ namespace OptCuts {
         }
     }
     
-    void Optimizer::setConfig(const TriangleSoup& config, int iterNum, int p_topoIter)
+    void Optimizer::setConfig(const TriMesh& config, int iterNum, int p_topoIter)
     {
         topoIter = p_topoIter;
         globalIterNum = iterNum;
@@ -688,7 +688,7 @@ namespace OptCuts {
 //        const double m = searchDir.dot(gradient);
 //        const double c1m = 1.0e-4 * m;
         Eigen::MatrixXd resultV0 = result.V;
-//        TriangleSoup temp = result; //TEST
+//        TriMesh temp = result; //TEST
         Eigen::MatrixXd scaffoldV0;
         if(scaffolding) {
 //            Scaffold tempp = scaffold;
@@ -767,7 +767,7 @@ namespace OptCuts {
     }
     
     void Optimizer::stepForward(const Eigen::MatrixXd& dataV0, const Eigen::MatrixXd& scaffoldV0,
-                                TriangleSoup& data, Scaffold& scaffoldData, double stepSize) const
+                                TriMesh& data, Scaffold& scaffoldData, double stepSize) const
     {
         assert(dataV0.rows() == data.V.rows());
         if(scaffolding) {
@@ -805,7 +805,7 @@ namespace OptCuts {
         arrowVec *= igl::avg_edge_length(result.V, result.F);
     }
     
-    void Optimizer::initStepSize(const TriangleSoup& data, double& stepSize) const
+    void Optimizer::initStepSize(const TriMesh& data, double& stepSize) const
     {
         for(int eI = 0; eI < energyTerms.size(); eI++) {
             energyTerms[eI]->initStepSize(data, searchDir, stepSize);
@@ -877,7 +877,7 @@ namespace OptCuts {
         buffer_gradientPerIter.clear();
     }
     
-    void Optimizer::computeEnergyVal(const TriangleSoup& data, const Scaffold& scaffoldData, double& energyVal, bool excludeScaffold)
+    void Optimizer::computeEnergyVal(const TriMesh& data, const Scaffold& scaffoldData, double& energyVal, bool excludeScaffold)
     {
         energyTerms[0]->computeEnergyVal(data, energyVal_ET[0]);
         energyVal = energyParams[0] * energyVal_ET[0];
@@ -896,7 +896,7 @@ namespace OptCuts {
             energyVal_scaffold = 0.0;
         }
     }
-    void Optimizer::computeGradient(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::VectorXd& gradient, bool excludeScaffold)
+    void Optimizer::computeGradient(const TriMesh& data, const Scaffold& scaffoldData, Eigen::VectorXd& gradient, bool excludeScaffold)
     {
         energyTerms[0]->computeGradient(data, gradient_ET[0]);
         gradient = energyParams[0] * gradient_ET[0];
@@ -911,7 +911,7 @@ namespace OptCuts {
             scaffoldData.augmentGradient(gradient, gradient_scaffold, (excludeScaffold ? 0.0 : (w_scaf / scaffold.airMesh.F.rows())));
         }
     }
-    void Optimizer::computePrecondMtr(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr)
+    void Optimizer::computePrecondMtr(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr)
     {
         if(!mute) { timer_step.start(0); }
         if(useDense) {
@@ -1011,7 +1011,7 @@ namespace OptCuts {
 //            std::cout << "***Warning: Indefinte hessian!" << std::endl;
 //        }
     }
-    void Optimizer::computeHessian(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& hessian) const
+    void Optimizer::computeHessian(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& hessian) const
     {
         energyTerms[0]->computeHessian(data, hessian);
         hessian *= energyParams[0];

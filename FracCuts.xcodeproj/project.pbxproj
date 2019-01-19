@@ -24,7 +24,7 @@
 		988D81BC20AA98FA0037737D /* libtbb.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 98BFBB1E1FA153EA00142E10 /* libtbb.dylib */; };
 		988D81BD20AA99060037737D /* libtriangle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 987382CD2076EE9D0040BBCE /* libtriangle.a */; };
 		988D81BF20AA99120037737D /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 988D81BE20AA99120037737D /* libglfw3.a */; };
-		988ED12F1F5727F400B21181 /* TriangleSoup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 988ED12D1F5727F400B21181 /* TriangleSoup.cpp */; };
+		988ED12F1F5727F400B21181 /* TriMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 988ED12D1F5727F400B21181 /* TriMesh.cpp */; };
 		988ED1351F5871F200B21181 /* Optimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 988ED1331F5871F200B21181 /* Optimizer.cpp */; };
 		98CBDA1F21973783003A35BD /* CHOLMODSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CBDA1821973783003A35BD /* CHOLMODSolver.cpp */; };
 		98CBDA2021973783003A35BD /* EigenLibSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CBDA1B21973783003A35BD /* EigenLibSolver.cpp */; };
@@ -74,8 +74,8 @@
 		988D81BE20AA99120037737D /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = ../../../../usr/local/lib/libglfw3.a; sourceTree = "<group>"; };
 		988ED1271F57211500B21181 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		988ED1291F57212300B21181 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../usr/local/lib; sourceTree = "<group>"; };
-		988ED12D1F5727F400B21181 /* TriangleSoup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleSoup.cpp; sourceTree = "<group>"; };
-		988ED12E1F5727F400B21181 /* TriangleSoup.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TriangleSoup.hpp; sourceTree = "<group>"; };
+		988ED12D1F5727F400B21181 /* TriMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriMesh.cpp; sourceTree = "<group>"; };
+		988ED12E1F5727F400B21181 /* TriMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TriMesh.hpp; sourceTree = "<group>"; };
 		988ED1331F5871F200B21181 /* Optimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Optimizer.cpp; sourceTree = "<group>"; };
 		988ED1341F5871F200B21181 /* Optimizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Optimizer.hpp; sourceTree = "<group>"; };
 		98BFBB1E1FA153EA00142E10 /* libtbb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtbb.dylib; path = ../../../../usr/local/lib/libtbb.dylib; sourceTree = "<group>"; };
@@ -140,8 +140,8 @@
 				987382CF2076F49A0040BBCE /* Scaffold.cpp */,
 				987382D02076F49A0040BBCE /* Scaffold.hpp */,
 				980180BB1F552CDA00C64B43 /* main.cpp */,
-				988ED12D1F5727F400B21181 /* TriangleSoup.cpp */,
-				988ED12E1F5727F400B21181 /* TriangleSoup.hpp */,
+				988ED12D1F5727F400B21181 /* TriMesh.cpp */,
+				988ED12E1F5727F400B21181 /* TriMesh.hpp */,
 				988ED1331F5871F200B21181 /* Optimizer.cpp */,
 				988ED1341F5871F200B21181 /* Optimizer.hpp */,
 				987382CB202902590040BBCE /* Types.hpp */,
@@ -278,7 +278,7 @@
 				98CBDA2021973783003A35BD /* EigenLibSolver.cpp in Sources */,
 				988ED1351F5871F200B21181 /* Optimizer.cpp in Sources */,
 				9848C12F21F37823008AC964 /* IglUtils.cpp in Sources */,
-				988ED12F1F5727F400B21181 /* TriangleSoup.cpp in Sources */,
+				988ED12F1F5727F400B21181 /* TriMesh.cpp in Sources */,
 				980180BC1F552CDA00C64B43 /* main.cpp in Sources */,
 				98CBDA2121973783003A35BD /* PardisoSolver.cpp in Sources */,
 				98CBDA1F21973783003A35BD /* CHOLMODSolver.cpp in Sources */,

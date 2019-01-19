@@ -72,7 +72,7 @@ namespace OptCuts {
                                 std::cout << "UV coordinates not valid, will generate separate rigid mapping UV!" << std::endl;
                             }
                             
-                            OptCuts::TriangleSoup inputTriSoup(V, F, UV, Eigen::MatrixXi(), false);
+                            OptCuts::TriMesh inputTriSoup(V, F, UV, Eigen::MatrixXi(), false);
                             if(argc > 4) {
                                 // input original model to get cohesive edge information
                                 Eigen::MatrixXd V0;
@@ -90,7 +90,7 @@ namespace OptCuts {
                                     return;
                                 }
                                 
-                                inputTriSoup.cohE = OptCuts::TriangleSoup(V0, F0, Eigen::MatrixXd()).cohE;
+                                inputTriSoup.cohE = OptCuts::TriMesh(V0, F0, Eigen::MatrixXd()).cohE;
                                 inputTriSoup.computeFeatures();
                             }
                             inputTriSoup.saveAsMesh(outputFolderPath + meshName + "_processed.obj", true);
@@ -132,7 +132,7 @@ namespace OptCuts {
                                         exit(-1);
                                     }
                                     
-                                    OptCuts::TriangleSoup *temp = new OptCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                                    OptCuts::TriMesh *temp = new OptCuts::TriMesh(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
                                     //            temp->farthestPointCut(); // open up a boundary for Tutte embedding
                                     //                temp->highCurvOnePointCut();
                                     temp->onePointCut();
@@ -215,7 +215,7 @@ namespace OptCuts {
                                           Eigen::MatrixXd(), Eigen::MatrixXi(), UV, FUV);
                             
                             
-                            OptCuts::TriangleSoup temp(V, F, UV, FUV, false);
+                            OptCuts::TriMesh temp(V, F, UV, FUV, false);
                             
                             std::vector<std::vector<int>> bnd_all;
                             igl::boundary_loop(temp.F, bnd_all);

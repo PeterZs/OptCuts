@@ -9,7 +9,7 @@
 #ifndef Scaffold_hpp
 #define Scaffold_hpp
 
-#include "TriangleSoup.hpp"
+#include "TriMesh.hpp"
 
 #include<Eigen/Eigen>
 
@@ -19,14 +19,14 @@ namespace OptCuts {
     class Scaffold
     {
     public:
-        TriangleSoup airMesh; // tessellation of voided regions
+        TriMesh airMesh; // tessellation of voided regions
         Eigen::VectorXi bnd, localVI2Global; // map between airMesh indices to augmented system indices
         std::map<int, int> meshVI2AirMesh; // the inverse map of bnd
         int wholeMeshSize; // augmented system size
         
     public:
         Scaffold(void);
-        Scaffold(const TriangleSoup& mesh, Eigen::MatrixXd UV_bnds = Eigen::MatrixXd(),
+        Scaffold(const TriMesh& mesh, Eigen::MatrixXd UV_bnds = Eigen::MatrixXd(),
                 Eigen::MatrixXi E = Eigen::MatrixXi(), const Eigen::VectorXi& p_bnd = Eigen::VectorXi());
 
         // augment mesh gradient with air mesh gradient with parameter w_scaf

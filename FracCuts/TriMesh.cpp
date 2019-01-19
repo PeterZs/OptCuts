@@ -1,12 +1,12 @@
 //
-//  TriangleSoup.cpp
+//  TriMesh.cpp
 //  OptCuts
 //
 //  Created by Minchen Li on 8/30/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
 //
 
-#include "TriangleSoup.hpp"
+#include "TriMesh.hpp"
 #include "IglUtils.hpp"
 #include "SymDirichletEnergy.hpp"
 #include "Optimizer.hpp"
@@ -34,12 +34,12 @@ extern int inSplitTotalAmt;
 
 namespace OptCuts {
     
-    TriangleSoup::TriangleSoup(void)
+    TriMesh::TriMesh(void)
     {
         initSeamLen = 0.0;
     }
     
-    TriangleSoup::TriangleSoup(const Eigen::MatrixXd& V_mesh, const Eigen::MatrixXi& F_mesh,
+    TriMesh::TriMesh(const Eigen::MatrixXd& V_mesh, const Eigen::MatrixXi& F_mesh,
                                const Eigen::MatrixXd& UV_mesh, const Eigen::MatrixXi& FUV_mesh,
                                bool separateTri, double p_initSeamLen, double p_areaThres_AM)
     {
@@ -276,7 +276,7 @@ namespace OptCuts {
         }
     }
     
-    TriangleSoup::TriangleSoup(Primitive primitive, double size, double spacing, bool separateTri)
+    TriMesh::TriMesh(Primitive primitive, double size, double spacing, bool separateTri)
     {
         switch(primitive)
         {
@@ -321,7 +321,7 @@ namespace OptCuts {
         }
         
         if(separateTri) {
-            *this = TriangleSoup(V_rest, F, V);
+            *this = TriMesh(V_rest, F, V);
         }
         else {
             computeFeatures(false, true);
@@ -329,7 +329,7 @@ namespace OptCuts {
         initSeamLen = 0.0;
     }
     
-    void TriangleSoup::computeLaplacianMtr(void)
+    void TriMesh::computeLaplacianMtr(void)
     {
         Eigen::SparseMatrix<double> L;
         igl::cotmatrix(V_rest, F, L);
@@ -357,7 +357,7 @@ namespace OptCuts {
 //                    LaplacianMtr.insert(it.row() * 2 + 1, it.col() * 2 + 1) = -it.value();// * M.coeffRef(it.row(), it.row());
     }
     
-    void TriangleSoup::computeFeatures(bool multiComp, bool resetFixedV)
+    void TriMesh::computeFeatures(bool multiComp, bool resetFixedV)
     {
         //TODO: if the mesh is multi-component, then fix more vertices
         if(resetFixedV) {
@@ -523,7 +523,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::updateFeatures(void)
+    void TriMesh::updateFeatures(void)
     {
         const int nCE = static_cast<int>(boundaryEdge.size());
         boundaryEdge.conservativeResize(cohE.rows());
@@ -542,7 +542,7 @@ namespace OptCuts {
         computeLaplacianMtr();
     }
     
-    void TriangleSoup::resetFixedVert(const std::set<int>& p_fixedVert)
+    void TriMesh::resetFixedVert(const std::set<int>& p_fixedVert)
     {
         for(const auto& vI : p_fixedVert) {
             assert(vI < V.rows());
@@ -552,7 +552,7 @@ namespace OptCuts {
         computeLaplacianMtr();
     }
     
-    void TriangleSoup::buildCohEfromRecord(const Eigen::MatrixXi& cohERecord)
+    void TriMesh::buildCohEfromRecord(const Eigen::MatrixXi& cohERecord)
     {
         assert(cohERecord.cols() == 4);
         
@@ -570,7 +570,7 @@ namespace OptCuts {
         computeFeatures();
     }
     
-    bool TriangleSoup::separateTriangle(const Eigen::VectorXd& measure, double thres)
+    bool TriMesh::separateTriangle(const Eigen::VectorXd& measure, double thres)
     {
         assert(measure.size() == F.rows());
         
@@ -769,7 +769,7 @@ namespace OptCuts {
         return changed;
     }
     
-    bool TriangleSoup::splitVertex(const Eigen::VectorXd& measure, double thres)
+    bool TriMesh::splitVertex(const Eigen::VectorXd& measure, double thres)
     {
         assert(measure.rows() == V.rows());
         
@@ -802,7 +802,7 @@ namespace OptCuts {
         return modified;
     }
     
-    void TriangleSoup::querySplit(double lambda_t, bool propagate, bool splitInterior,
+    void TriMesh::querySplit(double lambda_t, bool propagate, bool splitInterior,
                                   double& EwDec_max, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
                                   std::pair<double, double>& energyChanges_max) const
     {
@@ -1017,7 +1017,7 @@ namespace OptCuts {
         timer_step.stop();
     }
     
-    bool TriangleSoup::splitEdge(double lambda_t, double thres, bool propagate, bool splitInterior)
+    bool TriMesh::splitEdge(double lambda_t, double thres, bool propagate, bool splitInterior)
     {
         double EwDec_max;
         std::vector<int> path_max;
@@ -1057,7 +1057,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::queryMerge(double lambda, bool propagate,
+    void TriMesh::queryMerge(double lambda, bool propagate,
                                   double& localEwDec_max, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
                                   std::pair<double, double>& energyChanges_max)
     {
@@ -1209,7 +1209,7 @@ namespace OptCuts {
         timer_step.stop();
     }
     
-    bool TriangleSoup::mergeEdge(double lambda, double EDecThres, bool propagate)
+    bool TriMesh::mergeEdge(double lambda, double EDecThres, bool propagate)
     {
         double localEwDec_max;
         std::vector<int> path_max;
@@ -1234,7 +1234,7 @@ namespace OptCuts {
         }
     }
     
-    bool TriangleSoup::splitOrMerge(double lambda_t, double EDecThres, bool propagate, bool splitInterior,
+    bool TriMesh::splitOrMerge(double lambda_t, double EDecThres, bool propagate, bool splitInterior,
                                     bool& isMerge)
     {
         assert((!propagate) && "propagation is supported separately for split and merge!");
@@ -1310,7 +1310,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::onePointCut(int vI)
+    void TriMesh::onePointCut(int vI)
     {
         assert((vI >= 0) && (vI < V_rest.rows()));
         std::vector<int> path(vNeighbor[vI].begin(), vNeighbor[vI].end());
@@ -1332,7 +1332,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::highCurvOnePointCut(void)
+    void TriMesh::highCurvOnePointCut(void)
     {
         std::vector<double> gaussianCurv(V.rows(), 2.0 * M_PI);
         for(int triI = 0; triI < F.rows(); triI++) {
@@ -1507,7 +1507,7 @@ namespace OptCuts {
         std::reverse(path.begin(), path.end());
     }
     
-    void TriangleSoup::farthestPointCut(void)
+    void TriMesh::farthestPointCut(void)
     {
         assert(vNeighbor.size() == V_rest.rows());
         
@@ -1539,7 +1539,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::geomImgCut(TriangleSoup& data_findExtrema)
+    void TriMesh::geomImgCut(TriMesh& data_findExtrema)
     {
         // compute UV map for find extremal point (interior)
         data_findExtrema = *this;
@@ -1655,7 +1655,7 @@ namespace OptCuts {
 //        saveAsMesh("/Users/mincli/Desktop/meshes/test_mesh.obj");
     }
     
-    void TriangleSoup::cutPath(std::vector<int> path, bool makeCoh, int changePos,
+    void TriMesh::cutPath(std::vector<int> path, bool makeCoh, int changePos,
                                const Eigen::MatrixXd& newVertPos, bool allowCutThrough)
     {
         assert(path.size() >= 2);
@@ -1772,7 +1772,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::computeSeamScore(Eigen::VectorXd& seamScore) const
+    void TriMesh::computeSeamScore(Eigen::VectorXd& seamScore) const
     {
         seamScore.resize(cohE.rows());
         for(int cohI = 0; cohI < cohE.rows(); cohI++)
@@ -1786,7 +1786,7 @@ namespace OptCuts {
             }
         }
     }
-    void TriangleSoup::computeBoundaryLen(double& boundaryLen) const
+    void TriMesh::computeBoundaryLen(double& boundaryLen) const
     {
         boundaryLen = 0.0;
         for(const auto& e : edge2Tri) {
@@ -1795,7 +1795,7 @@ namespace OptCuts {
             }
         }
     }
-    void TriangleSoup::computeSeamSparsity(double& sparsity, bool triSoup) const
+    void TriMesh::computeSeamSparsity(double& sparsity, bool triSoup) const
     {
         const double thres = 1.0e-2;
         sparsity = 0.0;
@@ -1812,7 +1812,7 @@ namespace OptCuts {
         }
         sparsity += initSeamLen;
     }
-    void TriangleSoup::computeL2StretchPerElem(Eigen::VectorXd& L2StretchPerElem) const
+    void TriMesh::computeL2StretchPerElem(Eigen::VectorXd& L2StretchPerElem) const
     {
         L2StretchPerElem.resize(F.rows());
         for(int triI = 0; triI < F.rows(); triI++)
@@ -1838,7 +1838,7 @@ namespace OptCuts {
             L2StretchPerElem[triI] = std::sqrt(t0 / 2.0);
         }
     }
-    void TriangleSoup::computeStandardStretch(double& stretch_l2, double& stretch_inf, double& stretch_shear, double& compress_inf) const
+    void TriMesh::computeStandardStretch(double& stretch_l2, double& stretch_inf, double& stretch_shear, double& compress_inf) const
     {
         stretch_l2 = 0.0;
         stretch_inf = -__DBL_MAX__;
@@ -1906,13 +1906,13 @@ namespace OptCuts {
         compress_inf *= scaleFactor; // not meaningful now...
         // stretch_shear won't be affected by area scaling
     }
-    void TriangleSoup::outputStandardStretch(std::ofstream& file) const
+    void TriMesh::outputStandardStretch(std::ofstream& file) const
     {
         double stretch_l2, stretch_inf, stretch_shear, compress_inf;
         computeStandardStretch(stretch_l2, stretch_inf, stretch_shear, compress_inf);
         file << stretch_l2 << " " << stretch_inf << " " << stretch_shear << " " << compress_inf << std::endl;
     }
-    void TriangleSoup::computeAbsGaussianCurv(double& absGaussianCurv) const
+    void TriMesh::computeAbsGaussianCurv(double& absGaussianCurv) const
     {
         //!!! it's easy to optimize this way actually...
         std::vector<double> weights(V.rows(), 0.0);
@@ -1943,7 +1943,7 @@ namespace OptCuts {
         absGaussianCurv /= surfaceArea * 3.0;
     }
 
-    void TriangleSoup::initRigidUV(void)
+    void TriMesh::initRigidUV(void)
     {
         V.resize(V_rest.rows(), 2);
         for(int triI = 0; triI < F.rows(); triI++)
@@ -1964,7 +1964,7 @@ namespace OptCuts {
         }
     }
     
-    bool TriangleSoup::checkInversion(int triI, bool mute) const
+    bool TriMesh::checkInversion(int triI, bool mute) const
     {
         assert(triI < F.rows());
         
@@ -1990,7 +1990,7 @@ namespace OptCuts {
             return true;
         }
     }
-    bool TriangleSoup::checkInversion(bool mute, const std::vector<int>& triangles) const
+    bool TriMesh::checkInversion(bool mute, const std::vector<int>& triangles) const
     {
         if(triangles.empty()) {
             for(int triI = 0; triI < F.rows(); triI++)
@@ -2012,7 +2012,7 @@ namespace OptCuts {
         return true;
     }
     
-    void TriangleSoup::save(const std::string& filePath, const Eigen::MatrixXd& V, const Eigen::MatrixXi& F,
+    void TriMesh::save(const std::string& filePath, const Eigen::MatrixXd& V, const Eigen::MatrixXi& F,
                             const Eigen::MatrixXd UV, const Eigen::MatrixXi& FUV) const
     {
         std::ofstream out;
@@ -2050,12 +2050,12 @@ namespace OptCuts {
         out.close();
     }
     
-    void TriangleSoup::save(const std::string& filePath) const
+    void TriMesh::save(const std::string& filePath) const
     {
         save(filePath, V_rest, F, V);
     }
     
-    void TriangleSoup::saveAsMesh(const std::string& filePath, bool scaleUV) const
+    void TriMesh::saveAsMesh(const std::string& filePath, bool scaleUV) const
     {
         const double thres = 1.0e-2;
         std::vector<int> dupVI2GroupI(V.rows());
@@ -2186,7 +2186,7 @@ namespace OptCuts {
         save(filePath, V_mesh, F_mesh, UV_mesh, FUV_mesh);
     }
     
-    bool TriangleSoup::findBoundaryEdge(int vI, const std::pair<int, int>& startEdge,
+    bool TriMesh::findBoundaryEdge(int vI, const std::pair<int, int>& startEdge,
                                         std::pair<int, int>& boundaryEdge)
     {
         auto finder = edge2Tri.find(startEdge);
@@ -2216,7 +2216,7 @@ namespace OptCuts {
         }
     }
     
-    bool TriangleSoup::insideTri(int triI, const Eigen::RowVector2d& pos) const
+    bool TriMesh::insideTri(int triI, const Eigen::RowVector2d& pos) const
     {
         const Eigen::RowVector3i& triVInd = F.row(triI);
         const Eigen::RowVector2d e01 = V.row(triVInd[1]) - V.row(triVInd[0]);
@@ -2237,7 +2237,7 @@ namespace OptCuts {
         }
     }
         
-    bool TriangleSoup::insideUVRegion(const std::vector<int>& triangles, const Eigen::RowVector2d& pos) const
+    bool TriMesh::insideUVRegion(const std::vector<int>& triangles, const Eigen::RowVector2d& pos) const
     {
         for(const auto& triI : triangles) {
             if(insideTri(triI, pos)) {
@@ -2247,7 +2247,7 @@ namespace OptCuts {
         return false;
     }
 
-    bool TriangleSoup::isBoundaryVert(int vI, int vI_neighbor,
+    bool TriMesh::isBoundaryVert(int vI, int vI_neighbor,
                                       std::vector<int>& tri_toSep, std::pair<int, int>& boundaryEdge, bool toBound) const
     {
 //        const auto inputEdgeTri = edge2Tri.find(toBound ? std::pair<int, int>(vI, vI_neighbor) :
@@ -2288,7 +2288,7 @@ namespace OptCuts {
         } while(1);
     }
     
-    bool TriangleSoup::isBoundaryVert(int vI) const
+    bool TriMesh::isBoundaryVert(int vI) const
     {
         assert(vNeighbor.size() == V.rows());
         assert(vI < vNeighbor.size());
@@ -2304,7 +2304,7 @@ namespace OptCuts {
         return false;
     }
         
-    void TriangleSoup::compute2DInwardNormal(int vI, Eigen::RowVector2d& normal) const
+    void TriMesh::compute2DInwardNormal(int vI, Eigen::RowVector2d& normal) const
     {
         std::vector<int> incTris[2];
         std::pair<int, int> boundaryEdge[2];
@@ -2324,7 +2324,7 @@ namespace OptCuts {
         }
     }
     
-    double TriangleSoup::computeLocalEwDec(int vI, double lambda_t, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
+    double TriMesh::computeLocalEwDec(int vI, double lambda_t, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
                                            std::pair<double, double>& energyChanges_max,
                                            const std::vector<int>& incTris, const Eigen::RowVector2d& initMergedPos) const
     {
@@ -2527,7 +2527,7 @@ namespace OptCuts {
         }
     }
         
-    double TriangleSoup::computeLocalEDec_in(const std::vector<int>& triangles, const std::set<int>& freeVert,
+    double TriMesh::computeLocalEDec_in(const std::vector<int>& triangles, const std::set<int>& freeVert,
                                           const std::vector<int>& path, Eigen::MatrixXd& newVertPos, int maxIter) const
     {
         assert(triangles.size() && freeVert.size());
@@ -2561,7 +2561,7 @@ namespace OptCuts {
             }
             localTriI++;
         }
-        TriangleSoup localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
+        TriMesh localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
         localMesh.resetFixedVert(fixedVert);
         
         SymDirichletEnergy SD;
@@ -2660,7 +2660,7 @@ namespace OptCuts {
         return eDec;
     }
     
-    double TriangleSoup::computeLocalEDec(const std::vector<int>& path, const std::vector<int>& triangles,
+    double TriMesh::computeLocalEDec(const std::vector<int>& path, const std::vector<int>& triangles,
                                           const std::set<int>& freeVert, std::map<int, Eigen::RowVector2d>& newVertPos,
                                           const std::map<int, int>& mergeVert, const Eigen::RowVector2d& initMergedPos,
                                           bool closeup, int maxIter) const
@@ -2729,7 +2729,7 @@ namespace OptCuts {
             }
             localTriI++;
         }
-        TriangleSoup localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
+        TriMesh localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
         localMesh.resetFixedVert(fixedVert);
 //        localMesh.save("/Users/mincli/Desktop/meshes/test.obj");
 //        save("/Users/mincli/Desktop/meshes/test_full.obj");
@@ -2785,7 +2785,7 @@ namespace OptCuts {
         return eDec;
     }
         
-    double TriangleSoup::computeLocalEDec(const std::vector<int>& triangles, const std::set<int>& freeVert,
+    double TriMesh::computeLocalEDec(const std::vector<int>& triangles, const std::set<int>& freeVert,
                                           const std::vector<int>& splitPath, Eigen::MatrixXd& newVertPos,
                                           int maxIter) const
     {
@@ -2820,7 +2820,7 @@ namespace OptCuts {
             }
             localTriI++;
         }
-        TriangleSoup localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
+        TriMesh localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
         localMesh.resetFixedVert(fixedVert);
         
         // compute initial symmetric Dirichlet Energy value
@@ -3069,7 +3069,7 @@ namespace OptCuts {
         return eDec;
     }
     
-    double TriangleSoup::computeLocalEDec(const std::pair<int, int>& edge, Eigen::MatrixXd& newVertPos) const
+    double TriMesh::computeLocalEDec(const std::pair<int, int>& edge, Eigen::MatrixXd& newVertPos) const
     {
         assert(vNeighbor.size() == V.rows());
         auto edgeTriIndFinder = edge2Tri.find(edge);
@@ -3181,7 +3181,7 @@ namespace OptCuts {
 //        }
     }
     
-    void TriangleSoup::splitEdgeOnBoundary(const std::pair<int, int>& edge,
+    void TriMesh::splitEdgeOnBoundary(const std::pair<int, int>& edge,
                                            const Eigen::MatrixXd& newVertPos,
                                            bool changeVertPos, bool allowCutThrough)
     {
@@ -3356,7 +3356,7 @@ namespace OptCuts {
         }
     }
     
-    void TriangleSoup::mergeBoundaryEdges(const std::pair<int, int>& edge0, const std::pair<int, int>& edge1,
+    void TriMesh::mergeBoundaryEdges(const std::pair<int, int>& edge0, const std::pair<int, int>& edge1,
                                           const Eigen::RowVectorXd& mergedPos)
     {
         assert(edge0.second == edge1.first);

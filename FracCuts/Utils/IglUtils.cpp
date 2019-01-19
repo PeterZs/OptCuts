@@ -783,7 +783,7 @@ namespace OptCuts {
         outFile.close();
     }
     
-    void IglUtils::smoothVertField(const TriangleSoup& mesh, Eigen::VectorXd& field)
+    void IglUtils::smoothVertField(const TriMesh& mesh, Eigen::VectorXd& field)
     {
         assert(field.size() == mesh.V.rows());
         Eigen::VectorXd field_copy = field;

@@ -17,7 +17,7 @@ namespace OptCuts {
     
     //TODO: precomputation to accelerate optimization process
     
-    void ARAPEnergy::getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight) const
+    void ARAPEnergy::getEnergyValPerElem(const TriMesh& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight) const
     {
         energyValPerElem.resize(data.F.rows());
         for(int triI = 0; triI < data.F.rows(); triI++)
@@ -54,7 +54,7 @@ namespace OptCuts {
         }
     }
     
-    void ARAPEnergy::computeGradient(const TriangleSoup& data, Eigen::VectorXd& gradient, bool uniformWeight) const
+    void ARAPEnergy::computeGradient(const TriMesh& data, Eigen::VectorXd& gradient, bool uniformWeight) const
     {
         Eigen::MatrixXd cotVals;
         igl::cotmatrix_entries(data.V_rest, data.F, cotVals);
@@ -111,17 +111,17 @@ namespace OptCuts {
         }
     }
     
-    void ARAPEnergy::computePrecondMtr(const TriangleSoup& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight) const
+    void ARAPEnergy::computePrecondMtr(const TriMesh& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight) const
     {
         precondMtr = data.LaplacianMtr;
     }
     
-    void ARAPEnergy::computeHessian(const TriangleSoup& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight) const
+    void ARAPEnergy::computeHessian(const TriMesh& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight) const
     {
         assert(0 && "no hessian computation for this energy");
     }
     
-    void ARAPEnergy::checkEnergyVal(const TriangleSoup& data) const
+    void ARAPEnergy::checkEnergyVal(const TriMesh& data) const
     {
         // not quite necessary
     }

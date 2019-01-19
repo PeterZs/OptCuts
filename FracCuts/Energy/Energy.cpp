@@ -33,39 +33,39 @@ namespace OptCuts {
         return needRefactorize;
     }
     
-    void Energy::computeEnergyVal(const TriangleSoup& data, double& energyVal, bool uniformWeight) const
+    void Energy::computeEnergyVal(const TriMesh& data, double& energyVal, bool uniformWeight) const
     {
         Eigen::VectorXd energyValPerElem;
         getEnergyValPerElem(data, energyValPerElem, uniformWeight);
         energyVal = energyValPerElem.sum();
     }
     
-    void Energy::getEnergyValByElemID(const TriangleSoup& data, int elemI, double& energyVal, bool uniformWeight) const
+    void Energy::getEnergyValByElemID(const TriMesh& data, int elemI, double& energyVal, bool uniformWeight) const
     {
         assert(0 && "please implement before use!");
     }
     
-    void Energy::computePrecondMtr(const TriangleSoup& data, Eigen::VectorXd* V,
+    void Energy::computePrecondMtr(const TriMesh& data, Eigen::VectorXd* V,
                                    Eigen::VectorXi* I, Eigen::VectorXi* J, bool uniformWeight) const
     {
         assert(0 && "please implement this method in your subclass!");
     }
     
-    void Energy::computeHessian(const TriangleSoup& data,
+    void Energy::computeHessian(const TriMesh& data,
                                 Eigen::MatrixXd& Hessian,
                                 bool uniformWeight) const
     {
         assert(0 && "please implement this method in your subclass!");
     }
     
-    void Energy::checkGradient(const TriangleSoup& data) const
+    void Energy::checkGradient(const TriMesh& data) const
     {
         std::cout << "checking energy gradient computation..." << std::endl;
         
         double energyVal0;
         computeEnergyVal(data, energyVal0);
         const double h = 1.0e-8 * igl::avg_edge_length(data.V, data.F);
-        TriangleSoup perturbed = data;
+        TriMesh perturbed = data;
         Eigen::VectorXd gradient_finiteDiff;
         gradient_finiteDiff.resize(data.V.rows() * 2);
         for(int vI = 0; vI < data.V.rows(); vI++)
@@ -101,14 +101,14 @@ namespace OptCuts {
         logFile << "g_finiteDiff = \n" << gradient_finiteDiff << std::endl;
     }
     
-    void Energy::checkHessian(const TriangleSoup& data, bool triplet) const
+    void Energy::checkHessian(const TriMesh& data, bool triplet) const
     {
         std::cout << "checking energy hessian computation..." << std::endl;
         
         Eigen::VectorXd gradient0;
         computeGradient(data, gradient0);
         const double h = 1.0e-8 * igl::avg_edge_length(data.V, data.F);
-        TriangleSoup perturbed = data;
+        TriMesh perturbed = data;
         Eigen::SparseMatrix<double> hessian_finiteDiff;
         hessian_finiteDiff.resize(data.V.rows() * 2, data.V.rows() * 2);
         for(int vI = 0; vI < data.V.rows(); vI++)
@@ -168,7 +168,7 @@ namespace OptCuts {
     }
     
     
-    void Energy::initStepSize(const TriangleSoup& data, const Eigen::VectorXd& searchDir, double& stepSize) const
+    void Energy::initStepSize(const TriMesh& data, const Eigen::VectorXd& searchDir, double& stepSize) const
     {
         
     }

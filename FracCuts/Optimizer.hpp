@@ -21,10 +21,10 @@ namespace OptCuts {
     
     // a class for solving an optimization problem
     class Optimizer {
-        friend class TriangleSoup;
+        friend class TriMesh;
         
     protected: // referenced data
-        const TriangleSoup& data0; // initial guess
+        const TriMesh& data0; // initial guess
         const std::vector<Energy*>& energyTerms; // E_0, E_1, E_2, ...
         const std::vector<double>& energyParams; // a_0, a_1, a_2, ...
         // E = \Sigma_i a_i E_i
@@ -40,8 +40,8 @@ namespace OptCuts {
         int globalIterNum;
         int topoIter;
         double relGL2Tol, energyParamSum;
-        TriangleSoup result; // intermediate results of each iteration
-        TriangleSoup data_findExtrema; // intermediate results for deciding the cuts in each topology step
+        TriMesh result; // intermediate results of each iteration
+        TriMesh data_findExtrema; // intermediate results for deciding the cuts in each topology step
         bool scaffolding; // whether to enable bijectivity parameterization
         double w_scaf;
         Scaffold scaffold; // air meshes to enforce bijectivity
@@ -76,7 +76,7 @@ namespace OptCuts {
         std::ofstream file_gradientPerIter;
         
     public: // constructor and destructor
-        Optimizer(const TriangleSoup& p_data0, const std::vector<Energy*>& p_energyTerms, const std::vector<double>& p_energyParams,
+        Optimizer(const TriMesh& p_data0, const std::vector<Energy*>& p_energyTerms, const std::vector<double>& p_energyParams,
                   int p_propagateFracture = 1, bool p_mute = false, bool p_scaffolding = false,
                   const Eigen::MatrixXd& UV_bnds = Eigen::MatrixXd(),
                   const Eigen::MatrixXi& E = Eigen::MatrixXi(),
@@ -98,7 +98,7 @@ namespace OptCuts {
         bool createFracture(double stressThres, int propType,
                             bool allowPropagate = true, bool allowInSplit = false);
         bool createFracture(int opType, const std::vector<int>& path, const Eigen::MatrixXd& newVertPos, bool allowPropagate);
-        void setConfig(const TriangleSoup& config, int iterNum, int p_topoIter);
+        void setConfig(const TriMesh& config, int iterNum, int p_topoIter);
         void setPropagateFracture(bool p_prop);
         void setScaffolding(bool p_scaffolding);
         void setUseDense(bool p_useDense = true);
@@ -106,11 +106,11 @@ namespace OptCuts {
         void computeLastEnergyVal(void);
         
         void getGradientVisual(Eigen::MatrixXd& arrowVec) const;
-        TriangleSoup& getResult(void);
+        TriMesh& getResult(void);
         const Scaffold& getScaffold(void) const;
-        const TriangleSoup& getAirMesh(void) const;
+        const TriMesh& getAirMesh(void) const;
         bool isScaffolding(void) const;
-        const TriangleSoup& getData_findExtrema(void) const;
+        const TriMesh& getData_findExtrema(void) const;
         int getIterNum(void) const;
         int getTopoIter(void) const;
         void setRelGL2Tol(double p_relTol);
@@ -129,16 +129,16 @@ namespace OptCuts {
         bool lineSearch(void);
 
         void stepForward(const Eigen::MatrixXd& dataV0, const Eigen::MatrixXd& scaffoldV0,
-                         TriangleSoup& data, Scaffold& scaffoldData, double stepSize) const;
+                         TriMesh& data, Scaffold& scaffoldData, double stepSize) const;
         
         void updateTargetGRes(void);
         
-        void computeEnergyVal(const TriangleSoup& data, const Scaffold& scaffoldData, double& energyVal, bool excludeScaffold = false);
-        void computeGradient(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::VectorXd& gradient, bool excludeScaffold = false);
-        void computePrecondMtr(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr);
-        void computeHessian(const TriangleSoup& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& hessian) const;
+        void computeEnergyVal(const TriMesh& data, const Scaffold& scaffoldData, double& energyVal, bool excludeScaffold = false);
+        void computeGradient(const TriMesh& data, const Scaffold& scaffoldData, Eigen::VectorXd& gradient, bool excludeScaffold = false);
+        void computePrecondMtr(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr);
+        void computeHessian(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& hessian) const;
         
-        void initStepSize(const TriangleSoup& data, double& stepSize) const;
+        void initStepSize(const TriMesh& data, double& stepSize) const;
         
         void writeEnergyValToFile(bool flush);
         void writeGradL2NormToFile(bool flush);

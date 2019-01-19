@@ -1,13 +1,13 @@
 //
-//  TriangleSoup.hpp
+//  TriMesh.hpp
 //  OptCuts
 //
 //  Created by Minchen Li on 8/30/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
 //
 
-#ifndef TriangleSoup_hpp
-#define TriangleSoup_hpp
+#ifndef TriMesh_hpp
+#define TriMesh_hpp
 
 #include <Eigen/Eigen>
 
@@ -26,7 +26,7 @@ namespace OptCuts{
     // duplicate the vertices and edges of a mesh to separate its triangles,
     // adjacent triangles in the original mesh will have a cohesive edge structure to
     // indicate the connectivity
-    class TriangleSoup{
+    class TriMesh{
     public: // owned data
         Eigen::MatrixXd V_rest; // duplicated rest vertex coordinates in 3D
         Eigen::MatrixXd V; // duplicated vertex coordinates, the dimension depends on the search space
@@ -71,15 +71,15 @@ namespace OptCuts{
         
     public: // constructor
         // default constructor that doesn't do anything
-        TriangleSoup(void);
+        TriMesh(void);
         
         // initialize from a triangle mesh, V will be constructed from UV_mesh in 2D,
         // V_mesh will be used to initialize restShape
-        TriangleSoup(const Eigen::MatrixXd& V_mesh, const Eigen::MatrixXi& F_mesh,
+        TriMesh(const Eigen::MatrixXd& V_mesh, const Eigen::MatrixXi& F_mesh,
                      const Eigen::MatrixXd& UV_mesh, const Eigen::MatrixXi& FUV_mesh = Eigen::MatrixXi(),
                      bool separateTri = true, double p_initSeamLen = 0.0, double p_areaThres_AM = 0.0);
         
-        TriangleSoup(Primitive primitive, double size = 1.0, double spacing = 0.1, bool separateTri = true);
+        TriMesh(Primitive primitive, double size = 1.0, double spacing = 0.1, bool separateTri = true);
         
     public: // API
         void computeFeatures(bool multiComp = false, bool resetFixedV = false);
@@ -103,7 +103,7 @@ namespace OptCuts{
         void onePointCut(int vI = 0);
         void highCurvOnePointCut(void);
         void farthestPointCut(void);
-        void geomImgCut(TriangleSoup& data_findExtrema);
+        void geomImgCut(TriMesh& data_findExtrema);
         void cutPath(std::vector<int> path, bool makeCoh = false, int changePos = 0,
                      const Eigen::MatrixXd& newVertPos = Eigen::MatrixXd(), bool allowCutThrough = true);
         
@@ -171,4 +171,4 @@ namespace OptCuts{
     
 }
 
-#endif /* TriangleSoup_hpp */
+#endif /* TriMesh_hpp */

@@ -9,7 +9,7 @@
 #ifndef Energy_hpp
 #define Energy_hpp
 
-#include "TriangleSoup.hpp"
+#include "TriMesh.hpp"
 
 namespace OptCuts {
     
@@ -26,27 +26,27 @@ namespace OptCuts {
         bool getNeedRefactorize(void) const;
         
     public:
-        virtual void computeEnergyVal(const TriangleSoup& data, double& energyVal, bool uniformWeight = false) const;
-        virtual void getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight = false) const = 0;
-        virtual void getEnergyValByElemID(const TriangleSoup& data, int elemI, double& energyVal, bool uniformWeight = false) const;
+        virtual void computeEnergyVal(const TriMesh& data, double& energyVal, bool uniformWeight = false) const;
+        virtual void getEnergyValPerElem(const TriMesh& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight = false) const = 0;
+        virtual void getEnergyValByElemID(const TriMesh& data, int elemI, double& energyVal, bool uniformWeight = false) const;
         
-        virtual void computeGradient(const TriangleSoup& data, Eigen::VectorXd& gradient, bool uniformWeight = false) const = 0;
+        virtual void computeGradient(const TriMesh& data, Eigen::VectorXd& gradient, bool uniformWeight = false) const = 0;
         
-        virtual void computePrecondMtr(const TriangleSoup& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight = false) const = 0;
-        virtual void computePrecondMtr(const TriangleSoup& data, Eigen::VectorXd* V,
+        virtual void computePrecondMtr(const TriMesh& data, Eigen::SparseMatrix<double>& precondMtr, bool uniformWeight = false) const = 0;
+        virtual void computePrecondMtr(const TriMesh& data, Eigen::VectorXd* V,
                                        Eigen::VectorXi* I = NULL, Eigen::VectorXi* J = NULL, bool uniformWeight = false) const;
-        virtual void computeHessian(const TriangleSoup& data,
+        virtual void computeHessian(const TriMesh& data,
                                     Eigen::MatrixXd& Hessian,
                                     bool uniformWeight = false) const;
         
-        virtual void computeHessian(const TriangleSoup& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight = false) const = 0;
+        virtual void computeHessian(const TriMesh& data, Eigen::SparseMatrix<double>& hessian, bool uniformWeight = false) const = 0;
         
-        virtual void checkEnergyVal(const TriangleSoup& data) const = 0;
+        virtual void checkEnergyVal(const TriMesh& data) const = 0;
         
-        virtual void checkGradient(const TriangleSoup& data) const; // check with finite difference method, according to energyVal
-        virtual void checkHessian(const TriangleSoup& data, bool triplet = false) const; // check with finite difference method, according to gradient
+        virtual void checkGradient(const TriMesh& data) const; // check with finite difference method, according to energyVal
+        virtual void checkHessian(const TriMesh& data, bool triplet = false) const; // check with finite difference method, according to gradient
         
-        virtual void initStepSize(const TriangleSoup& data, const Eigen::VectorXd& searchDir, double& stepSize) const;
+        virtual void initStepSize(const TriMesh& data, const Eigen::VectorXd& searchDir, double& stepSize) const;
     };
     
 }
