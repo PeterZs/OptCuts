@@ -58,26 +58,26 @@ if(NOT TARGET OpenMP::OpenMP_CXX)
 endif()
 
 file(GLOB SRCFILES
-  FracCuts/main.cpp
-  FracCuts/Optimizer.cpp
-  FracCuts/TriangleSoup.cpp
-  FracCuts/Scaffold.cpp
+  src/main.cpp
+  src/Optimizer.cpp
+  src/TriMesh.cpp
+  src/Scaffold.cpp
 
-  FracCuts/Energy/Energy.cpp
-  FracCuts/Energy/ARAPEnergy.cpp
-  FracCuts/Energy/SymStretchEnergy.cpp
+  src/Energy/Energy.cpp
+  src/Energy/ARAPEnergy.cpp
+  src/Energy/SymDirichletEnergy.cpp
   
-  FracCuts/Utils/IglUtils.cpp
+  src/Utils/IglUtils.cpp
   
-  FracCuts/LinSysSolver/PardisoSolver.cpp
+  src/LinSysSolver/PardisoSolver.cpp
 )
 
 include_directories(
-  FracCuts
-  FracCuts/Energy
-  FracCuts/Utils
-  FracCuts/LinSysSolver
-  FracCuts/UnitTest
+  src
+  src/Energy
+  src/Utils
+  src/LinSysSolver
+  src/UnitTest
 )
 
 add_executable(${PROJECT_NAME}_bin ${SRCFILES})
