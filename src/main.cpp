@@ -9,7 +9,7 @@
 #include "Diagnostic.hpp"
 #include "MeshProcessing.hpp"
 
-#include "cut_to_disk.hpp" // hasn't been pulled into libigl
+#include "cut_to_disk.hpp" // hasn't been pulled into the older version of libigl we use
 #include <igl/cut_mesh.h>
 #include <igl/readOFF.h>
 #include <igl/boundary_loop.h>
@@ -37,10 +37,8 @@ OptCuts::TriMesh triSoup_backup;
 OptCuts::Optimizer* optimizer;
 std::vector<OptCuts::Energy*> energyTerms;
 std::vector<double> energyParams;
-//bool bijectiveParam = false;
 bool bijectiveParam = true;
 bool rand1PInitCut = false;
-//bool rand1PInitCut = true; //!!! for fast prototyping
 double lambda_init;
 bool optimization_on = false;
 int iterNum = 0;
@@ -54,7 +52,7 @@ bool altBase = false;
 bool outerLoopFinished = false;
 const int boundMeasureType = 0; // 0: E_SD, 1: L2 Stretch
 double upperBound = 4.1;
-const double convTol_upperBound = 1.0e-3; //TODO!!! related to avg edge len or upperBound?
+const double convTol_upperBound = 1.0e-3;
 std::vector<std::pair<double, double>> energyChanges_bSplit, energyChanges_iSplit, energyChanges_merge;
 std::vector<std::vector<int>> paths_bSplit, paths_iSplit, paths_merge;
 std::vector<Eigen::MatrixXd> newVertPoses_bSplit, newVertPoses_iSplit, newVertPoses_merge;
@@ -133,18 +131,12 @@ void updateViewerData_meshEdges(void)
 void updateViewerData_seam(Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::MatrixXd& UV)
 {
     if(showSeam) {
-        const double seamDistThres = 1.0e-2;
-        Eigen::VectorXd seamScore;
-        triSoup[viewChannel]->computeSeamScore(seamScore);
-        
         const Eigen::VectorXd cohIndices = Eigen::VectorXd::LinSpaced(triSoup[viewChannel]->cohE.rows(),
                                                                 0, triSoup[viewChannel]->cohE.rows() - 1);
         Eigen::MatrixXd color;
-//        OptCuts::IglUtils::mapScalarToColor(cohIndices, color, 0, cohIndices.rows() - 1, 1);
         color.resize(cohIndices.size(), 3);
         color.rowwise() = Eigen::RowVector3d(1.0, 0.5, 0.0);
         
-        //TODO: seamscore only for autocuts
         seamColor.resize(0, 3);
         double seamThickness = (viewUV ? (triSoup[viewChannel]->virtualRadius * 0.0007 / viewer.core.model_zoom * texScale) :
                                 (triSoup[viewChannel]->virtualRadius * 0.006));
@@ -175,14 +167,7 @@ void updateViewerData_distortion(void)
             break;
         }
             
-        case 2: { // show other triangle-based scalar fields
-            Eigen::VectorXd l2StretchPerElem;
-//            triSoup[viewChannel]->computeL2StretchPerElem(l2StretchPerElem);
-//            dynamic_cast<OptCuts::SymDirichletEnergy*>(energyTerms[0])->getDivGradPerElem(*triSoup[viewChannel], l2StretchPerElem);
-//            std::cout << l2StretchPerElem << std::endl; //DEBUG
-//            OptCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis, 1.0, 2.0);
-//            OptCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis,
-//                l2StretchPerElem.minCoeff(), l2StretchPerElem.maxCoeff());
+        case 2: { // show face weight
             Eigen::VectorXd faceWeight;
             faceWeight.resize(triSoup[viewChannel]->F.rows());
             for(int fI = 0; fI < triSoup[viewChannel]->F.rows(); fI++) {
@@ -340,7 +325,6 @@ void saveInfo(bool writePNG, bool writeGIF, bool writeMesh)
 {
     saveScreenshot(outputFolderPath + infoName + ".png", 0.5, writeGIF, writePNG);
     if(writeMesh) {
-//        triSoup[channel_result]->save(outputFolderPath + infoName + "_triSoup.obj");
         triSoup[channel_result]->saveAsMesh(outputFolderPath + infoName + "_mesh.obj");
     }
 }
@@ -515,12 +499,9 @@ bool postDrawFunc(igl::opengl::glfw::Viewer& viewer)
         saveInfo(outerLoopFinished, true, outerLoopFinished);
 //        saveInfo(true, false, false);
         // Note that the content saved in the screenshots are depends on where updateViewerData() is called
-        if(outerLoopFinished) {
-//            triSoup[channel_result]->saveAsMesh(outputFolderPath + infoName + "_mesh_01UV.obj", true);
-        }
     }
     
-    if(outerLoopFinished) { //var name change!!!
+    if(outerLoopFinished) {
         if(!isCapture3D) {
             viewer.core.is_animating = true;
             isCapture3D = true;
@@ -604,7 +585,6 @@ int computeBestCand(const std::vector<std::pair<double, double>>& energyChanges,
             id_minEChange = ecI;
         }
     }
-//    assert(id_minEChange >= 0);
     
     return id_minEChange;
 }
@@ -668,8 +648,8 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
     static int iterNum_bestFeasible = -1;
     static OptCuts::TriMesh triSoup_bestFeasible;
     static double E_se_bestFeasible = __DBL_MAX__;
-    static int lastStationaryIterNum = 0; //!!! still necessary because boundary and interior query are with same iterNum
-    static std::map<double, std::vector<std::pair<double, double>>> configs_stationaryV; //!!! better also include topology information
+    static int lastStationaryIterNum = 0; // still necessary because boundary and interior query are with same iterNum
+    static std::map<double, std::vector<std::pair<double, double>>> configs_stationaryV;
     if(iterNum != lastStationaryIterNum) {
         // not a roll back config
         const double lambda = 1.0 - energyParams[0];
@@ -796,7 +776,7 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
     
     // lambda update (dual update)
     energyParams[0] = updateLambda(measure_bound);
-    //!!! needs to be careful on lambda update space
+    //TODO: needs to be careful on lambda update space
     
     // critical lambda scheme
     if(checkConvergence) {
@@ -817,15 +797,13 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
 //            for(const auto& i : energyChanges_merge) {
 //                std::cout << i.first << "," << i.second << std::endl;
 //            }
-            //!!!DEBUG: with bijectivity, sometimes there might be no valid bSplit that could decrease E_SD
             if((!energyChanges_merge.empty()) &&
-               (computeOptPicked(energyChanges_bSplit, energyChanges_merge, 1.0 - energyParams[0]) == 1)){// &&
-//               (computeOptPicked(energyChanges_iSplit, energyChanges_merge, 1.0 - energyParams[0]) == 1)) {
+               (computeOptPicked(energyChanges_bSplit, energyChanges_merge, 1.0 - energyParams[0]) == 1))
+            {
                 // still picking merge
                 do {
                     energyParams[0] = updateLambda(measure_bound);
-                } while((computeOptPicked(energyChanges_bSplit, energyChanges_merge, 1.0 - energyParams[0]) == 1));// &&
-//                        (computeOptPicked(energyChanges_iSplit, energyChanges_merge, 1.0 - energyParams[0]) == 1));
+                } while((computeOptPicked(energyChanges_bSplit, energyChanges_merge, 1.0 - energyParams[0]) == 1));
                 
                 logFile << "iterativelyUpdated = " << energyParams[0] << ", increase for switch" << std::endl;
             }
@@ -833,7 +811,6 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
             if((!checkCand(energyChanges_iSplit)) && (!checkCand(energyChanges_bSplit))) {
                 // if filtering too strong
                 reQuery = true;
-//                assert(0); // for checking other examples
                 logFile << "enlarge filtering!" << std::endl;
             }
             else {
@@ -925,9 +902,7 @@ void converge_preDrawFunc(igl::opengl::glfw::Viewer& viewer)
     
     if(!bijectiveParam) {
         // perform exact solve
-//                            optimizer->setRelGL2Tol(1.0e-10);
         optimizer->setAllowEDecRelTol(false);
-        //!! can recompute precondmtr if needed
         converged = false;
         optimizer->setPropagateFracture(false);
         while(!converged) {
@@ -962,7 +937,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
             proceedOptimization();
         }
         
-//        viewChannel = channel_result;
         updateViewerData();
         
         if(converged) {
@@ -992,7 +966,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                         
                         infoName = "finalResult";
                         // perform exact solve
-//                        optimizer->setRelGL2Tol(1.0e-10);
                         optimizer->setAllowEDecRelTol(false);
                         converged = false;
                         while(!converged) {
@@ -1046,7 +1019,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     // if necessary, turn on scaffolding for random one point initial cut
                     if(!optimizer->isScaffolding() && bijectiveParam && rand1PInitCut) {
                         optimizer->setScaffolding(true);
-                        //TODO: other mode?
                     }
                     
                     double E_se; triSoup[channel_result]->computeSeamSparsity(E_se);
@@ -1091,7 +1063,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                                 else {
                                     // split or merge after lambda update
                                     if(reQuery) {
-                                        //TODO: reset filtering param
                                         filterExp_in += std::log(2.0) / std::log(inSplitTotalAmt);
                                         filterExp_in = std::min(1.0, filterExp_in);
                                         while(!optimizer->createFracture(fracThres, false, !altBase, true))
@@ -1100,7 +1071,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                                             filterExp_in = std::min(1.0, filterExp_in);
                                         }
                                         reQuery = false;
-                                        // set filtering param back?
+                                        //TODO: set filtering param back?
                                     }
                                     else {
                                         optimizer->createFracture(opType_queried, path_queried, newVertPos_queried, !altBase);
@@ -1215,6 +1186,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     vertAmt_input = V.rows();
+    
 //    //DEBUG
 //    OptCuts::TriMesh squareMesh(OptCuts::P_SQUARE, 1.0, 0.1, false);
 //    V = squareMesh.V_rest;
@@ -1336,33 +1308,11 @@ int main(int argc, char *argv[])
     }
     
     if(UV.rows() != 0) {
-//        //DEBUG
-//        // generate Tutte embedding using input seams
-//        Eigen::VectorXi bnd;
-//        igl::boundary_loop(FUV, bnd);
-//        Eigen::MatrixXd bnd_uv;
-//        OptCuts::IglUtils::map_vertices_to_circle(UV, bnd, bnd_uv);
-//        Eigen::SparseMatrix<double> A, M;
-//        OptCuts::IglUtils::computeUniformLaplacian(FUV, A);
-//        igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
         
         // with input UV
         OptCuts::TriMesh *temp = new OptCuts::TriMesh(V, F, UV, FUV, false);
         outputFolderPath += meshName + "_input_" + OptCuts::IglUtils::rtos(lambda) + "_" +
             OptCuts::IglUtils::rtos(delta) + "_" +startDS + folderTail;
-        
-//        //TEST: for commercial software output
-//        double area = 0;
-//        for(int triI = 0; triI < temp->F.rows(); triI++) {
-//            const Eigen::RowVector3i& triVInd = temp->F.row(triI);
-//            const Eigen::RowVector2d& uv01 = temp->V.row(triVInd[1]) - temp->V.row(triVInd[0]);
-//            const Eigen::RowVector2d& uv02 = temp->V.row(triVInd[2]) - temp->V.row(triVInd[0]);
-//            area += 0.5 * std::abs(uv01[0] * uv02[1] - uv01[1] * uv02[0]);
-//        }
-//        double mult = std::sqrt(temp->surfaceArea / area);
-//        for(int vI = 0; vI < temp->V.rows(); vI++) {
-//            temp->V.row(vI) *=  mult;
-//        }
         
         std::vector<std::vector<int>> bnd_all;
         igl::boundary_loop(temp->F, bnd_all);
@@ -1410,7 +1360,6 @@ int main(int argc, char *argv[])
         }
         
         triSoup.emplace_back(temp);
-//        temp->saveAsMesh("/Users/mincli/Desktop/output_OptCuts/test.obj");//DEBUG
     }
     else {
         // no input UV
@@ -1421,15 +1370,12 @@ int main(int argc, char *argv[])
             // disk-topology
             
             //TODO: what if it has multiple boundaries? or multi-components?
+            
             // Map the boundary to a circle, preserving edge proportions
             Eigen::MatrixXd bnd_uv;
-//            igl::map_vertices_to_circle(V, bnd, bnd_uv);
             OptCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
             
             Eigen::MatrixXd UV_Tutte;
-            
-//            // Harmonic parametrization
-//            igl::harmonic(V, F, bnd, bnd_uv, 1, UV_Tutte);
             
             // Harmonic map with uniform weights
             Eigen::SparseMatrix<double> A, M;
@@ -1494,7 +1440,7 @@ int main(int argc, char *argv[])
                 Eigen::MatrixXd Vcut;
                 Eigen::MatrixXi Fcut;
                 igl::cut_mesh(temp.V_rest, temp.F, cutFlags, Vcut, Fcut);
-                igl::writeOBJ(outputFolderPath + meshName + "_disk.obj", Vcut, Fcut); //DEBUG
+                igl::writeOBJ(outputFolderPath + meshName + "_disk.obj", Vcut, Fcut);
                 V = Vcut;
                 F = Fcut;
                 
@@ -1502,7 +1448,6 @@ int main(int argc, char *argv[])
                 assert(bnd.size());
                 
                 Eigen::MatrixXd bnd_uv;
-//                igl::map_vertices_to_circle(V, bnd, bnd_uv);
                 OptCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
                 
                 Eigen::MatrixXd UV_Tutte;
@@ -1551,21 +1496,6 @@ int main(int argc, char *argv[])
         return -1;
     }
     
-//    // * ARAP
-//    igl::ARAPData arap_data;
-//    arap_data.with_dynamics = false;
-//    Eigen::VectorXi b  = Eigen::VectorXi::Zero(0);
-//    Eigen::MatrixXd bc = Eigen::MatrixXd::Zero(0, 0);
-//    
-//    // Initialize ARAP
-////    arap_data.max_iter = 300;
-//    // 2 means that we're going to *solve* in 2d
-//    arap_precomputation(V[0], F[0], 2, b, arap_data);
-//    
-//    // Solve arap using the harmonic map as initial guess
-////    triSoup = OptCuts::TriMesh(V[0], F[0], UV[0]);
-//    arap_solve(bc, arap_data, UV[0]);
-    
     // setup timer
     timer.new_activity("topology");
     timer.new_activity("descent");
@@ -1586,21 +1516,15 @@ int main(int argc, char *argv[])
     texScale = 10.0 / (triSoup[0]->bbox.row(1) - triSoup[0]->bbox.row(0)).maxCoeff();
     assert(lambda < 1.0);
     energyParams.emplace_back(1.0 - lambda);
-//        energyTerms.emplace_back(new OptCuts::ARAPEnergy());
     energyTerms.emplace_back(new OptCuts::SymDirichletEnergy());
-//        energyTerms.back()->checkEnergyVal(*triSoup[0]);
-//        energyTerms.back()->checkGradient(*triSoup[0]);
-//        energyTerms.back()->checkHessian(*triSoup[0], true);
     
     optimizer = new OptCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, bijectiveParam && !rand1PInitCut); // for random one point initial cut, don't need air meshes in the beginning since it's impossible for a quad to intersect itself
-    //TODO: bijectivity for other mode?
-//    optimizer->setUseDense(); //DEBUG
+    
     optimizer->precompute();
     triSoup.emplace_back(&optimizer->getResult());
     triSoup_backup = optimizer->getResult();
     triSoup.emplace_back(&optimizer->getData_findExtrema()); // for visualizing UV map for finding extrema
     if(lambda > 0.0) {
-        //!!!TODO: put into switch(methodType)
         // fracture mode
         fractureMode = true;
         
