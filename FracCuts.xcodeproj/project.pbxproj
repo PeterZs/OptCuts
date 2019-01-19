@@ -12,7 +12,7 @@
 		9848C12721F3752D008AC964 /* libgomp.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9848C12621F3752D008AC964 /* libgomp.1.dylib */; };
 		9848C12F21F37823008AC964 /* IglUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9848C12D21F37823008AC964 /* IglUtils.cpp */; };
 		9848C13821F3783C008AC964 /* ARAPEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9848C13221F3783B008AC964 /* ARAPEnergy.cpp */; };
-		9848C13921F3783C008AC964 /* SymStretchEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9848C13421F3783B008AC964 /* SymStretchEnergy.cpp */; };
+		9848C13921F3783C008AC964 /* SymDirichletEnergy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9848C13421F3783B008AC964 /* SymDirichletEnergy.cpp */; };
 		9848C13A21F3783C008AC964 /* Energy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9848C13621F3783C008AC964 /* Energy.cpp */; };
 		987382D12076F49A0040BBCE /* Scaffold.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 987382CF2076F49A0040BBCE /* Scaffold.cpp */; };
 		988D81A720AA7FFE0037737D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 988ED1271F57211500B21181 /* OpenGL.framework */; };
@@ -56,8 +56,8 @@
 		9848C12D21F37823008AC964 /* IglUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IglUtils.cpp; path = Utils/IglUtils.cpp; sourceTree = "<group>"; };
 		9848C13221F3783B008AC964 /* ARAPEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ARAPEnergy.cpp; path = Energy/ARAPEnergy.cpp; sourceTree = "<group>"; };
 		9848C13321F3783B008AC964 /* Energy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Energy.hpp; path = Energy/Energy.hpp; sourceTree = "<group>"; };
-		9848C13421F3783B008AC964 /* SymStretchEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SymStretchEnergy.cpp; path = Energy/SymStretchEnergy.cpp; sourceTree = "<group>"; };
-		9848C13521F3783C008AC964 /* SymStretchEnergy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SymStretchEnergy.hpp; path = Energy/SymStretchEnergy.hpp; sourceTree = "<group>"; };
+		9848C13421F3783B008AC964 /* SymDirichletEnergy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SymDirichletEnergy.cpp; path = Energy/SymDirichletEnergy.cpp; sourceTree = "<group>"; };
+		9848C13521F3783C008AC964 /* SymDirichletEnergy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SymDirichletEnergy.hpp; path = Energy/SymDirichletEnergy.hpp; sourceTree = "<group>"; };
 		9848C13621F3783C008AC964 /* Energy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Energy.cpp; path = Energy/Energy.cpp; sourceTree = "<group>"; };
 		9848C13721F3783C008AC964 /* ARAPEnergy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ARAPEnergy.hpp; path = Energy/ARAPEnergy.hpp; sourceTree = "<group>"; };
 		9848C13C21F37851008AC964 /* Diagnostic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Diagnostic.hpp; path = UnitTest/Diagnostic.hpp; sourceTree = "<group>"; };
@@ -168,8 +168,8 @@
 				9848C13721F3783C008AC964 /* ARAPEnergy.hpp */,
 				9848C13621F3783C008AC964 /* Energy.cpp */,
 				9848C13321F3783B008AC964 /* Energy.hpp */,
-				9848C13421F3783B008AC964 /* SymStretchEnergy.cpp */,
-				9848C13521F3783C008AC964 /* SymStretchEnergy.hpp */,
+				9848C13421F3783B008AC964 /* SymDirichletEnergy.cpp */,
+				9848C13521F3783C008AC964 /* SymDirichletEnergy.hpp */,
 			);
 			name = Energy;
 			sourceTree = "<group>";
@@ -282,7 +282,7 @@
 				980180BC1F552CDA00C64B43 /* main.cpp in Sources */,
 				98CBDA2121973783003A35BD /* PardisoSolver.cpp in Sources */,
 				98CBDA1F21973783003A35BD /* CHOLMODSolver.cpp in Sources */,
-				9848C13921F3783C008AC964 /* SymStretchEnergy.cpp in Sources */,
+				9848C13921F3783C008AC964 /* SymDirichletEnergy.cpp in Sources */,
 				9848C13A21F3783C008AC964 /* Energy.cpp in Sources */,
 				9848C13821F3783C008AC964 /* ARAPEnergy.cpp in Sources */,
 				987382D12076F49A0040BBCE /* Scaffold.cpp in Sources */,

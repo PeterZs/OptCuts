@@ -8,7 +8,7 @@
 
 #include "TriangleSoup.hpp"
 #include "IglUtils.hpp"
-#include "SymStretchEnergy.hpp"
+#include "SymDirichletEnergy.hpp"
 #include "Optimizer.hpp"
 #include "Timer.hpp"
 
@@ -812,7 +812,7 @@ namespace OptCuts {
         
         std::vector<int> bestCandVerts;
         if(!propagate) {
-            SymStretchEnergy SD;
+            SymDirichletEnergy SD;
             //            double energyVal;
             //            SD.computeEnergyVal(*this, energyVal);
             Eigen::VectorXd divGradPerVert;
@@ -2564,7 +2564,7 @@ namespace OptCuts {
         TriangleSoup localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
         localMesh.resetFixedVert(fixedVert);
         
-        SymStretchEnergy SD;
+        SymDirichletEnergy SD;
         double initE = 0.0;
         for(const auto& triI : triangles) {
             double energyValI;
@@ -2734,7 +2734,7 @@ namespace OptCuts {
 //        localMesh.save("/Users/mincli/Desktop/meshes/test.obj");
 //        save("/Users/mincli/Desktop/meshes/test_full.obj");
         
-        SymStretchEnergy SD;
+        SymDirichletEnergy SD;
         double initE = 0.0;
         for(const auto& triI : triangles) {
             double energyValI;
@@ -2824,7 +2824,7 @@ namespace OptCuts {
         localMesh.resetFixedVert(fixedVert);
         
         // compute initial symmetric Dirichlet Energy value
-        SymStretchEnergy SD;
+        SymDirichletEnergy SD;
         double initE = 0.0;
         for(const auto& triI : triangles) {
             double energyValI;

@@ -119,7 +119,7 @@ namespace OptCuts{
                         assert(distFile);
                         
                         // for rendering:
-                        energyTerms.emplace_back(new OptCuts::SymStretchEnergy());
+                        energyTerms.emplace_back(new OptCuts::SymDirichletEnergy());
                         energyParams.emplace_back(1.0);
                         triSoup.resize(2);
                         viewer.core.background_color << 1.0f, 1.0f, 1.0f, 0.0f;
@@ -168,7 +168,7 @@ namespace OptCuts{
                             double seamLen;
                             resultMesh.computeSeamSparsity(seamLen, false);
                             double distortion;
-                            SymStretchEnergy SD;
+                            SymDirichletEnergy SD;
                             SD.computeEnergyVal(resultMesh, distortion);
                             file << distortion << " " << seamLen / resultMesh.virtualRadius << std::endl;
                             fprintf(distFile, "%s %lf\n", buf, distortion);

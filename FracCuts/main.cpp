@@ -1,7 +1,7 @@
 #include "Types.hpp"
 #include "IglUtils.hpp"
 #include "Optimizer.hpp"
-#include "SymStretchEnergy.hpp"
+#include "SymDirichletEnergy.hpp"
 #include "ARAPEnergy.hpp"
 #include "GIF.hpp"
 #include "Timer.hpp"
@@ -178,7 +178,7 @@ void updateViewerData_distortion(void)
         case 2: { // show other triangle-based scalar fields
             Eigen::VectorXd l2StretchPerElem;
 //            triSoup[viewChannel]->computeL2StretchPerElem(l2StretchPerElem);
-//            dynamic_cast<OptCuts::SymStretchEnergy*>(energyTerms[0])->getDivGradPerElem(*triSoup[viewChannel], l2StretchPerElem);
+//            dynamic_cast<OptCuts::SymDirichletEnergy*>(energyTerms[0])->getDivGradPerElem(*triSoup[viewChannel], l2StretchPerElem);
 //            std::cout << l2StretchPerElem << std::endl; //DEBUG
 //            OptCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis, 1.0, 2.0);
 //            OptCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis,
@@ -1587,7 +1587,7 @@ int main(int argc, char *argv[])
     assert(lambda < 1.0);
     energyParams.emplace_back(1.0 - lambda);
 //        energyTerms.emplace_back(new OptCuts::ARAPEnergy());
-    energyTerms.emplace_back(new OptCuts::SymStretchEnergy());
+    energyTerms.emplace_back(new OptCuts::SymDirichletEnergy());
 //        energyTerms.back()->checkEnergyVal(*triSoup[0]);
 //        energyTerms.back()->checkGradient(*triSoup[0]);
 //        energyTerms.back()->checkHessian(*triSoup[0], true);

@@ -7,7 +7,7 @@
 //
 
 #include "Optimizer.hpp"
-#include "SymStretchEnergy.hpp"
+#include "SymDirichletEnergy.hpp"
 #include "IglUtils.hpp"
 #include "Timer.hpp"
 
@@ -814,7 +814,7 @@ namespace OptCuts {
         if(scaffolding) {
             Eigen::VectorXd searchDir_scaffold;
             scaffold.wholeSearchDir2airMesh(searchDir, searchDir_scaffold);
-            SymStretchEnergy SD;
+            SymDirichletEnergy SD;
             SD.initStepSize(scaffold.airMesh, searchDir_scaffold, stepSize);
         }
     }
@@ -887,7 +887,7 @@ namespace OptCuts {
         }
         
         if(scaffolding && (!excludeScaffold)) {
-            SymStretchEnergy SD;
+            SymDirichletEnergy SD;
             SD.computeEnergyVal(scaffoldData.airMesh, energyVal_scaffold, true);
             energyVal_scaffold *= w_scaf / scaffold.airMesh.F.rows();
             energyVal += energyVal_scaffold;
@@ -906,7 +906,7 @@ namespace OptCuts {
         }
         
         if(scaffolding) {
-            SymStretchEnergy SD;
+            SymDirichletEnergy SD;
             SD.computeGradient(scaffoldData.airMesh, gradient_scaffold, true);
             scaffoldData.augmentGradient(gradient, gradient_scaffold, (excludeScaffold ? 0.0 : (w_scaf / scaffold.airMesh.F.rows())));
         }
@@ -924,7 +924,7 @@ namespace OptCuts {
             }
             
             if(scaffolding) {
-                SymStretchEnergy SD;
+                SymDirichletEnergy SD;
                 Eigen::MatrixXd Hessian_scaf;
                 SD.computeHessian(scaffoldData.airMesh, Hessian_scaf, true);
                 scaffoldData.augmentProxyMatrix(Hessian, Hessian_scaf, w_scaf / scaffold.airMesh.F.rows());
@@ -950,7 +950,7 @@ namespace OptCuts {
                 }
                 
                 if(scaffolding) {
-                    SymStretchEnergy SD;
+                    SymDirichletEnergy SD;
                     Eigen::VectorXi I, J;
                     Eigen::VectorXd V;
                     SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);

@@ -1,19 +1,19 @@
 //
-//  SymStretchEnergy.hpp
+//  SymDirichletEnergy.hpp
 //  OptCuts
 //
 //  Created by Minchen Li on 9/3/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
 //
 
-#ifndef SymStretchEnergy_hpp
-#define SymStretchEnergy_hpp
+#ifndef SymDirichletEnergy_hpp
+#define SymDirichletEnergy_hpp
 
 #include "Energy.hpp"
 
 namespace OptCuts {
     
-    class SymStretchEnergy : public Energy
+    class SymDirichletEnergy : public Energy
     {
     public:
         virtual void getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight = false) const;
@@ -43,7 +43,7 @@ namespace OptCuts {
         virtual void checkEnergyVal(const TriangleSoup& data) const; // check with isometric case
         
     public:
-        SymStretchEnergy(void);
+        SymDirichletEnergy(void);
         
     public:
         static void computeStressTensor(const Eigen::Vector3d v[3], const Eigen::Vector2d u[3], Eigen::Matrix2d& stressTensor);
@@ -51,4 +51,4 @@ namespace OptCuts {
     
 }
 
-#endif /* SymStretchEnergy_hpp */
+#endif /* SymDirichletEnergy_hpp */

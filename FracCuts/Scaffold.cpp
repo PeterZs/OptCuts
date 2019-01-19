@@ -8,7 +8,7 @@
 
 #include "Scaffold.hpp"
 #include "IglUtils.hpp"
-#include "SymStretchEnergy.hpp"
+#include "SymDirichletEnergy.hpp"
 #include "Timer.hpp"
 
 #include <igl/triangle/triangulate.h>
@@ -137,7 +137,7 @@ namespace OptCuts {
                         Eigen::VectorXd sepDir = Eigen::VectorXd::Zero(localMesh.V.rows() * 2);
                         sepDir.block(globalVI2local[vI] * 2, 0, 2, 1) = sepDir_oneV.transpose();
                         double stepSize_sep = 1.0;
-                        SymStretchEnergy SD;
+                        SymDirichletEnergy SD;
                         SD.initStepSize(localMesh, sepDir, stepSize_sep);
                         H.bottomRows(1) = mesh.V.row(vI) + 0.5 * stepSize_sep * sepDir_oneV;
                     }
@@ -336,7 +336,7 @@ namespace OptCuts {
         FColor.bottomRows(airMesh.F.rows()) = Eigen::MatrixXd::Ones(airMesh.F.rows(), 3);
 //        //DEBUG: for visualizing the distortion of air mesh triangles
 //        Eigen::VectorXd distortionPerElem;
-//        SymStretchEnergy SD;
+//        SymDirichletEnergy SD;
 //        SD.getEnergyValPerElem(airMesh, distortionPerElem, true);
 //        Eigen::MatrixXd color_distortionVis;
 //        OptCuts::IglUtils::mapScalarToColor(distortionPerElem, color_distortionVis, 4.0, 8.5);
