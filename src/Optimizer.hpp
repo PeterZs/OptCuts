@@ -45,13 +45,10 @@ namespace OptCuts {
         bool scaffolding; // whether to enable bijectivity parameterization
         double w_scaf;
         Scaffold scaffold; // air meshes to enforce bijectivity
-        // constant precondition matrix for solving the linear system for search directions
-        Eigen::SparseMatrix<double> precondMtr;
         Eigen::VectorXi I_mtr, J_mtr; // triplet representation
         Eigen::VectorXd V_mtr;
         Eigen::MatrixXd Hessian; // when using dense representation
         // cholesky solver for solving the linear system for search directions
-        Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> cholSolver;
         LinSysSolver<Eigen::VectorXi, Eigen::VectorXd>* linSysSolver;
         Eigen::LDLT<Eigen::MatrixXd> denseSolver;
         Eigen::VectorXd gradient; // energy gradient computed in each iteration
@@ -135,8 +132,7 @@ namespace OptCuts {
         
         void computeEnergyVal(const TriMesh& data, const Scaffold& scaffoldData, double& energyVal, bool excludeScaffold = false);
         void computeGradient(const TriMesh& data, const Scaffold& scaffoldData, Eigen::VectorXd& gradient, bool excludeScaffold = false);
-        void computePrecondMtr(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr);
-        void computeHessian(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& hessian) const;
+        void computeHessian(const TriMesh& data, const Scaffold& scaffoldData);
         
         void initStepSize(const TriMesh& data, double& stepSize) const;
         

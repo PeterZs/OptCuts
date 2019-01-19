@@ -79,7 +79,6 @@ namespace OptCuts {
             }
         }
         
-//        pardisoThreadAmt = 0;
         pardisoThreadAmt = 1; //TODO: use more threads!
         
         scaffolding = p_scaffolding;
@@ -163,41 +162,31 @@ namespace OptCuts {
             scaffold.mergeFixedV(result.fixedVert, fixedV_withScaf);
         }
         
-        computePrecondMtr(result, scaffold, precondMtr);
+        computeHessian(result, scaffold);
         
-        if(!pardisoThreadAmt) {
-            cholSolver.analyzePattern(precondMtr);
-            cholSolver.factorize(precondMtr);
-            if(cholSolver.info() != Eigen::Success) {
-                assert(0 && "Cholesky decomposition failed!");
+        if(useDense) {
+            if(!needRefactorize) {
+                denseSolver = Hessian.ldlt();
             }
         }
         else {
-            if(useDense) {
-                if(!needRefactorize) {
-                    denseSolver = Hessian.ldlt();
+            if(!mute) { timer_step.start(1); }
+            linSysSolver->set_type(pardisoThreadAmt, -2);
+            linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                                      scaffolding ? fixedV_withScaf : result.fixedVert);
+            linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
+            if(!mute) { timer_step.stop(); timer_step.start(2); }
+            linSysSolver->analyze_pattern();
+            if(!mute) { timer_step.stop(); }
+            if(!needRefactorize) {
+                try {
+                    if(!mute) { timer_step.start(3); }
+                    linSysSolver->factorize();
+                    if(!mute) { timer_step.stop(); }
                 }
-            }
-            else {
-                if(!mute) { timer_step.start(1); }
-                linSysSolver->set_type(pardisoThreadAmt, -2);
-    //            linSysSolver->set_pattern(I_mtr, J_mtr, V_mtr);
-                linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
-                                          scaffolding ? fixedV_withScaf : result.fixedVert);
-                linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
-                if(!mute) { timer_step.stop(); timer_step.start(2); }
-                linSysSolver->analyze_pattern();
-                if(!mute) { timer_step.stop(); }
-                if(!needRefactorize) {
-                    try {
-                        if(!mute) { timer_step.start(3); }
-                        linSysSolver->factorize();
-                        if(!mute) { timer_step.stop(); }
-                    }
-                    catch(std::exception e) {
-                        IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr_factorizeFail", I_mtr, J_mtr, V_mtr, true);
-                        exit(-1);
-                    }
+                catch(std::exception e) {
+                    IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr_factorizeFail", I_mtr, J_mtr, V_mtr, true);
+                    exit(-1);
                 }
             }
         }
@@ -240,15 +229,9 @@ namespace OptCuts {
             }
             globalIterNum++;
             if(!mute) { timer.stop(); }
-//            //DEBUG
-//            if(globalIterNum > 1220) {
-//                result.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_afterPN.obj");
-//                scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_afterPN_AM.obj");
-//            }
             
             if(propagateFracture > 0) {
                 if(!createFracture(lastEDec, propagateFracture)) {
-//                    propagateFracture = 0;
                     // always perform the one decreasing E_w more
                     if(scaffolding) {
                         scaffold = Scaffold(result, UV_bnds_scaffold, E_scaffold, bnd_scaffold);
@@ -265,10 +248,6 @@ namespace OptCuts {
                 else {
                     lastPropagate = true;
                 }
-                // for alternating propagation with lambda updates
-//                if(createFracture(lastEDec, propagateFracture)) {
-//                    return 2;
-//                }
             }
             else {
                 if(scaffolding) {
@@ -292,26 +271,17 @@ namespace OptCuts {
         if(!mute) {
             std::cout << "recompute proxy/Hessian matrix and factorize..." << std::endl;
         }
-        computePrecondMtr(result, scaffold, precondMtr);
-        if(!pardisoThreadAmt) {
-            cholSolver.factorize(precondMtr);
-            if(cholSolver.info() != Eigen::Success) {
-                IglUtils::writeSparseMatrixToFile(outputFolderPath + "precondMtr_decomposeFailed", precondMtr);
-                assert(0 && "Cholesky decomposition failed!");
-            }
+        computeHessian(result, scaffold);
+        
+        if(useDense) {
+            denseSolver = Hessian.ldlt();
         }
         else {
-            if(useDense) {
-                denseSolver = Hessian.ldlt();
-            }
-            else {
-                if(!mute) { timer_step.start(1); }
-    //            linSysSolver->update_a(V_mtr);
-                linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
-                if(!mute) { timer_step.stop(); timer_step.start(3); }
-                linSysSolver->factorize();
-                if(!mute) { timer_step.stop(); }
-            }
+            if(!mute) { timer_step.start(1); }
+            linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
+            if(!mute) { timer_step.stop(); timer_step.start(3); }
+            linSysSolver->factorize();
+            if(!mute) { timer_step.stop(); }
         }
     }
     
@@ -319,7 +289,7 @@ namespace OptCuts {
     {
         topoIter = p_topoIter;
         globalIterNum = iterNum;
-        result = config; //!!! is it able to copy all?
+        result = config;
         if(scaffolding) {
             scaffold = Scaffold(result, UV_bnds_scaffold, E_scaffold, bnd_scaffold);
             result.scaffold = &scaffold;
@@ -377,37 +347,25 @@ namespace OptCuts {
             if(!mute) {
                 std::cout << "recompute proxy/Hessian matrix and factorize..." << std::endl;
             }
-            computePrecondMtr(result, scaffold, precondMtr);
-            if(!pardisoThreadAmt) {
-                cholSolver.analyzePattern(precondMtr);
+            computeHessian(result, scaffold);
+            
+            if(useDense) {
                 if(!needRefactorize) {
-                    cholSolver.factorize(precondMtr);
-                    if(cholSolver.info() != Eigen::Success) {
-                        IglUtils::writeSparseMatrixToFile(outputFolderPath + "precondMtr_decomposeFailed", precondMtr);
-                        assert(0 && "Cholesky decomposition failed!");
-                    }
+                    denseSolver = Hessian.ldlt();
                 }
             }
             else {
-                if(useDense) {
-                    if(!needRefactorize) {
-                        denseSolver = Hessian.ldlt();
-                    }
-                }
-                else {
-                    if(!mute) { timer_step.start(1); }
-    //                linSysSolver->set_pattern(I_mtr, J_mtr, V_mtr);
-                    linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
-                                              scaffolding ? fixedV_withScaf : result.fixedVert);
-                    linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
-                    if(!mute) { timer_step.stop(); timer_step.start(2); }
-                    linSysSolver->analyze_pattern();
+                if(!mute) { timer_step.start(1); }
+                linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                                          scaffolding ? fixedV_withScaf : result.fixedVert);
+                linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
+                if(!mute) { timer_step.stop(); timer_step.start(2); }
+                linSysSolver->analyze_pattern();
+                if(!mute) { timer_step.stop(); }
+                if(!needRefactorize) {
+                    if(!mute) { timer_step.start(3); }
+                    linSysSolver->factorize();
                     if(!mute) { timer_step.stop(); }
-                    if(!needRefactorize) {
-                        if(!mute) { timer_step.start(3); }
-                        linSysSolver->factorize();
-                        if(!mute) { timer_step.stop(); }
-                    }
                 }
             }
         }
@@ -418,11 +376,6 @@ namespace OptCuts {
         assert(methodType == MT_OURS);
         
         topoIter++;
-//        //DEBUG
-//        if(globalIterNum > 520) {
-//            result.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_preTopo.obj");
-//            scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_preTopo_AM.obj");
-//        }
         
         timer.start(0);
         bool isMerge = false;
@@ -462,9 +415,6 @@ namespace OptCuts {
                 break;
         }
         timer.stop();
-//        logFile << result.V.rows() << std::endl;
-//        logFile << result.F << std::endl; //DEBUG
-//        logFile << result.cohE << std::endl; //DEBUG
         
         if(scaffolding) {
             scaffold = Scaffold(result, UV_bnds_scaffold, E_scaffold, bnd_scaffold);
@@ -472,11 +422,6 @@ namespace OptCuts {
             scaffold.mergeVNeighbor(result.vNeighbor, vNeighbor_withScaf);
             scaffold.mergeFixedV(result.fixedVert, fixedV_withScaf);
         }
-//            //DEBUG
-//            if(globalIterNum > 10) {
-//                result.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_postTopo.obj");
-//                scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_postTopo_AM.obj");
-//            }
         
         timer.start(3);
         updateEnergyData(true, false, true);
@@ -498,11 +443,6 @@ namespace OptCuts {
         if(propType == 0) {
             topoIter++;
         }
-//        //DEBUG
-//        if(globalIterNum > 520) {
-//            result.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_preTopo.obj");
-//            scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_preTopo_AM.obj");
-//        }
         
         timer.start(0);
         bool changed = false;
@@ -514,13 +454,6 @@ namespace OptCuts {
                 switch(propType) {
                     case 0: // initiation
                         changed = result.splitOrMerge(1.0 - energyParams[0], stressThres, false, allowInSplit, isMerge);
-//                        //DEBUG:
-//                        if(allowInSplit) {
-//                            changed = false;
-//                        }
-//                        else {
-//                            changed = result.splitOrMerge(1.0 - energyParams[0], stressThres, false, allowInSplit, isMerge);
-//                        }
                         break;
                         
                     case 1: // propagate split
@@ -529,7 +462,6 @@ namespace OptCuts {
                         
                     case 2: // propagate merge
                         changed = result.mergeEdge(1.0 - energyParams[0], stressThres, true);
-//                        changed = false;
                         isMerge = true;
                         break;
                 }
@@ -547,25 +479,14 @@ namespace OptCuts {
                 break;
         }
         timer.stop();
-//        logFile << result.V.rows() << std::endl;
+        
         if(changed) {
-            // In fact currently it will always change
-            // because we are doing it anyway and roll back
-            // if it increase E_w
-//            logFile << result.F << std::endl; //DEBUG
-//            logFile << result.cohE << std::endl; //DEBUG
-            
             if(scaffolding) {
                 scaffold = Scaffold(result, UV_bnds_scaffold, E_scaffold, bnd_scaffold);
                 result.scaffold = &scaffold;
                 scaffold.mergeVNeighbor(result.vNeighbor, vNeighbor_withScaf);
                 scaffold.mergeFixedV(result.fixedVert, fixedV_withScaf);
             }
-//            //DEBUG
-//            if(globalIterNum > 10) {
-//                result.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_postTopo.obj");
-//                scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test"+std::to_string(globalIterNum)+"_postTopo_AM.obj");
-//            }
             
             timer.start(3);
             updateEnergyData(true, false, true);
@@ -576,7 +497,6 @@ namespace OptCuts {
             }
             
             if(allowPropagate && (propType == 0)) {
-//                solve(1);
                 propagateFracture = 1 + isMerge;
             }
         }
@@ -591,86 +511,65 @@ namespace OptCuts {
                 std::cout << "recompute proxy/Hessian matrix..." << std::endl;
             }
             if(!fractureInitiated) {
-                computePrecondMtr(result, scaffold, precondMtr);
+                computeHessian(result, scaffold);
             }
             
             if(!mute) {
                 std::cout << "factorizing proxy/Hessian matrix..." << std::endl;
             }
-            if(!pardisoThreadAmt) {
-                cholSolver.factorize(precondMtr);
-                if(cholSolver.info() != Eigen::Success) {
-                    IglUtils::writeSparseMatrixToFile(outputFolderPath + "precondMtr_decomposeFailed", precondMtr);
-                    assert(0 && "Cholesky decomposition failed!");
-                }
-            }
-            else {
-                if(!fractureInitiated) {
-                    if(!useDense) {
-                        if(scaffolding) {
-                            if(!mute) { timer_step.start(1); }
-    //                        linSysSolver->set_pattern(I_mtr, J_mtr, V_mtr);
-                            linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
-                                                      scaffolding ? fixedV_withScaf : result.fixedVert);
-                            linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
-                            if(!mute) { timer_step.stop(); timer_step.start(2); }
-                            linSysSolver->analyze_pattern();
-                            if(!mute) { timer_step.stop(); }
-                        }
-                        else {
-                            if(!mute) { timer_step.start(1); }
-    //                        linSysSolver->update_a(V_mtr);
-                            linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
-                            if(!mute) { timer_step.stop(); }
-                        }
-                    }
-                }
-                try {
-                    if(!mute) { timer_step.start(3); }
-                    if(useDense) {
-                        denseSolver = Hessian.ldlt();
+            
+            if(!fractureInitiated) {
+                if(!useDense) {
+                    if(scaffolding) {
+                        if(!mute) { timer_step.start(1); }
+                        linSysSolver->set_pattern(scaffolding ? vNeighbor_withScaf : result.vNeighbor,
+                                                  scaffolding ? fixedV_withScaf : result.fixedVert);
+                        linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
+                        if(!mute) { timer_step.stop(); timer_step.start(2); }
+                        linSysSolver->analyze_pattern();
+                        if(!mute) { timer_step.stop(); }
                     }
                     else {
-                        linSysSolver->factorize();
+                        if(!mute) { timer_step.start(1); }
+                        linSysSolver->update_a(I_mtr, J_mtr, V_mtr);
+                        if(!mute) { timer_step.stop(); }
                     }
-                    if(!mute) { timer_step.stop(); }
                 }
-                catch(std::exception e) {
-                    if(!useDense) {
-                        IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr",
-                                                          I_mtr, J_mtr, V_mtr, true);
-                    }
-                    exit(-1);
+            }
+            try {
+                if(!mute) { timer_step.start(3); }
+                if(useDense) {
+                    denseSolver = Hessian.ldlt();
                 }
+                else {
+                    linSysSolver->factorize();
+                }
+                if(!mute) { timer_step.stop(); }
+            }
+            catch(std::exception e) {
+                if(!useDense) {
+                    IglUtils::writeSparseMatrixToFile(outputFolderPath + "mtr",
+                                                      I_mtr, J_mtr, V_mtr, true);
+                }
+                exit(-1);
             }
         }
         
-        if(!pardisoThreadAmt) {
-            searchDir = cholSolver.solve(-gradient);
-            if(cholSolver.info() != Eigen::Success) {
-                assert(0 && "Cholesky solve failed!");
-            }
+        Eigen::VectorXd minusG = -gradient;
+        if(!mute) { timer_step.start(4); }
+        if(useDense) {
+            searchDir = denseSolver.solve(minusG);
         }
         else {
-            Eigen::VectorXd minusG = -gradient;
-            if(!mute) { timer_step.start(4); }
-            if(useDense) {
-                searchDir = denseSolver.solve(minusG);
-            }
-            else {
-                linSysSolver->solve(minusG, searchDir);
-            }
-            if(!mute) { timer_step.stop(); }
+            linSysSolver->solve(minusG, searchDir);
         }
+        if(!mute) { timer_step.stop(); }
+        
         fractureInitiated = false;
         
         if(!mute) { timer_step.start(5); }
         bool stopped = lineSearch();
         if(!mute) { timer_step.stop(); }
-        if(stopped) {
-//            IglUtils::writeSparseMatrixToFile(outputFolderPath + "precondMtr_stopped_" + std::to_string(globalIterNum), precondMtr);
-//            logFile << "descent step stopped at overallIter" << globalIterNum << " for no prominent energy decrease." << std::endl;
-        }
         return stopped;
     }
     
@@ -685,41 +584,30 @@ namespace OptCuts {
         }
         
         double lastEnergyVal_scaffold = 0.0;
-//        const double m = searchDir.dot(gradient);
-//        const double c1m = 1.0e-4 * m;
         Eigen::MatrixXd resultV0 = result.V;
-//        TriMesh temp = result; //TEST
         Eigen::MatrixXd scaffoldV0;
         if(scaffolding) {
-//            Scaffold tempp = scaffold;
             scaffoldV0 = scaffold.airMesh.V;
             computeEnergyVal(result, scaffold, lastEnergyVal); // this update is necessary since scaffold changes
             lastEnergyVal_scaffold = energyVal_scaffold;
         }
         stepForward(resultV0, scaffoldV0, result, scaffold, stepSize);
         double testingE;
-//        Eigen::VectorXd testingG;
         computeEnergyVal(result, scaffold, testingE);
-//        computeGradient(testingData, testingG);
         
-//        while((testingE > lastEnergyVal + stepSize * c1m) ||
-//              (searchDir.dot(testingG) < c2m)) // Wolfe condition
-        while(testingE > lastEnergyVal) // Armijo condition
-//        while(0)
+        while(testingE > lastEnergyVal) // ensure energy decrease
         {
             stepSize /= 2.0;
             if(stepSize == 0.0) {
                 stopped = true;
                 if(!mute) {
                     logFile << "testingE" << globalIterNum << " " << testingE << " > " << lastEnergyVal << std::endl;
-//                    logFile << "testingG" << globalIterNum << " " << searchDir.dot(testingG) << " < " << c2m << std::endl;
                 }
                 break;
             }
             
             stepForward(resultV0, scaffoldV0, result, scaffold, stepSize);
             computeEnergyVal(result, scaffold, testingE);
-//            computeGradient(testingData, testingG);
         }
         if(!mute) {
             std::cout << stepSize << "(armijo) ";
@@ -745,10 +633,8 @@ namespace OptCuts {
         if(scaffolding) {
             lastEDec += (-lastEnergyVal_scaffold + energyVal_scaffold);
         }
-//        lastEDec = (lastEnergyVal - testingE) / stepSize;
-        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (stepSize > 1.0e-3)) { // avoid stopping in hard situations
-//        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize)) {
-            // no prominent energy decrease, stop for accelerating the process
+        if(allowEDecRelTol && (lastEDec / lastEnergyVal < 1.0e-6 * stepSize) && (stepSize > 1.0e-3))
+        { // avoid stopping in hard situations
             stopped = true;
         }
         lastEnergyVal = testingE;
@@ -789,7 +675,6 @@ namespace OptCuts {
     
     void Optimizer::updateTargetGRes(void)
     {
-//        targetGRes = energyParamSum * (data0.V_rest.rows() - data0.fixedVert.size()) * relGL2Tol * data0.avgEdgeLen * data0.avgEdgeLen;
         targetGRes = energyParamSum * static_cast<double>(data0.V_rest.rows() - data0.fixedVert.size()) / static_cast<double>(data0.V_rest.rows()) * relGL2Tol;
     }
     
@@ -911,7 +796,7 @@ namespace OptCuts {
             scaffoldData.augmentGradient(gradient, gradient_scaffold, (excludeScaffold ? 0.0 : (w_scaf / scaffold.airMesh.F.rows())));
         }
     }
-    void Optimizer::computePrecondMtr(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& precondMtr)
+    void Optimizer::computeHessian(const TriMesh& data, const Scaffold& scaffoldData)
     {
         if(!mute) { timer_step.start(0); }
         if(useDense) {
@@ -931,97 +816,31 @@ namespace OptCuts {
             }
         }
         else {
-            if(pardisoThreadAmt) {
-                I_mtr.resize(0);
-                J_mtr.resize(0);
-                V_mtr.resize(0);
-                //!!! should consider add first and then do projected Newton if multiple energies are used
-                for(int eI = 0; eI < energyTerms.size(); eI++) {
-                    Eigen::VectorXi I, J;
-                    Eigen::VectorXd V;
-                    energyTerms[eI]->computePrecondMtr(data, &V, &I, &J);
-                    V *= energyParams[eI];
-                    I_mtr.conservativeResize(I_mtr.size() + I.size());
-                    I_mtr.bottomRows(I.size()) = I;
-                    J_mtr.conservativeResize(J_mtr.size() + J.size());
-                    J_mtr.bottomRows(J.size()) = J;
-                    V_mtr.conservativeResize(V_mtr.size() + V.size());
-                    V_mtr.bottomRows(V.size()) = V;
-                }
-                
-                if(scaffolding) {
-                    SymDirichletEnergy SD;
-                    Eigen::VectorXi I, J;
-                    Eigen::VectorXd V;
-                    SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);
-                    scaffoldData.augmentProxyMatrix(I_mtr, J_mtr, V_mtr, I, J, V, w_scaf / scaffold.airMesh.F.rows());
-                }
-    //            IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/OptCuts/mtr", I_mtr, J_mtr, V_mtr, true);
+            I_mtr.resize(0);
+            J_mtr.resize(0);
+            V_mtr.resize(0);
+            for(int eI = 0; eI < energyTerms.size(); eI++) {
+                Eigen::VectorXi I, J;
+                Eigen::VectorXd V;
+                energyTerms[eI]->computePrecondMtr(data, &V, &I, &J);
+                V *= energyParams[eI];
+                I_mtr.conservativeResize(I_mtr.size() + I.size());
+                I_mtr.bottomRows(I.size()) = I;
+                J_mtr.conservativeResize(J_mtr.size() + J.size());
+                J_mtr.bottomRows(J.size()) = J;
+                V_mtr.conservativeResize(V_mtr.size() + V.size());
+                V_mtr.bottomRows(V.size()) = V;
             }
-            else {
-                //TODO: triplet representation for eigen matrices
-                //TODO: SCAFFOLDING
-                precondMtr.setZero();
-                energyTerms[0]->computePrecondMtr(data, precondMtr);
-                precondMtr *= energyParams[0];
-                for(int eI = 1; eI < energyTerms.size(); eI++) {
-                    Eigen::SparseMatrix<double> precondMtrI;
-                    energyTerms[eI]->computePrecondMtr(data, precondMtrI);
-                    if(precondMtrI.rows() == precondMtr.rows() * 2) {
-                        precondMtrI *= energyParams[eI];
-                        for (int k = 0; k < precondMtr.outerSize(); ++k)
-                        {
-                            for (Eigen::SparseMatrix<double>::InnerIterator it(precondMtr, k); it; ++it)
-                            {
-                                precondMtrI.coeffRef(it.row() * 2, it.col() * 2) += it.value();
-                                precondMtrI.coeffRef(it.row() * 2 + 1, it.col() * 2 + 1) += it.value();
-                            }
-                        }
-                        precondMtr = precondMtrI;
-                    }
-                    else if(precondMtrI.rows() * 2 == precondMtr.rows()) {
-                        for (int k = 0; k < precondMtrI.outerSize(); ++k)
-                        {
-                            for (Eigen::SparseMatrix<double>::InnerIterator it(precondMtrI, k); it; ++it)
-                            {
-                                precondMtr.coeffRef(it.row() * 2, it.col() * 2) += energyParams[eI] * it.value();
-                                precondMtr.coeffRef(it.row() * 2 + 1, it.col() * 2 + 1) += energyParams[eI] * it.value();
-                            }
-                        }
-                    }
-                    else {
-                        assert(precondMtrI.rows() == precondMtr.rows());
-                        precondMtr += energyParams[eI] * precondMtrI;
-                    }
-                }
+            
+            if(scaffolding) {
+                SymDirichletEnergy SD;
+                Eigen::VectorXi I, J;
+                Eigen::VectorXd V;
+                SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);
+                scaffoldData.augmentProxyMatrix(I_mtr, J_mtr, V_mtr, I, J, V, w_scaf / scaffold.airMesh.F.rows());
             }
         }
         if(!mute) { timer_step.stop(); }
-//        Eigen::BDCSVD<Eigen::MatrixXd> svd((Eigen::MatrixXd(precondMtr)));
-//        logFile << "singular values of precondMtr_E:" << std::endl << svd.singularValues() << std::endl;
-//        double det = 1.0;
-//        for(int i = svd.singularValues().size() - 1; i >= 0; i--) {
-//            det *= svd.singularValues()[i];
-//        }
-//        std::cout << "det(precondMtr_E) = " << det << std::endl;
-        
-//        const double det = Eigen::MatrixXd(precondMtr).determinant();
-//        logFile << det << std::endl;
-//        if(det <= 1e-10) {
-//            std::cout << "***Warning: Indefinte hessian!" << std::endl;
-//        }
-    }
-    void Optimizer::computeHessian(const TriMesh& data, const Scaffold& scaffoldData, Eigen::SparseMatrix<double>& hessian) const
-    {
-        energyTerms[0]->computeHessian(data, hessian);
-        hessian *= energyParams[0];
-        for(int eI = 1; eI < energyTerms.size(); eI++) {
-            Eigen::SparseMatrix<double> hessianI;
-            energyTerms[eI]->computeHessian(data, hessianI);
-            hessian += energyParams[eI] * hessianI;
-        }
-        
-        //TODO: SCAFFOLDING
     }
     
     double Optimizer::getLastEnergyVal(bool excludeScaffold) const
