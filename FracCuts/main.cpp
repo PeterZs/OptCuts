@@ -3,8 +3,6 @@
 #include "Optimizer.hpp"
 #include "SymStretchEnergy.hpp"
 #include "ARAPEnergy.hpp"
-#include "SeparationEnergy.hpp"
-#include "CohesiveEnergy.hpp"
 #include "GIF.hpp"
 #include "Timer.hpp"
 
@@ -155,17 +153,11 @@ void updateViewerData_seam(Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::Matrix
             const auto finder = triSoup[viewChannel]->edge2Tri.find(std::pair<int, int>(cohE[0], cohE[1]));
             assert(finder != triSoup[viewChannel]->edge2Tri.end());
             const Eigen::RowVector3d& sn = triSoup[viewChannel]->triNormal.row(finder->second);
-            if((seamScore[eI] > seamDistThres) || (methodType != FracCuts::MT_AUTOCUTS)) {
-                // seam edge
-                FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[0]), V.row(cohE[1]), seamThickness, texScale, !viewUV, sn);
-                if(viewUV) {
-                    FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[2]), V.row(cohE[3]), seamThickness, texScale, !viewUV, sn);
-                }
-            }
-            else if((seamScore[eI] < 0.0) && showBoundary) {
-                // boundary edge
-                //TODO: debug!
-                FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[0]), V.row(cohE[1]), seamThickness, texScale, !viewUV, sn);
+            
+            // seam edge
+            FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[0]), V.row(cohE[1]), seamThickness, texScale, !viewUV, sn);
+            if(viewUV) {
+                FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[2]), V.row(cohE[3]), seamThickness, texScale, !viewUV, sn);
             }
         }
     }
@@ -489,48 +481,6 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
                 break;
             }
                 
-            case 'h':
-            case 'H': { //!!!needsUpdate mannual homotopy optimization
-                FracCuts::SeparationEnergy *sepE = NULL;
-                for(const auto eTermI : energyTerms) {
-                    sepE = dynamic_cast<FracCuts::SeparationEnergy*>(eTermI);
-                    if(sepE != NULL) {
-                        break;
-                    }
-                }
-                
-                if(sepE != NULL) {
-                    saveScreenshot(outputFolderPath + "homotopyFS_" + std::to_string(sepE->getSigmaParam()) + ".png", 0.5);
-                    triSoup[channel_result]->save(outputFolderPath + "homotopyFS_" + std::to_string(sepE->getSigmaParam()) + ".obj");
-                    triSoup[channel_result]->saveAsMesh(outputFolderPath + "homotopyFS_" + std::to_string(sepE->getSigmaParam()) + "_mesh.obj");
-                    
-                    if(sepE->decreaseSigma())
-                    {
-                        homoTransFile << iterNum << std::endl;
-                        optimizer->computeLastEnergyVal();
-                        converged = false;
-                        optimizer->updatePrecondMtrAndFactorize();
-                        if(fractureMode) {
-                            // won't be called now since we are using standard AutoCuts
-                            assert(0);
-                            optimizer->createFracture(fracThres, false, !altBase);
-                        }
-                    }
-                    else {
-                        triSoup[channel_result]->saveAsMesh(outputFolderPath + "result_mesh_01UV.obj", true);
-                        
-                        optimization_on = false;
-                        viewer.core.is_animating = false;
-                        std::cout << "optimization converged." << std::endl;
-                        homoTransFile.close();
-                    }
-                }
-                else {
-                    std::cout << "No homotopy settings!" << std::endl;
-                }
-                break;
-            }
-                
             case 'o':
             case 'O': {
                 infoName = std::to_string(iterNum);
@@ -563,6 +513,7 @@ bool postDrawFunc(igl::opengl::glfw::Viewer& viewer)
     if(saveInfo_postDraw) {
         saveInfo_postDraw = false;
         saveInfo(outerLoopFinished, true, outerLoopFinished);
+//        saveInfo(true, false, false);
         // Note that the content saved in the screenshots are depends on where updateViewerData() is called
         if(outerLoopFinished) {
 //            triSoup[channel_result]->saveAsMesh(outputFolderPath + infoName + "_mesh_01UV.obj", true);
@@ -1014,22 +965,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
 //        viewChannel = channel_result;
         updateViewerData();
         
-        FracCuts::SeparationEnergy *sepE = NULL;
-        for(const auto eTermI : energyTerms) {
-            sepE = dynamic_cast<FracCuts::SeparationEnergy*>(eTermI);
-            if(sepE != NULL) {
-                break;
-            }
-        }
-        
-        if(methodType == FracCuts::MT_AUTOCUTS) {
-            assert(sepE != NULL);
-            if((iterNum < 10) || (iterNum % 10 == 0)) {
-//                saveScreenshot(outputFolderPath + std::to_string(iterNum) + ".png", 1.0);
-                saveInfo_postDraw = true;
-            }
-        }
-        
         if(converged) {
             saveInfo_postDraw = true;
             
@@ -1051,39 +986,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
             }
             
             switch(methodType) {
-                case FracCuts::MT_AUTOCUTS: {
-                    infoName = "homotopy_" + std::to_string(sepE->getSigmaParam());
-                    if(autoHomotopy && sepE->decreaseSigma()) {
-                        homoTransFile << iterNum << std::endl;
-                        optimizer->computeLastEnergyVal();
-                        converged = false;
-                    }
-                    else {
-                        infoName = "finalResult";
-
-                        // perform exact solve
-//                        optimizer->setRelGL2Tol(1.0e-8);
-                        optimizer->setAllowEDecRelTol(false);
-                        converged = false;
-                        while(!converged) {
-                            proceedOptimization(1000);
-                        }
-                        secPast += difftime(time(NULL), lastStart_world);
-                        updateViewerData();
-                        
-                        optimization_on = false;
-                        viewer.core.is_animating = false;
-                        std::cout << "optimization converged, with " << secPast << "s." << std::endl;
-                        logFile << "optimization converged, with " << secPast << "s." << std::endl;
-                        homoTransFile.close();
-                        outerLoopFinished = true;
-                    }
-                    //!!!TODO: energy and grad file output!
-                    // flush
-                    // decrease delta will change E_s thus E_w
-                    break;
-                }
-                    
                 case FracCuts::MT_GEOMIMG: {
                     if(measure_bound <= upperBound) {
                         logFile << "measure reaches user specified upperbound " << upperBound << std::endl;
@@ -1351,7 +1253,7 @@ int main(int argc, char *argv[])
     else {
         std::cout << "Use default method: ours." << std::endl;
     }
-    bool startWithTriSoup = (methodType == FracCuts::MT_AUTOCUTS);
+    
     std::string startDS;
     switch (methodType) {
         case FracCuts::MT_OURS_FIXED:
@@ -1367,13 +1269,6 @@ int main(int argc, char *argv[])
         case FracCuts::MT_GEOMIMG:
             assert(lambda < 1.0);
             startDS = "GeomImg";
-            bijectiveParam = false;
-            break;
-            
-        case FracCuts::MT_AUTOCUTS:
-            assert(lambda > 0.0);
-            assert(delta > 0.0);
-            startDS = "AutoCuts";
             bijectiveParam = false;
             break;
             
@@ -1452,7 +1347,7 @@ int main(int argc, char *argv[])
 //        igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
         
         // with input UV
-        FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, UV, FUV, startWithTriSoup);
+        FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, UV, FUV, false);
         outputFolderPath += meshName + "_input_" + FracCuts::IglUtils::rtos(lambda) + "_" +
             FracCuts::IglUtils::rtos(delta) + "_" +startDS + folderTail;
         
@@ -1543,7 +1438,7 @@ int main(int argc, char *argv[])
 //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
 //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
             
-            triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), startWithTriSoup));
+            triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false));
             outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
                 "_" + startDS + folderTail;
         }
@@ -1619,40 +1514,31 @@ int main(int argc, char *argv[])
                 //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
                 //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
                 
-                FracCuts::TriangleSoup* ptr = new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), startWithTriSoup);
+                FracCuts::TriangleSoup* ptr = new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false);
                 ptr->buildCohEfromRecord(cohEdgeRecord);
                 triSoup.emplace_back(ptr);
                 outputFolderPath += meshName + "_HighGenus_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) + "_" + startDS + folderTail;
             }
             else {
-                if(startWithTriSoup) {
-                    // rigid initialization, the most stable initialization for AutoCuts...
-                    assert((lambda > 0.0) && startWithTriSoup);
-                    triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd()));
-                    outputFolderPath += meshName + "_rigid_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
-                        "_" + startDS + folderTail;
-                }
-                else {
-                    FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
-    //                temp->farthestPointCut(); // open up a boundary for Tutte embedding
-    //                temp->highCurvOnePointCut();
-                    temp->onePointCut();
-                    rand1PInitCut = true;
-                    
-                    igl::boundary_loop(temp->F, bnd);
-                    assert(bnd.size());
-                    Eigen::MatrixXd bnd_uv;
-                    FracCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
-                    Eigen::SparseMatrix<double> A, M;
-                    FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
-                    Eigen::MatrixXd UV_Tutte;
-                    igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
-                    triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, temp->F, startWithTriSoup, temp->initSeamLen));
-                    
-                    delete temp;
-                    outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
-                                    "_" + startDS + folderTail;
-                }
+                FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+//                temp->farthestPointCut(); // open up a boundary for Tutte embedding
+//                temp->highCurvOnePointCut();
+                temp->onePointCut();
+                rand1PInitCut = true;
+                
+                igl::boundary_loop(temp->F, bnd);
+                assert(bnd.size());
+                Eigen::MatrixXd bnd_uv;
+                FracCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
+                Eigen::SparseMatrix<double> A, M;
+                FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+                Eigen::MatrixXd UV_Tutte;
+                igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
+                triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
+                
+                delete temp;
+                outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
+                                "_" + startDS + folderTail;
             }
         }
     }
@@ -1698,23 +1584,14 @@ int main(int argc, char *argv[])
     
     // * Our approach
     texScale = 10.0 / (triSoup[0]->bbox.row(1) - triSoup[0]->bbox.row(0)).maxCoeff();
-    if(lambda != 1.0) {
-        energyParams.emplace_back(1.0 - lambda);
+    assert(lambda < 1.0);
+    energyParams.emplace_back(1.0 - lambda);
 //        energyTerms.emplace_back(new FracCuts::ARAPEnergy());
-        energyTerms.emplace_back(new FracCuts::SymStretchEnergy());
+    energyTerms.emplace_back(new FracCuts::SymStretchEnergy());
 //        energyTerms.back()->checkEnergyVal(*triSoup[0]);
 //        energyTerms.back()->checkGradient(*triSoup[0]);
 //        energyTerms.back()->checkHessian(*triSoup[0], true);
-    }
-    if((lambda != 0.0) && startWithTriSoup) {
-        //DEBUG alternating framework
-        energyParams.emplace_back(lambda);
-        energyTerms.emplace_back(new FracCuts::SeparationEnergy(triSoup[0]->avgEdgeLen * triSoup[0]->avgEdgeLen, delta));
-//        energyTerms.emplace_back(new FracCuts::CohesiveEnergy(triSoup[0]->avgEdgeLen, delta));
-//        energyTerms.back()->checkEnergyVal(*triSoup[0]);
-//        energyTerms.back()->checkGradient(*triSoup[0]);
-//        energyTerms.back()->checkHessian(*triSoup[0]);
-    }
+    
     optimizer = new FracCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, bijectiveParam && !rand1PInitCut); // for random one point initial cut, don't need air meshes in the beginning since it's impossible for a quad to intersect itself
     //TODO: bijectivity for other mode?
 //    optimizer->setUseDense(); //DEBUG
@@ -1722,7 +1599,7 @@ int main(int argc, char *argv[])
     triSoup.emplace_back(&optimizer->getResult());
     triSoup_backup = optimizer->getResult();
     triSoup.emplace_back(&optimizer->getData_findExtrema()); // for visualizing UV map for finding extrema
-    if((lambda > 0.0) && (!startWithTriSoup)) {
+    if(lambda > 0.0) {
         //!!!TODO: put into switch(methodType)
         // fracture mode
         fractureMode = true;

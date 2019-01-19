@@ -18,7 +18,6 @@
 namespace FracCuts {
     enum MethodType {
         MT_OURS,
-        MT_AUTOCUTS,
         MT_GEOMIMG,
         MT_OURS_FIXED,
         MT_NOCUT

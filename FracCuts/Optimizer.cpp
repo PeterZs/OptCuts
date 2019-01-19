@@ -8,7 +8,6 @@
 
 #include "Optimizer.hpp"
 #include "SymStretchEnergy.hpp"
-#include "SeparationEnergy.hpp"
 #include "IglUtils.hpp"
 #include "Timer.hpp"
 
