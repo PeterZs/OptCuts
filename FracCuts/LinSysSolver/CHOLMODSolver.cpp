@@ -1,6 +1,6 @@
 //
 //  CHOLMODSolver.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 6/22/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace FracCuts {
+namespace OptCuts {
     
     template <typename vectorTypeI, typename vectorTypeS>
     CHOLMODSolver<vectorTypeI, vectorTypeS>::CHOLMODSolver(void)

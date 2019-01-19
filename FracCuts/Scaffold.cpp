@@ -1,6 +1,6 @@
 //
 //  Scaffold.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 4/5/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -18,7 +18,7 @@
 
 extern Timer timer;
 
-namespace FracCuts {
+namespace OptCuts {
     Scaffold::Scaffold(void)
     {
     }
@@ -339,7 +339,7 @@ namespace FracCuts {
 //        SymStretchEnergy SD;
 //        SD.getEnergyValPerElem(airMesh, distortionPerElem, true);
 //        Eigen::MatrixXd color_distortionVis;
-//        FracCuts::IglUtils::mapScalarToColor(distortionPerElem, color_distortionVis, 4.0, 8.5);
+//        OptCuts::IglUtils::mapScalarToColor(distortionPerElem, color_distortionVis, 4.0, 8.5);
 //        FColor.bottomRows(airMesh.F.rows()) = color_distortionVis;
     }
     

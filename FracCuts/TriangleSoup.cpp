@@ -1,6 +1,6 @@
 //
 //  TriangleSoup.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/30/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -32,7 +32,7 @@ extern std::vector<Eigen::MatrixXd> newVertPoses_bSplit, newVertPoses_iSplit, ne
 extern double filterExp_in;
 extern int inSplitTotalAmt;
 
-namespace FracCuts {
+namespace OptCuts {
     
     TriangleSoup::TriangleSoup(void)
     {
@@ -1553,7 +1553,7 @@ namespace FracCuts {
             // Map the boundary to a circle, preserving edge proportions
             Eigen::MatrixXd bnd_uv;
             //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
-            FracCuts::IglUtils::map_vertices_to_circle(this->V_rest, bnd, bnd_uv);
+            OptCuts::IglUtils::map_vertices_to_circle(this->V_rest, bnd, bnd_uv);
             
             Eigen::MatrixXd UV_Tutte;
             
@@ -1561,7 +1561,7 @@ namespace FracCuts {
                 case 1: {
                     // Harmonic map with uniform weights
                     Eigen::SparseMatrix<double> A, M;
-                    FracCuts::IglUtils::computeUniformLaplacian(this->F, A);
+                    OptCuts::IglUtils::computeUniformLaplacian(this->F, A);
                     igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
                     break;
                 }
@@ -1576,8 +1576,8 @@ namespace FracCuts {
                     // Shape Preserving Mesh Parameterization
                     // (Harmonic map with MVC weights)
                     Eigen::SparseMatrix<double> A;
-                    FracCuts::IglUtils::computeMVCMtr(this->V_rest, this->F, A);
-                    FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
+                    OptCuts::IglUtils::computeMVCMtr(this->V_rest, this->F, A);
+                    OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
                     break;
                 }
                     
@@ -2638,7 +2638,7 @@ namespace FracCuts {
         }
         
         // conduct optimization on local mesh
-        std::vector<FracCuts::Energy*> energyTerms(1, &SD);
+        std::vector<OptCuts::Energy*> energyTerms(1, &SD);
         std::vector<double> energyParams(1, 1.0);
         Optimizer optimizer(localMesh, energyTerms, energyParams, 0, true, isBijective,
                             UV_bnds, E, bnd, true);
@@ -2762,7 +2762,7 @@ namespace FracCuts {
         }
         
         // conduct optimization on local mesh
-        std::vector<FracCuts::Energy*> energyTerms(1, &SD);
+        std::vector<OptCuts::Energy*> energyTerms(1, &SD);
         std::vector<double> energyParams(1, 1.0);
         Optimizer optimizer(localMesh, energyTerms, energyParams, 0, true, isBijective,
                             UV_bnds, E, bnd, true);
@@ -3040,7 +3040,7 @@ namespace FracCuts {
         }
         
         // conduct optimization on local mesh
-        std::vector<FracCuts::Energy*> energyTerms(1, &SD);
+        std::vector<OptCuts::Energy*> energyTerms(1, &SD);
         std::vector<double> energyParams(1, 1.0);
         Optimizer optimizer(localMesh, energyTerms, energyParams, 0, true, !!scaffold,
                             UV_bnds, E, bnd, true);

@@ -1,6 +1,6 @@
 //
 //  Diagnostic.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 1/31/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -25,17 +25,17 @@ extern bool viewUV;
 extern bool showTexture;
 extern int showDistortion;
 extern double texScale;
-extern std::vector<const FracCuts::TriangleSoup*> triSoup;
-extern std::vector<FracCuts::Energy*> energyTerms;
+extern std::vector<const OptCuts::TriangleSoup*> triSoup;
+extern std::vector<OptCuts::Energy*> energyTerms;
 extern std::vector<double> energyParams;
-extern FracCuts::Optimizer* optimizer;
+extern OptCuts::Optimizer* optimizer;
 extern void updateViewerData(void);
 extern bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier);
 extern bool preDrawFunc(igl::opengl::glfw::Viewer& viewer);
 extern bool postDrawFunc(igl::opengl::glfw::Viewer& viewer);
 extern void saveScreenshot(const std::string& filePath, double scale, bool writeGIF, bool writePNG);
 
-namespace FracCuts{
+namespace OptCuts{
     class Diagnostic
     {
     public:
@@ -49,7 +49,7 @@ namespace FracCuts{
                         // compute SVD to a sparse matrix
                         if(argc > 3) {
                             Eigen::SparseMatrix<double> mtr;
-                            FracCuts::IglUtils::loadSparseMatrixFromFile(argv[3], mtr);
+                            OptCuts::IglUtils::loadSparseMatrixFromFile(argv[3], mtr);
                             Eigen::MatrixXd mtr_dense(mtr);
                             Eigen::BDCSVD<Eigen::MatrixXd> svd(mtr_dense);
                             std::cout << "singular values of mtr:" << std::endl << svd.singularValues() << std::endl;
@@ -119,7 +119,7 @@ namespace FracCuts{
                         assert(distFile);
                         
                         // for rendering:
-                        energyTerms.emplace_back(new FracCuts::SymStretchEnergy());
+                        energyTerms.emplace_back(new OptCuts::SymStretchEnergy());
                         energyParams.emplace_back(1.0);
                         triSoup.resize(2);
                         viewer.core.background_color << 1.0f, 1.0f, 1.0f, 0.0f;
@@ -182,7 +182,7 @@ namespace FracCuts{
                             viewUV = true;
                             showTexture = false;
                             showDistortion = true;
-                            optimizer = new FracCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, false);
+                            optimizer = new OptCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, false);
                             updateViewerData();
                             viewer.launch_rendering(false);
                             saveScreenshot(resultsFolderPath + '/' + std::string(buf) + "/finalResult.png",
@@ -266,17 +266,17 @@ namespace FracCuts{
                                 if(bnd.size()) {
                                     Eigen::MatrixXd bnd_uv;
                                     //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
-                                    FracCuts::IglUtils::map_vertices_to_circle(UV, bnd, bnd_uv);
+                                    OptCuts::IglUtils::map_vertices_to_circle(UV, bnd, bnd_uv);
                                     
                                     //            // Harmonic parametrization
                                     //            igl::harmonic(V, F, bnd, bnd_uv, 1, UV);
                                     
                                     // Harmonic map with uniform weights
                                     Eigen::SparseMatrix<double> A, M;
-                                    FracCuts::IglUtils::computeUniformLaplacian(FUV, A);
+                                    OptCuts::IglUtils::computeUniformLaplacian(FUV, A);
                                     igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
-                                    //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
-                                    //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV);
+                                    //            OptCuts::IglUtils::computeMVCMtr(V, F, A);
+                                    //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV);
                                     
                                     igl::writeOBJ(outputFolderPath + resultName + ".obj",
                                                   V, F, N, FN, UV, FUV);
@@ -351,7 +351,7 @@ namespace FracCuts{
                                           V_UV, FUV, Eigen::MatrixXd(), Eigen::MatrixXi(), UV, FUV);
                             
                             
-                            FracCuts::TriangleSoup temp(V, F, UV, FUV, false);
+                            OptCuts::TriangleSoup temp(V, F, UV, FUV, false);
                             
                             std::vector<std::vector<int>> bnd_all;
                             igl::boundary_loop(temp.F, bnd_all);
@@ -602,7 +602,7 @@ namespace FracCuts{
                                           V_UV, FUV, Eigen::MatrixXd(), Eigen::MatrixXi(), UV, FUV);
                             
                             
-                            FracCuts::TriangleSoup temp(V, F, UV, FUV, false);
+                            OptCuts::TriangleSoup temp(V, F, UV, FUV, false);
                             
                             std::vector<std::vector<int>> bnd_all;
                             igl::boundary_loop(temp.F, bnd_all);

@@ -1,6 +1,6 @@
 //
 //  Energy.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/31/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -11,7 +11,7 @@
 
 #include "TriangleSoup.hpp"
 
-namespace FracCuts {
+namespace OptCuts {
     
     // an abstract class for energy terms in the objective of an optimization problem
     class Energy {

@@ -1,6 +1,6 @@
 //
 //  Optimizer.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/31/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -26,14 +26,14 @@
 #include <string>
 #include <numeric>
 
-extern FracCuts::MethodType methodType;
+extern OptCuts::MethodType methodType;
 extern const std::string outputFolderPath;
 extern const bool fractureMode;
 
 extern std::ofstream logFile;
 extern Timer timer, timer_step;
 
-namespace FracCuts {
+namespace OptCuts {
     
     Optimizer::Optimizer(const TriangleSoup& p_data0,
                          const std::vector<Energy*>& p_energyTerms, const std::vector<double>& p_energyParams,
@@ -956,7 +956,7 @@ namespace FracCuts {
                     SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);
                     scaffoldData.augmentProxyMatrix(I_mtr, J_mtr, V_mtr, I, J, V, w_scaf / scaffold.airMesh.F.rows());
                 }
-    //            IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/FracCuts/mtr", I_mtr, J_mtr, V_mtr, true);
+    //            IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/OptCuts/mtr", I_mtr, J_mtr, V_mtr, true);
             }
             else {
                 //TODO: triplet representation for eigen matrices

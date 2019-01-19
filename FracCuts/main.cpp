@@ -30,12 +30,12 @@
 
 
 // optimization
-FracCuts::MethodType methodType;
-std::vector<const FracCuts::TriangleSoup*> triSoup;
+OptCuts::MethodType methodType;
+std::vector<const OptCuts::TriangleSoup*> triSoup;
 int vertAmt_input;
-FracCuts::TriangleSoup triSoup_backup;
-FracCuts::Optimizer* optimizer;
-std::vector<FracCuts::Energy*> energyTerms;
+OptCuts::TriangleSoup triSoup_backup;
+OptCuts::Optimizer* optimizer;
+std::vector<OptCuts::Energy*> energyTerms;
 std::vector<double> energyParams;
 //bool bijectiveParam = false;
 bool bijectiveParam = true;
@@ -140,7 +140,7 @@ void updateViewerData_seam(Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::Matrix
         const Eigen::VectorXd cohIndices = Eigen::VectorXd::LinSpaced(triSoup[viewChannel]->cohE.rows(),
                                                                 0, triSoup[viewChannel]->cohE.rows() - 1);
         Eigen::MatrixXd color;
-//        FracCuts::IglUtils::mapScalarToColor(cohIndices, color, 0, cohIndices.rows() - 1, 1);
+//        OptCuts::IglUtils::mapScalarToColor(cohIndices, color, 0, cohIndices.rows() - 1, 1);
         color.resize(cohIndices.size(), 3);
         color.rowwise() = Eigen::RowVector3d(1.0, 0.5, 0.0);
         
@@ -155,9 +155,9 @@ void updateViewerData_seam(Eigen::MatrixXd& V, Eigen::MatrixXi& F, Eigen::Matrix
             const Eigen::RowVector3d& sn = triSoup[viewChannel]->triNormal.row(finder->second);
             
             // seam edge
-            FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[0]), V.row(cohE[1]), seamThickness, texScale, !viewUV, sn);
+            OptCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[0]), V.row(cohE[1]), seamThickness, texScale, !viewUV, sn);
             if(viewUV) {
-                FracCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[2]), V.row(cohE[3]), seamThickness, texScale, !viewUV, sn);
+                OptCuts::IglUtils::addThickEdge(V, F, UV, seamColor, color.row(eI), V.row(cohE[2]), V.row(cohE[3]), seamThickness, texScale, !viewUV, sn);
             }
         }
     }
@@ -171,17 +171,17 @@ void updateViewerData_distortion(void)
         case 1: { // show SD energy value
             Eigen::VectorXd distortionPerElem;
             energyTerms[0]->getEnergyValPerElem(*triSoup[viewChannel], distortionPerElem, true);
-            FracCuts::IglUtils::mapScalarToColor(distortionPerElem, color_distortionVis, 4.0, 8.5);
+            OptCuts::IglUtils::mapScalarToColor(distortionPerElem, color_distortionVis, 4.0, 8.5);
             break;
         }
             
         case 2: { // show other triangle-based scalar fields
             Eigen::VectorXd l2StretchPerElem;
 //            triSoup[viewChannel]->computeL2StretchPerElem(l2StretchPerElem);
-//            dynamic_cast<FracCuts::SymStretchEnergy*>(energyTerms[0])->getDivGradPerElem(*triSoup[viewChannel], l2StretchPerElem);
+//            dynamic_cast<OptCuts::SymStretchEnergy*>(energyTerms[0])->getDivGradPerElem(*triSoup[viewChannel], l2StretchPerElem);
 //            std::cout << l2StretchPerElem << std::endl; //DEBUG
-//            FracCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis, 1.0, 2.0);
-//            FracCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis,
+//            OptCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis, 1.0, 2.0);
+//            OptCuts::IglUtils::mapScalarToColor(l2StretchPerElem, color_distortionVis,
 //                l2StretchPerElem.minCoeff(), l2StretchPerElem.maxCoeff());
             Eigen::VectorXd faceWeight;
             faceWeight.resize(triSoup[viewChannel]->F.rows());
@@ -191,7 +191,7 @@ void updateViewerData_distortion(void)
                                   triSoup[viewChannel]->vertWeight[triVInd[1]] +
                                   triSoup[viewChannel]->vertWeight[triVInd[2]]) / 3.0;
             }
-//            FracCuts::IglUtils::mapScalarToColor(faceWeight, color_distortionVis,
+//            OptCuts::IglUtils::mapScalarToColor(faceWeight, color_distortionVis,
 //                faceWeight.minCoeff(), faceWeight.maxCoeff());
             igl::colormap(igl::COLOR_MAP_TYPE_VIRIDIS, faceWeight, true, color_distortionVis);
             break;
@@ -666,7 +666,7 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
     //TODO?: stop when first violates bounds from feasible, don't go to best feasible. check after each merge whether distortion is violated
     // oscillation detection
     static int iterNum_bestFeasible = -1;
-    static FracCuts::TriangleSoup triSoup_bestFeasible;
+    static OptCuts::TriangleSoup triSoup_bestFeasible;
     static double E_se_bestFeasible = __DBL_MAX__;
     static int lastStationaryIterNum = 0; //!!! still necessary because boundary and interior query are with same iterNum
     static std::map<double, std::vector<std::pair<double, double>>> configs_stationaryV; //!!! better also include topology information
@@ -986,7 +986,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
             }
             
             switch(methodType) {
-                case FracCuts::MT_GEOMIMG: {
+                case OptCuts::MT_GEOMIMG: {
                     if(measure_bound <= upperBound) {
                         logFile << "measure reaches user specified upperbound " << upperBound << std::endl;
                         
@@ -1021,15 +1021,15 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     break;
                 }
                     
-                case FracCuts::MT_OURS_FIXED:
-                case FracCuts::MT_OURS: {
+                case OptCuts::MT_OURS_FIXED:
+                case OptCuts::MT_OURS: {
                     infoName = std::to_string(iterNum);
                     if(converged == 2) {
                         converged = 0;
                         return false;
                     }
                     
-                    if((methodType == FracCuts::MT_OURS) && (measure_bound <= upperBound)) {
+                    if((methodType == OptCuts::MT_OURS) && (measure_bound <= upperBound)) {
                         // save info once bound is reached for comparison
                         static bool saved = false;
                         if(!saved) {
@@ -1061,7 +1061,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     homoTransFile << iterNum_lastTopo << std::endl;
                     
                     // continue to split boundary
-                    if((methodType == FracCuts::MT_OURS) &&
+                    if((methodType == OptCuts::MT_OURS) &&
                        (!updateLambda_stationaryV()))
                     {
                         // oscillation detected
@@ -1082,7 +1082,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                             }
                             else {
                                 homoTransFile << iterNum << std::endl; // mark stationaryVT
-                                if((methodType == FracCuts::MT_OURS_FIXED) ||
+                                if((methodType == OptCuts::MT_OURS_FIXED) ||
                                    (!updateLambda_stationaryV(false, true)))
                                 {
                                     // all converged
@@ -1114,7 +1114,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     break;
                 }
                     
-                case FracCuts::MT_NOCUT: {
+                case OptCuts::MT_NOCUT: {
                     converge_preDrawFunc(viewer);
                     break;
                 }
@@ -1167,13 +1167,13 @@ int main(int argc, char *argv[])
             
         case 1: {
             // diagnostic mode
-            FracCuts::Diagnostic::run(argc, argv);
+            OptCuts::Diagnostic::run(argc, argv);
             return 0;
         }
             
         case 2: {
             // mesh processing mode
-            FracCuts::MeshProcessing::run(argc, argv);
+            OptCuts::MeshProcessing::run(argc, argv);
             return 0;
         }
             
@@ -1216,7 +1216,7 @@ int main(int argc, char *argv[])
     }
     vertAmt_input = V.rows();
 //    //DEBUG
-//    FracCuts::TriangleSoup squareMesh(FracCuts::P_SQUARE, 1.0, 0.1, false);
+//    OptCuts::TriangleSoup squareMesh(OptCuts::P_SQUARE, 1.0, 0.1, false);
 //    V = squareMesh.V_rest;
 //    F = squareMesh.F;
     
@@ -1248,7 +1248,7 @@ int main(int argc, char *argv[])
     }
     
     if(argc > 5) {
-        methodType = FracCuts::MethodType(std::stoi(argv[5]));
+        methodType = OptCuts::MethodType(std::stoi(argv[5]));
     }
     else {
         std::cout << "Use default method: ours." << std::endl;
@@ -1256,23 +1256,23 @@ int main(int argc, char *argv[])
     
     std::string startDS;
     switch (methodType) {
-        case FracCuts::MT_OURS_FIXED:
+        case OptCuts::MT_OURS_FIXED:
             assert(lambda < 1.0);
             startDS = "OursFixed";
             break;
             
-        case FracCuts::MT_OURS:
+        case OptCuts::MT_OURS:
             assert(lambda < 1.0);
             startDS = "OursBounded";
             break;
             
-        case FracCuts::MT_GEOMIMG:
+        case OptCuts::MT_GEOMIMG:
             assert(lambda < 1.0);
             startDS = "GeomImg";
             bijectiveParam = false;
             break;
             
-        case FracCuts::MT_NOCUT:
+        case OptCuts::MT_NOCUT:
             lambda = 0.0;
             startDS = "NoCut";
             break;
@@ -1341,15 +1341,15 @@ int main(int argc, char *argv[])
 //        Eigen::VectorXi bnd;
 //        igl::boundary_loop(FUV, bnd);
 //        Eigen::MatrixXd bnd_uv;
-//        FracCuts::IglUtils::map_vertices_to_circle(UV, bnd, bnd_uv);
+//        OptCuts::IglUtils::map_vertices_to_circle(UV, bnd, bnd_uv);
 //        Eigen::SparseMatrix<double> A, M;
-//        FracCuts::IglUtils::computeUniformLaplacian(FUV, A);
+//        OptCuts::IglUtils::computeUniformLaplacian(FUV, A);
 //        igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
         
         // with input UV
-        FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, UV, FUV, false);
-        outputFolderPath += meshName + "_input_" + FracCuts::IglUtils::rtos(lambda) + "_" +
-            FracCuts::IglUtils::rtos(delta) + "_" +startDS + folderTail;
+        OptCuts::TriangleSoup *temp = new OptCuts::TriangleSoup(V, F, UV, FUV, false);
+        outputFolderPath += meshName + "_input_" + OptCuts::IglUtils::rtos(lambda) + "_" +
+            OptCuts::IglUtils::rtos(delta) + "_" +startDS + folderTail;
         
 //        //TEST: for commercial software output
 //        double area = 0;
@@ -1398,7 +1398,7 @@ int main(int argc, char *argv[])
             // Harmonic map with uniform weights
             Eigen::MatrixXd UV_Tutte;
             Eigen::SparseMatrix<double> A, M;
-            FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+            OptCuts::IglUtils::computeUniformLaplacian(temp->F, A);
             igl::harmonic(A, M, bnd_stacked, bnd_uv_stacked, 1, temp->V);
 
             if(!temp->checkInversion()) {
@@ -1410,7 +1410,7 @@ int main(int argc, char *argv[])
         }
         
         triSoup.emplace_back(temp);
-//        temp->saveAsMesh("/Users/mincli/Desktop/output_FracCuts/test.obj");//DEBUG
+//        temp->saveAsMesh("/Users/mincli/Desktop/output_OptCuts/test.obj");//DEBUG
     }
     else {
         // no input UV
@@ -1424,7 +1424,7 @@ int main(int argc, char *argv[])
             // Map the boundary to a circle, preserving edge proportions
             Eigen::MatrixXd bnd_uv;
 //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
-            FracCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
+            OptCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
             
             Eigen::MatrixXd UV_Tutte;
             
@@ -1433,13 +1433,13 @@ int main(int argc, char *argv[])
             
             // Harmonic map with uniform weights
             Eigen::SparseMatrix<double> A, M;
-            FracCuts::IglUtils::computeUniformLaplacian(F, A);
+            OptCuts::IglUtils::computeUniformLaplacian(F, A);
             igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
-//            FracCuts::IglUtils::computeMVCMtr(V, F, A);
-//            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
+//            OptCuts::IglUtils::computeMVCMtr(V, F, A);
+//            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
             
-            triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false));
-            outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
+            triSoup.emplace_back(new OptCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false));
+            outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) +
                 "_" + startDS + folderTail;
         }
         else {
@@ -1453,7 +1453,7 @@ int main(int argc, char *argv[])
                 
                 // record cohesive edge information,
                 // transfer information format for cut_mesh
-                FracCuts::TriangleSoup temp(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                OptCuts::TriangleSoup temp(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
                 Eigen::MatrixXi cutFlags(F.rows(), 3);
                 Eigen::MatrixXi cohEdgeRecord;
                 cutFlags.setZero();
@@ -1503,24 +1503,24 @@ int main(int argc, char *argv[])
                 
                 Eigen::MatrixXd bnd_uv;
 //                igl::map_vertices_to_circle(V, bnd, bnd_uv);
-                FracCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
+                OptCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
                 
                 Eigen::MatrixXd UV_Tutte;
                 
                 // Harmonic map with uniform weights
                 Eigen::SparseMatrix<double> A, M;
-                FracCuts::IglUtils::computeUniformLaplacian(F, A);
+                OptCuts::IglUtils::computeUniformLaplacian(F, A);
                 igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
-                //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
-                //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
+                //            OptCuts::IglUtils::computeMVCMtr(V, F, A);
+                //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
                 
-                FracCuts::TriangleSoup* ptr = new FracCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false);
+                OptCuts::TriangleSoup* ptr = new OptCuts::TriangleSoup(V, F, UV_Tutte, Eigen::MatrixXi(), false);
                 ptr->buildCohEfromRecord(cohEdgeRecord);
                 triSoup.emplace_back(ptr);
-                outputFolderPath += meshName + "_HighGenus_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) + "_" + startDS + folderTail;
+                outputFolderPath += meshName + "_HighGenus_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) + "_" + startDS + folderTail;
             }
             else {
-                FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                OptCuts::TriangleSoup *temp = new OptCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
 //                temp->farthestPointCut(); // open up a boundary for Tutte embedding
 //                temp->highCurvOnePointCut();
                 temp->onePointCut();
@@ -1529,15 +1529,15 @@ int main(int argc, char *argv[])
                 igl::boundary_loop(temp->F, bnd);
                 assert(bnd.size());
                 Eigen::MatrixXd bnd_uv;
-                FracCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
+                OptCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
                 Eigen::SparseMatrix<double> A, M;
-                FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+                OptCuts::IglUtils::computeUniformLaplacian(temp->F, A);
                 Eigen::MatrixXd UV_Tutte;
                 igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
-                triSoup.emplace_back(new FracCuts::TriangleSoup(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
+                triSoup.emplace_back(new OptCuts::TriangleSoup(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
                 
                 delete temp;
-                outputFolderPath += meshName + "_Tutte_" + FracCuts::IglUtils::rtos(lambda) + "_" + FracCuts::IglUtils::rtos(delta) +
+                outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) +
                                 "_" + startDS + folderTail;
             }
         }
@@ -1563,7 +1563,7 @@ int main(int argc, char *argv[])
 //    arap_precomputation(V[0], F[0], 2, b, arap_data);
 //    
 //    // Solve arap using the harmonic map as initial guess
-////    triSoup = FracCuts::TriangleSoup(V[0], F[0], UV[0]);
+////    triSoup = OptCuts::TriangleSoup(V[0], F[0], UV[0]);
 //    arap_solve(bc, arap_data, UV[0]);
     
     // setup timer
@@ -1586,13 +1586,13 @@ int main(int argc, char *argv[])
     texScale = 10.0 / (triSoup[0]->bbox.row(1) - triSoup[0]->bbox.row(0)).maxCoeff();
     assert(lambda < 1.0);
     energyParams.emplace_back(1.0 - lambda);
-//        energyTerms.emplace_back(new FracCuts::ARAPEnergy());
-    energyTerms.emplace_back(new FracCuts::SymStretchEnergy());
+//        energyTerms.emplace_back(new OptCuts::ARAPEnergy());
+    energyTerms.emplace_back(new OptCuts::SymStretchEnergy());
 //        energyTerms.back()->checkEnergyVal(*triSoup[0]);
 //        energyTerms.back()->checkGradient(*triSoup[0]);
 //        energyTerms.back()->checkHessian(*triSoup[0], true);
     
-    optimizer = new FracCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, bijectiveParam && !rand1PInitCut); // for random one point initial cut, don't need air meshes in the beginning since it's impossible for a quad to intersect itself
+    optimizer = new OptCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, bijectiveParam && !rand1PInitCut); // for random one point initial cut, don't need air meshes in the beginning since it's impossible for a quad to intersect itself
     //TODO: bijectivity for other mode?
 //    optimizer->setUseDense(); //DEBUG
     optimizer->precompute();
@@ -1611,7 +1611,7 @@ int main(int argc, char *argv[])
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //TEST: regional seam placement
-    std::ifstream vWFile("/Users/mincli/Desktop/output_FracCuts/" + meshName + "_selected.txt");
+    std::ifstream vWFile("/Users/mincli/Desktop/output_OptCuts/" + meshName + "_selected.txt");
     if(vWFile.is_open()) {
         while(!vWFile.eof()) {
             int selected;
@@ -1622,10 +1622,10 @@ int main(int argc, char *argv[])
         }
         vWFile.close();
     }
-    FracCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
+    OptCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
     
 //    //TEST: regional seam placement, Zhongshi
-//    std::ifstream vWFile("/Users/mincli/Desktop/output_FracCuts/" + meshName + "_RSP.txt");
+//    std::ifstream vWFile("/Users/mincli/Desktop/output_OptCuts/" + meshName + "_RSP.txt");
 //    if(vWFile.is_open()) {
 //        double revLikelihood;
 //        for(int vI = 0; vI < optimizer->getResult().vertWeight.size(); vI++) {

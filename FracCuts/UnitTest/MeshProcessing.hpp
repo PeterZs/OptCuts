@@ -1,6 +1,6 @@
 //
 //  MeshProcessing.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 1/31/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -22,7 +22,7 @@
 
 extern std::string outputFolderPath;
 
-namespace FracCuts {
+namespace OptCuts {
     class MeshProcessing
     {
     public:
@@ -72,7 +72,7 @@ namespace FracCuts {
                                 std::cout << "UV coordinates not valid, will generate separate rigid mapping UV!" << std::endl;
                             }
                             
-                            FracCuts::TriangleSoup inputTriSoup(V, F, UV, Eigen::MatrixXi(), false);
+                            OptCuts::TriangleSoup inputTriSoup(V, F, UV, Eigen::MatrixXi(), false);
                             if(argc > 4) {
                                 // input original model to get cohesive edge information
                                 Eigen::MatrixXd V0;
@@ -90,7 +90,7 @@ namespace FracCuts {
                                     return;
                                 }
                                 
-                                inputTriSoup.cohE = FracCuts::TriangleSoup(V0, F0, Eigen::MatrixXd()).cohE;
+                                inputTriSoup.cohE = OptCuts::TriangleSoup(V0, F0, Eigen::MatrixXd()).cohE;
                                 inputTriSoup.computeFeatures();
                             }
                             inputTriSoup.saveAsMesh(outputFolderPath + meshName + "_processed.obj", true);
@@ -112,17 +112,17 @@ namespace FracCuts {
                                     // Map the boundary to a circle, preserving edge proportions
                                     Eigen::MatrixXd bnd_uv;
                                     //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
-                                    FracCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
+                                    OptCuts::IglUtils::map_vertices_to_circle(V, bnd, bnd_uv);
                                     
                                     //            // Harmonic parametrization
                                     //            igl::harmonic(V, F, bnd, bnd_uv, 1, UV);
                                     
                                     // Harmonic map with uniform weights
                                     Eigen::SparseMatrix<double> A, M;
-                                    FracCuts::IglUtils::computeUniformLaplacian(F, A);
+                                    OptCuts::IglUtils::computeUniformLaplacian(F, A);
                                     igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
-                                    //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
-                                    //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV);
+                                    //            OptCuts::IglUtils::computeMVCMtr(V, F, A);
+                                    //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV);
                                 }
                                 else {
                                     // closed surface
@@ -132,7 +132,7 @@ namespace FracCuts {
                                         exit(-1);
                                     }
                                     
-                                    FracCuts::TriangleSoup *temp = new FracCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                                    OptCuts::TriangleSoup *temp = new OptCuts::TriangleSoup(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
                                     //            temp->farthestPointCut(); // open up a boundary for Tutte embedding
                                     //                temp->highCurvOnePointCut();
                                     temp->onePointCut();
@@ -141,9 +141,9 @@ namespace FracCuts {
                                     igl::boundary_loop(temp->F, bnd);
                                     assert(bnd.size());
                                     Eigen::MatrixXd bnd_uv;
-                                    FracCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
+                                    OptCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
                                     Eigen::SparseMatrix<double> A, M;
-                                    FracCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+                                    OptCuts::IglUtils::computeUniformLaplacian(temp->F, A);
                                     igl::harmonic(A, M, bnd, bnd_uv, 1, UV);
                                     
                                     delete temp;
@@ -215,7 +215,7 @@ namespace FracCuts {
                                           Eigen::MatrixXd(), Eigen::MatrixXi(), UV, FUV);
                             
                             
-                            FracCuts::TriangleSoup temp(V, F, UV, FUV, false);
+                            OptCuts::TriangleSoup temp(V, F, UV, FUV, false);
                             
                             std::vector<std::vector<int>> bnd_all;
                             igl::boundary_loop(temp.F, bnd_all);
@@ -265,17 +265,17 @@ namespace FracCuts {
                             assert(bnd.size());
                             Eigen::MatrixXd bnd_uv;
                             //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
-                            FracCuts::IglUtils::map_vertices_to_circle(V_UV, bnd, bnd_uv);
+                            OptCuts::IglUtils::map_vertices_to_circle(V_UV, bnd, bnd_uv);
                             
                             //            // Harmonic parametrization
                             //            igl::harmonic(V, F, bnd, bnd_uv, 1, UV);
                             
                             // Harmonic map with uniform weights
                             Eigen::SparseMatrix<double> A, M;
-                            FracCuts::IglUtils::computeUniformLaplacian(F_UV, A);
+                            OptCuts::IglUtils::computeUniformLaplacian(F_UV, A);
                             igl::harmonic(A, M, bnd, bnd_uv, 1, V_UV);
-                            //            FracCuts::IglUtils::computeMVCMtr(V, F, A);
-                            //            FracCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV);
+                            //            OptCuts::IglUtils::computeMVCMtr(V, F, A);
+                            //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV);
                             
                             igl::writeOBJ(meshPath.substr(0, meshPath.find("_closed.obj")) +
                                           "_withSUV.obj", V, F, N, FN, V_UV, F_UV);

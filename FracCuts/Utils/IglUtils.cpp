@@ -1,6 +1,6 @@
 //
 //  IglUtils.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/30/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -10,7 +10,7 @@
 
 #include <set>
 
-namespace FracCuts {
+namespace OptCuts {
     void IglUtils::computeGraphLaplacian(const Eigen::MatrixXi& F, Eigen::SparseMatrix<double>& graphL) {
         // compute vertex adjacency
         int vertAmt = F.maxCoeff() + 1;

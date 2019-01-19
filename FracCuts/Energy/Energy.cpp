@@ -1,6 +1,6 @@
 //
 //  Energy.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 9/4/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -15,7 +15,7 @@
 
 extern std::ofstream logFile;
 
-namespace FracCuts {
+namespace OptCuts {
     
     Energy::Energy(bool p_needRefactorize) :
         needRefactorize(p_needRefactorize)

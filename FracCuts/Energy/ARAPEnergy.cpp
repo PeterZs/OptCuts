@@ -1,6 +1,6 @@
 //
 //  ARAPEnergy.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 9/5/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -13,7 +13,7 @@
 #include <igl/cotmatrix.h>
 #include <igl/massmatrix.h>
 
-namespace FracCuts {
+namespace OptCuts {
     
     //TODO: precomputation to accelerate optimization process
     

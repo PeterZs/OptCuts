@@ -1,6 +1,6 @@
 //
 //  LinSysSolver.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 6/30/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -18,7 +18,7 @@
 #include <map>
 #include <iostream>
 
-namespace FracCuts {
+namespace OptCuts {
     
     template <typename vectorTypeI, typename vectorTypeS>
     class LinSysSolver

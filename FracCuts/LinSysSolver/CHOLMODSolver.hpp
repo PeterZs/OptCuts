@@ -1,6 +1,6 @@
 //
 //  CHOLMODSolver.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 6/22/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -18,7 +18,7 @@
 #include <vector>
 #include <set>
 
-namespace FracCuts {
+namespace OptCuts {
     
     template <typename vectorTypeI, typename vectorTypeS>
     class CHOLMODSolver : public LinSysSolver<vectorTypeI, vectorTypeS>

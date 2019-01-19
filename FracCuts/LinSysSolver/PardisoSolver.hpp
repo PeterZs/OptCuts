@@ -15,7 +15,7 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 
-namespace FracCuts {
+namespace OptCuts {
 
     //extract II,JJ,SS (row,column and value vectors) from sparse matrix, Eigen version
     //Olga Diamanti's method for PARDISO

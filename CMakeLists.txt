@@ -60,18 +60,24 @@ endif()
 file(GLOB SRCFILES
   FracCuts/main.cpp
   FracCuts/Optimizer.cpp
-  FracCuts/Scaffold.cpp
-  FracCuts/ARAPEnergy.cpp
-  FracCuts/Energy.cpp
-  FracCuts/IglUtils.cpp
-  FracCuts/SymStretchEnergy.cpp
   FracCuts/TriangleSoup.cpp
+  FracCuts/Scaffold.cpp
+
+  FracCuts/Energy/Energy.cpp
+  FracCuts/Energy/ARAPEnergy.cpp
+  FracCuts/Energy/SymStretchEnergy.cpp
+  
+  FracCuts/Utils/IglUtils.cpp
+  
   FracCuts/LinSysSolver/PardisoSolver.cpp
 )
 
 include_directories(
   FracCuts
+  FracCuts/Energy
+  FracCuts/Utils
   FracCuts/LinSysSolver
+  FracCuts/UnitTest
 )
 
 add_executable(${PROJECT_NAME}_bin ${SRCFILES})

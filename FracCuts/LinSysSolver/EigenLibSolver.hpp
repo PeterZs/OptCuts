@@ -1,6 +1,6 @@
 //
 //  EigenLibSolver.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 6/30/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -16,7 +16,7 @@
 #include <vector>
 #include <set>
 
-namespace FracCuts {
+namespace OptCuts {
     
     template <typename vectorTypeI, typename vectorTypeS>
     class EigenLibSolver : public LinSysSolver<vectorTypeI, vectorTypeS>

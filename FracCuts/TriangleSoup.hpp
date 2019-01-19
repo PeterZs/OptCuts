@@ -1,6 +1,6 @@
 //
 //  TriangleSoup.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/30/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -14,7 +14,7 @@
 #include <set>
 #include <array>
 
-namespace FracCuts{
+namespace OptCuts{
     
     enum Primitive
     {

@@ -1,6 +1,6 @@
 //
 //  EigenLibSolver.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 6/30/18.
 //  Copyright © 2018 Minchen Li. All rights reserved.
@@ -8,7 +8,7 @@
 
 #include "EigenLibSolver.hpp"
 
-namespace FracCuts {
+namespace OptCuts {
     
     template <typename vectorTypeI, typename vectorTypeS>
     void EigenLibSolver<vectorTypeI, vectorTypeS>::set_type(int threadAmt, int _mtype, bool is_upper_half)

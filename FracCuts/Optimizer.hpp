@@ -1,6 +1,6 @@
 //
 //  Optimizer.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/31/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -17,7 +17,7 @@
 
 #include <fstream>
 
-namespace FracCuts {
+namespace OptCuts {
     
     // a class for solving an optimization problem
     class Optimizer {

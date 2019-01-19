@@ -1,6 +1,6 @@
 //
 //  IglUtils.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 8/30/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace FracCuts {
+namespace OptCuts {
     
     // a static class implementing basic geometry processing operations that are not provided in libIgl
     class IglUtils {

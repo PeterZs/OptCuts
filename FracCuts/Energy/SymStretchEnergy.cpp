@@ -1,6 +1,6 @@
 //
 //  SymStretchEnergy.cpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 9/3/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -20,7 +20,7 @@
 
 extern std::ofstream logFile;
 
-namespace FracCuts {
+namespace OptCuts {
     
     void SymStretchEnergy::getEnergyValPerElem(const TriangleSoup& data, Eigen::VectorXd& energyValPerElem, bool uniformWeight) const
     {
@@ -423,7 +423,7 @@ namespace FracCuts {
     {
 //        precondMtr = data.LaplacianMtr;
         computeHessian(data, precondMtr, uniformWeight);
-//        IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/FracCuts/mtr", precondMtr, true);
+//        IglUtils::writeSparseMatrixToFile("/Users/mincli/Desktop/OptCuts/mtr", precondMtr, true);
         
 //        Eigen::BDCSVD<Eigen::MatrixXd> svd((Eigen::MatrixXd(precondMtr)));
 //        logFile << "singular values of precondMtr_ESD:" << std::endl << svd.singularValues() << std::endl;

@@ -14,7 +14,7 @@
 using namespace std;
 //#define PLOTS_PARDISO
 
-namespace FracCuts {
+namespace OptCuts {
     
     template <typename vectorTypeI, typename vectorTypeS>
     PardisoSolver<vectorTypeI,vectorTypeS>::PardisoSolver():

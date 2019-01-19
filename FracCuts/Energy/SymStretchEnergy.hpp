@@ -1,6 +1,6 @@
 //
 //  SymStretchEnergy.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 9/3/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -11,7 +11,7 @@
 
 #include "Energy.hpp"
 
-namespace FracCuts {
+namespace OptCuts {
     
     class SymStretchEnergy : public Energy
     {

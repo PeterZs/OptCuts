@@ -1,6 +1,6 @@
 //
 //  ARAPEnergy.hpp
-//  FracCuts
+//  OptCuts
 //
 //  Created by Minchen Li on 9/5/17.
 //  Copyright © 2017 Minchen Li. All rights reserved.
@@ -11,7 +11,7 @@
 
 #include "Energy.hpp"
 
-namespace FracCuts
+namespace OptCuts
 {
     
     class ARAPEnergy : public Energy
