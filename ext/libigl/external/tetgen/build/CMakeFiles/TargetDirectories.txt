@@ -1,0 +1,3 @@
+/Users/mincli/Documents/libigl/external/tetgen/build/CMakeFiles/tetgen.dir
+/Users/mincli/Documents/libigl/external/tetgen/build/CMakeFiles/ALL_BUILD.dir
+/Users/mincli/Documents/libigl/external/tetgen/build/CMakeFiles/ZERO_CHECK.dir

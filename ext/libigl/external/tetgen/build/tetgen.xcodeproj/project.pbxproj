@@ -1,0 +1,635 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		1A73D30CD07C42D1972719C2 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = BEEB05C9CE764833BF4CE921 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				9FF934A710BA4DB69F464D5C /* CMake Rules */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		29F195523D9E4512836DA218 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3906685E108C4012B81B1DF7 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				D49A9E0C25384509B8AFD6AD /* CMake Rules */,
+			);
+			dependencies = (
+				19088322C5C84BF38295CC0C /* PBXTargetDependency */,
+				94A328309A02401A89217784 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		4A8BC891B534478DBD9ABD9D /* /Users/mincli/Documents/libigl/external/tetgen/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4648FFC147F04658B76D555E /* /Users/mincli/Documents/libigl/external/tetgen/CMakeLists.txt */; };
+		51C5D68C8FD4424A93C114CB /* /Users/mincli/Documents/libigl/external/tetgen/tetgen.cxx */ = {isa = PBXBuildFile; fileRef = 59270D7D19ED4805B9A7E53E /* /Users/mincli/Documents/libigl/external/tetgen/tetgen.cxx */; };
+		552DF4D4590F470D9B3A0937 /* /Users/mincli/Documents/libigl/external/tetgen/predicates.cxx */ = {isa = PBXBuildFile; fileRef = 4AF6A1484D144BAF8D71937C /* /Users/mincli/Documents/libigl/external/tetgen/predicates.cxx */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		00DAE2A4264E435487599F41 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		5BACDB86171543A1A450FC19 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		AAEDE0BDB658436B91D18E1A /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		F07BED41CE3C4D92844D1BE3 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		26FF1550AE0C48C4A1D236C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A039F6C4D5B4F7B904DFFD4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8BBA20D544B4D138897E732;
+			remoteInfo = tetgen;
+		};
+		46AE6931B21543698A40CB3A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A039F6C4D5B4F7B904DFFD4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A73D30CD07C42D1972719C2;
+			remoteInfo = ZERO_CHECK;
+		};
+		F84DC6A15A2047E4996A7A27 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A039F6C4D5B4F7B904DFFD4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A73D30CD07C42D1972719C2;
+			remoteInfo = ZERO_CHECK;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		193F837AE78A4E0A8F0B095F /* tetgen */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libtetgen.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		34FA8F36EFF54CE5B4AEB1FA /* /Users/mincli/Documents/libigl/external/tetgen/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		4648FFC147F04658B76D555E /* /Users/mincli/Documents/libigl/external/tetgen/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		4AF6A1484D144BAF8D71937C /* /Users/mincli/Documents/libigl/external/tetgen/predicates.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = predicates.cxx; path = predicates.cxx; sourceTree = SOURCE_ROOT; };
+		59270D7D19ED4805B9A7E53E /* /Users/mincli/Documents/libigl/external/tetgen/tetgen.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = tetgen.cxx; path = tetgen.cxx; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		46716118B61345A5B0A27C69 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				193F837AE78A4E0A8F0B095F /* tetgen */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		621348F8BD834334BE3FAE48 /* tetgen */ = {
+			isa = PBXGroup;
+			children = (
+				E06EB196F9E3413E8A706E56 /* Source Files */,
+				4648FFC147F04658B76D555E /* /Users/mincli/Documents/libigl/external/tetgen/CMakeLists.txt */,
+			);
+			name = tetgen;
+			sourceTree = "<group>";
+		};
+		67760E4836474E85AF4CC15E /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		88E7E541F71645FF852485FC = {
+			isa = PBXGroup;
+			children = (
+				621348F8BD834334BE3FAE48 /* tetgen */,
+				CBABC09059F94AC199A30EDB /* ALL_BUILD */,
+				46716118B61345A5B0A27C69 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CBABC09059F94AC199A30EDB /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				67760E4836474E85AF4CC15E /* CMake Rules */,
+				34FA8F36EFF54CE5B4AEB1FA /* /Users/mincli/Documents/libigl/external/tetgen/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		E06EB196F9E3413E8A706E56 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				4AF6A1484D144BAF8D71937C /* /Users/mincli/Documents/libigl/external/tetgen/predicates.cxx */,
+				59270D7D19ED4805B9A7E53E /* /Users/mincli/Documents/libigl/external/tetgen/tetgen.cxx */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D8BBA20D544B4D138897E732 /* tetgen */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 45A7673DD34D4F47823707EE /* Build configuration list for PBXNativeTarget "tetgen" */;
+			buildPhases = (
+				9DFA5D231F944DCDB8ACF05F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6D676C418939415CBD39A6A2 /* PBXTargetDependency */,
+			);
+			name = tetgen;
+			productName = tetgen;
+			productReference = 193F837AE78A4E0A8F0B095F /* tetgen */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7A039F6C4D5B4F7B904DFFD4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0830;
+			};
+			buildConfigurationList = 2B6E1B8D07C141F0BA1DF6DD /* Build configuration list for PBXProject "tetgen" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				F07BED41CE3C4D92844D1BE3 /* Debug */,
+				AAEDE0BDB658436B91D18E1A /* Release */,
+				00DAE2A4264E435487599F41 /* MinSizeRel */,
+				5BACDB86171543A1A450FC19 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 88E7E541F71645FF852485FC;
+			projectDirPath = ../;
+			projectRoot = "";
+			targets = (
+				29F195523D9E4512836DA218 /* ALL_BUILD */,
+				1A73D30CD07C42D1972719C2 /* ZERO_CHECK */,
+				D8BBA20D544B4D138897E732 /* tetgen */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1DF335B8F3DB427F8FD41D8E = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		4F61E3D6C7C64F2A89B428A9 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		9FF934A710BA4DB69F464D5C /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/mincli/Documents/libigl/external/tetgen/build -f /Users/mincli/Documents/libigl/external/tetgen/build/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		D49A9E0C25384509B8AFD6AD /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/mincli/Documents/libigl/external/tetgen/build -f /Users/mincli/Documents/libigl/external/tetgen/build/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9DFA5D231F944DCDB8ACF05F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				552DF4D4590F470D9B3A0937 /* /Users/mincli/Documents/libigl/external/tetgen/predicates.cxx */,
+				51C5D68C8FD4424A93C114CB /* /Users/mincli/Documents/libigl/external/tetgen/tetgen.cxx */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		19088322C5C84BF38295CC0C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8BBA20D544B4D138897E732 /* tetgen */;
+			targetProxy = 26FF1550AE0C48C4A1D236C8 /* PBXContainerItemProxy */;
+		};
+		6D676C418939415CBD39A6A2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A73D30CD07C42D1972719C2 /* ZERO_CHECK */;
+			targetProxy = 46AE6931B21543698A40CB3A /* PBXContainerItemProxy */;
+		};
+		94A328309A02401A89217784 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A73D30CD07C42D1972719C2 /* ZERO_CHECK */;
+			targetProxy = F84DC6A15A2047E4996A7A27 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		134E2E5DF2F642FFBB353128 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		1E42E0E5456344FD895B6C1F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",TETLIBRARY);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = tetgen;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		27EC0FF847144E20B90FF3F8 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build/build;
+			};
+			name = RelWithDebInfo;
+		};
+		363E396CD77049A1A1832A1B /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		3DEAC52DDC994AE989B790BA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		44AE1F7582A64F9D938DFDF6 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		55895F54BEE44F83A7A9544D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",TETLIBRARY);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = tetgen;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		62A33D48169441DD91A6ED02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		6FFC53EFD2C143F28B4C6EBC /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build/build;
+			};
+			name = MinSizeRel;
+		};
+		7BCA079537194197B39C7388 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build/build;
+			};
+			name = Release;
+		};
+		A51F73C1AD324CCCBCA0D922 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		B9186558E65C44E5A8A03D5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		BB1C2E58DC384B2490CC2247 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",TETLIBRARY);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = tetgen;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		E93D2C461F834277A1F9C64A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",TETLIBRARY);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = tetgen;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		EB33A0AE57FE4D5BA281C9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		FFD660CCB6704D5DBF65EA20 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/tetgen/build/build;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2B6E1B8D07C141F0BA1DF6DD /* Build configuration list for PBXProject "tetgen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFD660CCB6704D5DBF65EA20 /* Debug */,
+				7BCA079537194197B39C7388 /* Release */,
+				6FFC53EFD2C143F28B4C6EBC /* MinSizeRel */,
+				27EC0FF847144E20B90FF3F8 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3906685E108C4012B81B1DF7 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				62A33D48169441DD91A6ED02 /* Debug */,
+				EB33A0AE57FE4D5BA281C9CD /* Release */,
+				A51F73C1AD324CCCBCA0D922 /* MinSizeRel */,
+				44AE1F7582A64F9D938DFDF6 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		45A7673DD34D4F47823707EE /* Build configuration list for PBXNativeTarget "tetgen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55895F54BEE44F83A7A9544D /* Debug */,
+				BB1C2E58DC384B2490CC2247 /* Release */,
+				1E42E0E5456344FD895B6C1F /* MinSizeRel */,
+				E93D2C461F834277A1F9C64A /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BEEB05C9CE764833BF4CE921 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9186558E65C44E5A8A03D5E /* Debug */,
+				134E2E5DF2F642FFBB353128 /* Release */,
+				3DEAC52DDC994AE989B790BA /* MinSizeRel */,
+				363E396CD77049A1A1832A1B /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7A039F6C4D5B4F7B904DFFD4 /* Project object */;
+}

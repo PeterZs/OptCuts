@@ -1,0 +1,3 @@
+/Users/mincli/Documents/libigl/external/triangle/build/CMakeFiles/triangle.dir
+/Users/mincli/Documents/libigl/external/triangle/build/CMakeFiles/ALL_BUILD.dir
+/Users/mincli/Documents/libigl/external/triangle/build/CMakeFiles/ZERO_CHECK.dir

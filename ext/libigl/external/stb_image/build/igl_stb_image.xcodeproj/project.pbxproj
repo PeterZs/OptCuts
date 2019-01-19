@@ -1,0 +1,673 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		3662E9D09BDC4F9999548D1D /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 0B2F7C4878D64527A44D33B3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				E75E724332A346DBB7687252 /* CMake Rules */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		CADD8442E2D7474C805DC3A7 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B6B3A7EECC374142993BCBAB /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				A675AD29995A44A2A129AFAF /* CMake Rules */,
+			);
+			dependencies = (
+				004106A018A04E0E827824E4 /* PBXTargetDependency */,
+				B19214DA3B29454A855BBB08 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		02D9088C542B451DAAD45EC4 /* /Users/mincli/Documents/libigl/external/stb_image/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 1B72DA374F9044419A7B0841 /* /Users/mincli/Documents/libigl/external/stb_image/CMakeLists.txt */; };
+		9F2F5258611D452FAF095844 /* /Users/mincli/Documents/libigl/external/stb_image/igl_stb_image.cpp */ = {isa = PBXBuildFile; fileRef = 9D13CAD3598A4192A26C80BA /* /Users/mincli/Documents/libigl/external/stb_image/igl_stb_image.cpp */; };
+		DA1AA9F018F0473080EACFF2 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image.h */ = {isa = PBXBuildFile; fileRef = 6C66998B006344D5B36E33C9 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image.h */; };
+		E4CE49F8554140328C031F12 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image_write.h */ = {isa = PBXBuildFile; fileRef = 27D7E88B4AE14CF195E23239 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image_write.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		83BA7A97B163442C9928655E /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		9761D0B54E944DD9AD244196 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		D6664ADA1118433A8A5F49AC /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		F764A7330F9A4C8F9E6164B3 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		A77E06756D2F4A5D84300BF0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59326ED7174A4B8897AEFCEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3662E9D09BDC4F9999548D1D;
+			remoteInfo = ZERO_CHECK;
+		};
+		C4EB425E7CD2440EB2614394 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59326ED7174A4B8897AEFCEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3662E9D09BDC4F9999548D1D;
+			remoteInfo = ZERO_CHECK;
+		};
+		FAB0E7B66126419EACCAFA65 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59326ED7174A4B8897AEFCEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79B3A6A271414CAAA3BB6C92;
+			remoteInfo = igl_stb_image;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1B72DA374F9044419A7B0841 /* /Users/mincli/Documents/libigl/external/stb_image/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		27D7E88B4AE14CF195E23239 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image_write.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stb_image_write.h; path = stb_image_write.h; sourceTree = SOURCE_ROOT; };
+		3062F9358ED24C7DA67B22DD /* igl_stb_image */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libigl_stb_image.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C66998B006344D5B36E33C9 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stb_image.h; path = stb_image.h; sourceTree = SOURCE_ROOT; };
+		894E8A57C0EB4517A12C4C68 /* /Users/mincli/Documents/libigl/external/stb_image/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9D13CAD3598A4192A26C80BA /* /Users/mincli/Documents/libigl/external/stb_image/igl_stb_image.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = igl_stb_image.cpp; path = igl_stb_image.cpp; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0C3C47446D3B471A8FF875CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3062F9358ED24C7DA67B22DD /* igl_stb_image */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		342F560ECBDF437C8712D08D /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				7373E75A8D4E45828DCABFE3 /* CMake Rules */,
+				894E8A57C0EB4517A12C4C68 /* /Users/mincli/Documents/libigl/external/stb_image/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		486FCE66EC774BCBA9436800 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				9D13CAD3598A4192A26C80BA /* /Users/mincli/Documents/libigl/external/stb_image/igl_stb_image.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		7373E75A8D4E45828DCABFE3 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		8A145D63AA0C4A8BB473DEB4 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				6C66998B006344D5B36E33C9 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image.h */,
+				27D7E88B4AE14CF195E23239 /* /Users/mincli/Documents/libigl/external/stb_image/stb_image_write.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		B3327E56C53549BF9DE8AC67 /* igl_stb_image */ = {
+			isa = PBXGroup;
+			children = (
+				486FCE66EC774BCBA9436800 /* Source Files */,
+				8A145D63AA0C4A8BB473DEB4 /* Header Files */,
+				1B72DA374F9044419A7B0841 /* /Users/mincli/Documents/libigl/external/stb_image/CMakeLists.txt */,
+			);
+			name = igl_stb_image;
+			sourceTree = "<group>";
+		};
+		EDF51E2747DA484D950A78FD = {
+			isa = PBXGroup;
+			children = (
+				B3327E56C53549BF9DE8AC67 /* igl_stb_image */,
+				342F560ECBDF437C8712D08D /* ALL_BUILD */,
+				0C3C47446D3B471A8FF875CA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		79B3A6A271414CAAA3BB6C92 /* igl_stb_image */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5CF4689D3EB74C5D938ADAB8 /* Build configuration list for PBXNativeTarget "igl_stb_image" */;
+			buildPhases = (
+				41311B207E4D408181E26693 /* Sources */,
+				F42E5E73BC944F8C8E3A14F6 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5A04EBED72FD4A92971FEAB5 /* PBXTargetDependency */,
+			);
+			name = igl_stb_image;
+			productName = igl_stb_image;
+			productReference = 3062F9358ED24C7DA67B22DD /* igl_stb_image */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		59326ED7174A4B8897AEFCEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0930;
+			};
+			buildConfigurationList = F664C967CB4141548D36ADAF /* Build configuration list for PBXProject "igl_stb_image" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				D6664ADA1118433A8A5F49AC /* Debug */,
+				F764A7330F9A4C8F9E6164B3 /* Release */,
+				83BA7A97B163442C9928655E /* MinSizeRel */,
+				9761D0B54E944DD9AD244196 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = EDF51E2747DA484D950A78FD;
+			projectDirPath = ../;
+			projectRoot = "";
+			targets = (
+				CADD8442E2D7474C805DC3A7 /* ALL_BUILD */,
+				3662E9D09BDC4F9999548D1D /* ZERO_CHECK */,
+				79B3A6A271414CAAA3BB6C92 /* igl_stb_image */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A5082B66B0DD4868A3967CA5 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		A675AD29995A44A2A129AFAF /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/mincli/Documents/libigl/external/stb_image/build -f /Users/mincli/Documents/libigl/external/stb_image/build/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		E75E724332A346DBB7687252 /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/mincli/Documents/libigl/external/stb_image/build -f /Users/mincli/Documents/libigl/external/stb_image/build/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		F42E5E73BC944F8C8E3A14F6 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/mincli/Documents/libigl/external/stb_image/build -f /Users/mincli/Documents/libigl/external/stb_image/build/CMakeScripts/igl_stb_image_postBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		FE62BE434CEF4C31883935A0 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41311B207E4D408181E26693 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F2F5258611D452FAF095844 /* /Users/mincli/Documents/libigl/external/stb_image/igl_stb_image.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		004106A018A04E0E827824E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3662E9D09BDC4F9999548D1D /* ZERO_CHECK */;
+			targetProxy = A77E06756D2F4A5D84300BF0 /* PBXContainerItemProxy */;
+		};
+		5A04EBED72FD4A92971FEAB5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3662E9D09BDC4F9999548D1D /* ZERO_CHECK */;
+			targetProxy = C4EB425E7CD2440EB2614394 /* PBXContainerItemProxy */;
+		};
+		B19214DA3B29454A855BBB08 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79B3A6A271414CAAA3BB6C92 /* igl_stb_image */;
+			targetProxy = FAB0E7B66126419EACCAFA65 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2834113DD56744138E083D52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",igl_stb_image_EXPORTS);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/mincli/Documents/libigl/external/stb_image,/Users/mincli/Documents/libigl/external/stb_image/build);
+				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CPLUSPLUSFLAGS = "   -fPIC -fvisibility=hidden  ";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = igl_stb_image;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		2F50EF0C50E944008D479DAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",igl_stb_image_EXPORTS);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/mincli/Documents/libigl/external/stb_image,/Users/mincli/Documents/libigl/external/stb_image/build);
+				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -fPIC -fvisibility=hidden  ";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = igl_stb_image;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		389DD56FC85F4327A47DB787 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		480289ABD0AC4E18A470D053 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build/build;
+			};
+			name = Debug;
+		};
+		6D7D705878164FEE866BD687 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		81A91E7128D44A87BD6DBB32 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build/build;
+			};
+			name = RelWithDebInfo;
+		};
+		8FBB77A1091C432EB9992E7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		91F1DB4D5A134ECE92837C4F /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		92B2274F75914C9788F2D954 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		A061DD8874DB4D888ED3BB9B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		BB926EC51D7F44DFBDB6D8E6 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",igl_stb_image_EXPORTS);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/mincli/Documents/libigl/external/stb_image,/Users/mincli/Documents/libigl/external/stb_image/build);
+				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -fPIC -fvisibility=hidden  ";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = igl_stb_image;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		C27D8F69C95B4DFBAAA384D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build/build;
+			};
+			name = Release;
+		};
+		C995669E1554417BAE4C929F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		E5185743546C44D5B5258B7F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		EB78E69FB1BA4170AB6310D9 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build/build;
+			};
+			name = MinSizeRel;
+		};
+		F234A7A98E5B4968B1643F19 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",igl_stb_image_EXPORTS);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/mincli/Documents/libigl/external/stb_image,/Users/mincli/Documents/libigl/external/stb_image/build);
+				INSTALL_PATH = "@rpath";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -fPIC -fvisibility=hidden  ";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = igl_stb_image;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/mincli/Documents/libigl/external/stb_image/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0B2F7C4878D64527A44D33B3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C995669E1554417BAE4C929F /* Debug */,
+				8FBB77A1091C432EB9992E7F /* Release */,
+				E5185743546C44D5B5258B7F /* MinSizeRel */,
+				389DD56FC85F4327A47DB787 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5CF4689D3EB74C5D938ADAB8 /* Build configuration list for PBXNativeTarget "igl_stb_image" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2834113DD56744138E083D52 /* Debug */,
+				2F50EF0C50E944008D479DAA /* Release */,
+				F234A7A98E5B4968B1643F19 /* MinSizeRel */,
+				BB926EC51D7F44DFBDB6D8E6 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B6B3A7EECC374142993BCBAB /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				92B2274F75914C9788F2D954 /* Debug */,
+				A061DD8874DB4D888ED3BB9B /* Release */,
+				6D7D705878164FEE866BD687 /* MinSizeRel */,
+				91F1DB4D5A134ECE92837C4F /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F664C967CB4141548D36ADAF /* Build configuration list for PBXProject "igl_stb_image" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				480289ABD0AC4E18A470D053 /* Debug */,
+				C27D8F69C95B4DFBAAA384D0 /* Release */,
+				EB78E69FB1BA4170AB6310D9 /* MinSizeRel */,
+				81A91E7128D44A87BD6DBB32 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 59326ED7174A4B8897AEFCEA /* Project object */;
+}

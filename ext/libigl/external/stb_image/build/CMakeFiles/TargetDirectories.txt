@@ -1,0 +1,3 @@
+/Users/mincli/Documents/libigl/external/stb_image/build/CMakeFiles/igl_stb_image.dir
+/Users/mincli/Documents/libigl/external/stb_image/build/CMakeFiles/ALL_BUILD.dir
+/Users/mincli/Documents/libigl/external/stb_image/build/CMakeFiles/ZERO_CHECK.dir
