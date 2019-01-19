@@ -9,12 +9,13 @@
 /* Begin PBXBuildFile section */
 		980180BC1F552CDA00C64B43 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 980180BB1F552CDA00C64B43 /* main.cpp */; };
 		982CE6131F5DB358004176A8 /* Energy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 982CE6121F5DB358004176A8 /* Energy.cpp */; };
+		9848C12521F36A91008AC964 /* libpardiso600-MACOS-X86-64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9848C12421F36A90008AC964 /* libpardiso600-MACOS-X86-64.dylib */; };
+		9848C12721F3752D008AC964 /* libgomp.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9848C12621F3752D008AC964 /* libgomp.1.dylib */; };
 		987382D12076F49A0040BBCE /* Scaffold.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 987382CF2076F49A0040BBCE /* Scaffold.cpp */; };
 		988D81A720AA7FFE0037737D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 988ED1271F57211500B21181 /* OpenGL.framework */; };
 		988D81A920AA80A60037737D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 988D81A820AA80A60037737D /* IOKit.framework */; };
 		988D81AB20AA80E40037737D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 988D81AA20AA80E40037737D /* Cocoa.framework */; };
 		988D81AD20AA81130037737D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 988D81AC20AA81130037737D /* CoreVideo.framework */; };
-		988D81B720AA98380037737D /* libpardiso500-MACOS-X86-64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 98CE47671F71DF6200627725 /* libpardiso500-MACOS-X86-64.dylib */; };
 		988D81B920AA98E10037737D /* libglad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 988D81B820AA98E10037737D /* libglad.a */; };
 		988D81BB20AA98ED0037737D /* libigl_stb_image.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 988D81BA20AA98ED0037737D /* libigl_stb_image.dylib */; };
 		988D81BC20AA98FA0037737D /* libtbb.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 98BFBB1E1FA153EA00142E10 /* libtbb.dylib */; };
@@ -50,6 +51,8 @@
 		983E7DB3202240D900412128 /* Diagnostic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Diagnostic.hpp; sourceTree = "<group>"; };
 		983E7DB62022421400412128 /* MeshProcessing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MeshProcessing.hpp; sourceTree = "<group>"; };
 		98471EF72108FC00009B79BC /* cut_to_disk.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cut_to_disk.hpp; sourceTree = "<group>"; };
+		9848C12421F36A90008AC964 /* libpardiso600-MACOS-X86-64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libpardiso600-MACOS-X86-64.dylib"; path = "../../../../usr/local/lib/libpardiso600-MACOS-X86-64.dylib"; sourceTree = "<group>"; };
+		9848C12621F3752D008AC964 /* libgomp.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgomp.1.dylib; path = ../../../../usr/local/lib/libgomp.1.dylib; sourceTree = "<group>"; };
 		987382CB202902590040BBCE /* Types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Types.hpp; sourceTree = "<group>"; };
 		987382CD2076EE9D0040BBCE /* libtriangle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtriangle.a; path = ../../../../usr/local/lib/libtriangle.a; sourceTree = "<group>"; };
 		987382CF2076F49A0040BBCE /* Scaffold.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scaffold.cpp; sourceTree = "<group>"; };
@@ -92,13 +95,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9848C12721F3752D008AC964 /* libgomp.1.dylib in Frameworks */,
+				9848C12521F36A91008AC964 /* libpardiso600-MACOS-X86-64.dylib in Frameworks */,
 				98CBDA2321973AEE003A35BD /* libcholmod.3.0.12.dylib in Frameworks */,
 				988D81BF20AA99120037737D /* libglfw3.a in Frameworks */,
 				988D81BD20AA99060037737D /* libtriangle.a in Frameworks */,
 				988D81BC20AA98FA0037737D /* libtbb.dylib in Frameworks */,
 				988D81BB20AA98ED0037737D /* libigl_stb_image.dylib in Frameworks */,
 				988D81B920AA98E10037737D /* libglad.a in Frameworks */,
-				988D81B720AA98380037737D /* libpardiso500-MACOS-X86-64.dylib in Frameworks */,
 				988D81AD20AA81130037737D /* CoreVideo.framework in Frameworks */,
 				988D81AB20AA80E40037737D /* Cocoa.framework in Frameworks */,
 				988D81A920AA80A60037737D /* IOKit.framework in Frameworks */,
@@ -158,6 +162,8 @@
 		988ED1261F57211500B21181 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9848C12621F3752D008AC964 /* libgomp.1.dylib */,
+				9848C12421F36A90008AC964 /* libpardiso600-MACOS-X86-64.dylib */,
 				98CBDA2221973AEE003A35BD /* libcholmod.3.0.12.dylib */,
 				988D81BE20AA99120037737D /* libglfw3.a */,
 				988D81BA20AA98ED0037737D /* libigl_stb_image.dylib */,

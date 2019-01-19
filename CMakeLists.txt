@@ -3,7 +3,7 @@ project(OptCuts)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-find_package(OpenMP REQUIRED)
+#find_package(OpenMP REQUIRED)
 # libigl
 option(LIBIGL_USE_STATIC_LIBRARY "Use libigl as static library" OFF)
 option(LIBIGL_WITH_ANTTWEAKBAR       "Use AntTweakBar"    OFF)
@@ -57,6 +57,22 @@ if(NOT TARGET OpenMP::OpenMP_CXX)
     target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
 endif()
 
-file(GLOB SRCFILES FracCuts/*.cpp)
+file(GLOB SRCFILES
+  FracCuts/main.cpp
+  FracCuts/Optimizer.cpp
+  FracCuts/Scaffold.cpp
+  FracCuts/ARAPEnergy.cpp
+  FracCuts/Energy.cpp
+  FracCuts/IglUtils.cpp
+  FracCuts/SymStretchEnergy.cpp
+  FracCuts/TriangleSoup.cpp
+  FracCuts/LinSysSolver/PardisoSolver.cpp
+)
+
+include_directories(
+  FracCuts
+  FracCuts/LinSysSolver
+)
+
 add_executable(${PROJECT_NAME}_bin ${SRCFILES})
 target_link_libraries(${PROJECT_NAME}_bin igl::core igl::opengl_glfw igl::triangle igl::png ${PARDISO} TBB::tbb OpenMP::OpenMP_CXX)
