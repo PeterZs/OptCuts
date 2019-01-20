@@ -145,25 +145,36 @@ namespace OptCuts{
                                 const Eigen::RowVectorXd& mergedPos);
         
         // query vertex candidate for either split or merge
-        double computeLocalEwDec(int vI, double lambda_t, std::vector<int>& path, Eigen::MatrixXd& newVertPos,
-                                 std::pair<double, double>& energyChanges,
-                                 const std::vector<int>& incTris = std::vector<int>(),
-                                 const Eigen::RowVector2d& initMergedPos = Eigen::RowVector2d()) const;
+        double computeLocalLDec(int vI, double lambda_t,
+                                std::vector<int>& path,
+                                Eigen::MatrixXd& newVertPos,
+                                std::pair<double, double>& energyChanges,
+                                const std::vector<int>& incTris = std::vector<int>(),
+                                const Eigen::RowVector2d& initMergedPos = Eigen::RowVector2d()) const;
         // query interior incident edge of a boundary vertex candidate
-        double computeLocalEDec(const std::pair<int, int>& edge, Eigen::MatrixXd& newVertPos) const; //TODO: write this in a new class
+        double queryLocalEdDec_bSplit(const std::pair<int, int>& edge,
+                                      Eigen::MatrixXd& newVertPos) const;
+        
         // boundary split
-        double computeLocalEDec(const std::vector<int>& triangles, const std::set<int>& freeVert,
-                                const std::vector<int>& splitPath, Eigen::MatrixXd& newVertPos,
-                                int maxIter = 100) const;
+        double computeLocalEdDec_bSplit(const std::vector<int>& triangles,
+                                        const std::set<int>& freeVert,
+                                        const std::vector<int>& splitPath,
+                                        Eigen::MatrixXd& newVertPos,
+                                        int maxIter = 100) const;
         // interior split
-        double computeLocalEDec_in(const std::vector<int>& triangles, const std::set<int>& freeVert,
-                                const std::vector<int>& path, Eigen::MatrixXd& newVertPos, int maxIter = 100) const;
-        //TODO: sort all computeLocalEDec, and separate vert routine
-        // minimize SD on the local stencil (merge)
-        double computeLocalEDec(const std::vector<int>& path, const std::vector<int>& triangles,
-                                const std::set<int>& freeVert, std::map<int, Eigen::RowVector2d>& newVertPos,
-                                const std::map<int, int>& mergeVert, const Eigen::RowVector2d& initMergedPos,
-                                bool closeup = false, int maxIter = 100) const;
+        double computeLocalEdDec_inSplit(const std::vector<int>& triangles,
+                                         const std::set<int>& freeVert,
+                                         const std::vector<int>& path,
+                                         Eigen::MatrixXd& newVertPos,
+                                         int maxIter = 100) const;
+        // merge
+        double computeLocalEdDec_merge(const std::vector<int>& path,
+                                       const std::vector<int>& triangles,
+                                       const std::set<int>& freeVert,
+                                       std::map<int, Eigen::RowVector2d>& newVertPos,
+                                       const std::map<int, int>& mergeVert,
+                                       const Eigen::RowVector2d& initMergedPos,
+                                       bool closeup = false, int maxIter = 100) const;
     };
     
 }

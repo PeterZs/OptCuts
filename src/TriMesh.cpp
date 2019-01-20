@@ -658,8 +658,10 @@ namespace OptCuts {
                 newVertPoses_p.resize(bestCandVerts.size());
                 energyChanges_p.resize(bestCandVerts.size());
                 tbb::parallel_for(0, (int)bestCandVerts.size(), 1, [&](int candI) {
-                    EwDecs[candI] = computeLocalEwDec(bestCandVerts[candI], lambda_t, paths_p[candI], newVertPoses_p[candI],
-                                                      energyChanges_p[candI]);
+                    EwDecs[candI] = computeLocalLDec(bestCandVerts[candI],
+                                                     lambda_t, paths_p[candI],
+                                                     newVertPoses_p[candI],
+                                                     energyChanges_p[candI]);
                 });
             }
             else {
@@ -669,8 +671,10 @@ namespace OptCuts {
                 newVertPoses_bSplit.resize(bestCandVerts.size());
                 energyChanges_bSplit.resize(bestCandVerts.size());
                 tbb::parallel_for(0, (int)bestCandVerts.size(), 1, [&](int candI) {
-                    EwDecs[candI] = computeLocalEwDec(bestCandVerts[candI], lambda_t, paths_bSplit[candI], newVertPoses_bSplit[candI],
-                                                      energyChanges_bSplit[candI]);
+                    EwDecs[candI] = computeLocalLDec(bestCandVerts[candI],
+                                                     lambda_t, paths_bSplit[candI],
+                                                     newVertPoses_bSplit[candI],
+                                                     energyChanges_bSplit[candI]);
                 });
             }
         }
@@ -683,8 +687,10 @@ namespace OptCuts {
             newVertPoses_iSplit.resize(bestCandVerts.size());
             energyChanges_iSplit.resize(bestCandVerts.size());
             tbb::parallel_for(0, (int)bestCandVerts.size(), 1, [&](int candI) {
-                EwDecs[candI] = computeLocalEwDec(bestCandVerts[candI], lambda_t, paths_iSplit[candI], newVertPoses_iSplit[candI],
-                                                        energyChanges_iSplit[candI]);
+                EwDecs[candI] = computeLocalLDec(bestCandVerts[candI],
+                                                 lambda_t, paths_iSplit[candI],
+                                                 newVertPoses_iSplit[candI],
+                                                 energyChanges_iSplit[candI]);
                 if(EwDecs[candI] != -__DBL_MAX__) {
                     EwDecs[candI] *= 0.5;
                 }
@@ -898,7 +904,9 @@ namespace OptCuts {
             }
             Eigen::MatrixXd newVertPos;
             std::pair<double, double> energyChanges;
-            double localEwDec = computeLocalEwDec(0, lambda, path, newVertPos, energyChanges, triangles, mergedPos);
+            double localEwDec = computeLocalLDec(0, lambda, path,
+                                                 newVertPos, energyChanges,
+                                                 triangles, mergedPos);
             if(!propagate) {
                 paths_merge.emplace_back(path);
                 newVertPoses_merge.emplace_back(newVertPos);
@@ -2017,9 +2025,12 @@ namespace OptCuts {
         }
     }
     
-    double TriMesh::computeLocalEwDec(int vI, double lambda_t, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
-                                           std::pair<double, double>& energyChanges_max,
-                                           const std::vector<int>& incTris, const Eigen::RowVector2d& initMergedPos) const
+    double TriMesh::computeLocalLDec(int vI, double lambda_t,
+                                     std::vector<int>& path_max,
+                                     Eigen::MatrixXd& newVertPos_max,
+                                     std::pair<double, double>& energyChanges_max,
+                                     const std::vector<int>& incTris,
+                                     const Eigen::RowVector2d& initMergedPos) const
     {
         if(!path_max.empty()) {
             // merge query
@@ -2054,7 +2065,7 @@ namespace OptCuts {
                 mergeVert[path_max[0]] = path_max[2];
                 mergeVert[path_max[2]] = path_max[0];
                 std::map<int, Eigen::RowVector2d> newVertPos;
-                const double SDInc = -computeLocalEDec(path_max, incTris, freeVert, newVertPos, mergeVert, initMergedPos, closeup);
+                const double SDInc = -computeLocalEdDec_merge(path_max, incTris, freeVert, newVertPos, mergeVert, initMergedPos, closeup);
                 energyChanges_max.first = SDInc;
                 energyChanges_max.second = -seDec;
                 if(SDInc == __DBL_MAX__) {
@@ -2091,7 +2102,7 @@ namespace OptCuts {
                     // interior edge
                     
                     Eigen::MatrixXd newVertPosI;
-                    const double SDDec = computeLocalEDec(edge, newVertPosI);
+                    const double SDDec = queryLocalEdDec_bSplit(edge, newVertPosI);
                     
                     const double seInc = (V_rest.row(vI) - V_rest.row(nbVI)).norm() /
                         virtualRadius * (vertWeight[vI] + vertWeight[nbVI]) / 2.0;
@@ -2152,7 +2163,7 @@ namespace OptCuts {
                     double SDDec = 0.0;
                     Eigen::MatrixXd newVertPos;
                     
-                    SDDec += computeLocalEDec_in(umbrella, freeVert, path, newVertPos);
+                    SDDec += computeLocalEdDec_inSplit(umbrella, freeVert, path, newVertPos);
                     //TODO: share local mesh before split, also for boundary splits
                     
                     const double seInc = ((V_rest.row(path[0]) - V_rest.row(path[1])).norm() * (vertWeight[path[0]] + vertWeight[path[1]]) +
@@ -2171,8 +2182,11 @@ namespace OptCuts {
         }
     }
         
-    double TriMesh::computeLocalEDec_in(const std::vector<int>& triangles, const std::set<int>& freeVert,
-                                          const std::vector<int>& path, Eigen::MatrixXd& newVertPos, int maxIter) const
+    double TriMesh::computeLocalEdDec_inSplit(const std::vector<int>& triangles,
+                                              const std::set<int>& freeVert,
+                                              const std::vector<int>& path,
+                                              Eigen::MatrixXd& newVertPos,
+                                              int maxIter) const
     {
         assert(triangles.size() && freeVert.size());
         
@@ -2301,10 +2315,13 @@ namespace OptCuts {
         return eDec;
     }
     
-    double TriMesh::computeLocalEDec(const std::vector<int>& path, const std::vector<int>& triangles,
-                                          const std::set<int>& freeVert, std::map<int, Eigen::RowVector2d>& newVertPos,
-                                          const std::map<int, int>& mergeVert, const Eigen::RowVector2d& initMergedPos,
-                                          bool closeup, int maxIter) const
+    double TriMesh::computeLocalEdDec_merge(const std::vector<int>& path,
+                                            const std::vector<int>& triangles,
+                                            const std::set<int>& freeVert,
+                                            std::map<int, Eigen::RowVector2d>& newVertPos,
+                                            const std::map<int, int>& mergeVert,
+                                            const Eigen::RowVector2d& initMergedPos,
+                                            bool closeup, int maxIter) const
     {
         assert(triangles.size() && freeVert.size());
         assert(!mergeVert.empty());
@@ -2421,9 +2438,11 @@ namespace OptCuts {
         return eDec;
     }
         
-    double TriMesh::computeLocalEDec(const std::vector<int>& triangles, const std::set<int>& freeVert,
-                                          const std::vector<int>& splitPath, Eigen::MatrixXd& newVertPos,
-                                          int maxIter) const
+    double TriMesh::computeLocalEdDec_bSplit(const std::vector<int>& triangles,
+                                             const std::set<int>& freeVert,
+                                             const std::vector<int>& splitPath,
+                                             Eigen::MatrixXd& newVertPos,
+                                             int maxIter) const
     {
         assert(triangles.size() && freeVert.size());
         
@@ -2697,7 +2716,7 @@ namespace OptCuts {
         return eDec;
     }
     
-    double TriMesh::computeLocalEDec(const std::pair<int, int>& edge, Eigen::MatrixXd& newVertPos) const
+    double TriMesh::queryLocalEdDec_bSplit(const std::pair<int, int>& edge, Eigen::MatrixXd& newVertPos) const
     {
         assert(vNeighbor.size() == V.rows());
         auto edgeTriIndFinder = edge2Tri.find(edge);
@@ -2762,7 +2781,7 @@ namespace OptCuts {
         std::vector<int> splitPath(2);
         splitPath[0] = vI_boundary;
         splitPath[1] = vI_interior;
-        return computeLocalEDec(tri_toSep, freeVertGID, splitPath, newVertPos);
+        return computeLocalEdDec_bSplit(tri_toSep, freeVertGID, splitPath, newVertPos);
     }
     
     void TriMesh::splitEdgeOnBoundary(const std::pair<int, int>& edge,
