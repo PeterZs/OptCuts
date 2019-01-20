@@ -56,7 +56,6 @@ namespace OptCuts{
         std::vector<std::set<std::pair<int, int>>> validSplit;
         std::set<int> fixedVert; // for linear solve
         Eigen::Matrix<double, 2, 3> bbox;
-//        Eigen::MatrixXd cotVals; // cotangent values of rest triangle corners
         Eigen::VectorXd vertWeight; // for regional seam placement
         
         // indices for fast access
@@ -87,8 +86,6 @@ namespace OptCuts{
         void resetFixedVert(const std::set<int>& p_fixedVert);
         void buildCohEfromRecord(const Eigen::MatrixXi& cohERecord);
         
-        bool separateTriangle(const Eigen::VectorXd& measure, double thres);
-        bool splitVertex(const Eigen::VectorXd& measure, double thres);
         void querySplit(double lambda_t, bool propagate, bool splitInterior,
                         double& EwDec_max, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
                         std::pair<double, double>& energyChanges_max) const;

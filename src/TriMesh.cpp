@@ -68,10 +68,6 @@ namespace OptCuts {
                     V.row(vDupIndStart + 2) = UV_mesh.row(F_mesh.row(triI)[2]);
                 }
                 
-//                // perturb for testing separation energy
-//                V.row(vDupIndStart + 1) = V.row(vDupIndStart) + 0.5 * (V.row(vDupIndStart + 1) - V.row(vDupIndStart));
-//                V.row(vDupIndStart + 2) = V.row(vDupIndStart) + 0.5 * (V.row(vDupIndStart + 2) - V.row(vDupIndStart));
-                
                 V_rest.row(vDupIndStart) = V_mesh.row(F_mesh.row(triI)[0]);
                 V_rest.row(vDupIndStart + 1) = V_mesh.row(F_mesh.row(triI)[1]);
                 V_rest.row(vDupIndStart + 2) = V_mesh.row(F_mesh.row(triI)[2]);
@@ -106,7 +102,6 @@ namespace OptCuts {
                     cohE.row(-cohPI.second[0] - 1)[3] = cohPI.second[1];
                 }
             }
-//            std::cout << cohE << std::endl;
             
             if(UV_mesh.rows() == 0) {
                 // no input UV
@@ -207,33 +202,6 @@ namespace OptCuts {
         computeFeatures(false, true);
         
         vertWeight = Eigen::VectorXd::Ones(V.rows());
-        //TEST: compute gaussian curvature for regional seam placement
-//        vertWeight = Eigen::VectorXd::Ones(V.rows()) * 2.0 * M_PI;
-//        for(int triI = 0; triI < F.rows(); triI++) {
-//            const Eigen::RowVector3i& triVInd = F.row(triI);
-//            const Eigen::RowVector3d v[3] = {
-//                V_rest.row(triVInd[0]),
-//                V_rest.row(triVInd[1]),
-//                V_rest.row(triVInd[2])
-//            };
-//            for(int vI = 0; vI < 3; vI++) {
-//                int vI_post = (vI + 1) % 3;
-//                int vI_pre = (vI + 2) % 3;
-//                const Eigen::RowVector3d e0 = v[vI_pre] - v[vI];
-//                const Eigen::RowVector3d e1 = v[vI_post] - v[vI];
-//                vertWeight[triVInd[vI]] -= std::acos(std::max(-1.0, std::min(1.0, e0.dot(e1) / e0.norm() / e1.norm())));
-//            }
-//        }
-//        const double maxRatio = 4.0;
-//        for(int vI = 0; vI < V.rows(); vI++) {
-//            if(isBoundaryVert(vI)) {
-//                vertWeight[vI] -= M_PI;
-//            }
-//            if(vertWeight[vI] < 0) {
-//                vertWeight[vI] = -vertWeight[vI];
-//            }
-//            vertWeight[vI] = maxRatio - (maxRatio - 1.0) * vertWeight[vI] / (2.0 * M_PI);
-//        }
     }
     
     void initCylinder(double r1_x, double r1_y, double r2_x, double r2_y, double height, int circle_res, int height_resolution,
@@ -351,15 +319,10 @@ namespace OptCuts {
             LaplacianMtr.insert(fixedVI, fixedVI) = 1.0;
         }
         LaplacianMtr.makeCompressed();
-//        //        Eigen::SparseMatrix<double> M;
-//        //        massmatrix(data.V_rest, data.F, igl::MASSMATRIX_TYPE_DEFAULT, M);
-//                    LaplacianMtr.insert(it.row() * 2, it.col() * 2) = -it.value();// * M.coeffRef(it.row(), it.row());
-//                    LaplacianMtr.insert(it.row() * 2 + 1, it.col() * 2 + 1) = -it.value();// * M.coeffRef(it.row(), it.row());
     }
     
     void TriMesh::computeFeatures(bool multiComp, bool resetFixedV)
     {
-        //TODO: if the mesh is multi-component, then fix more vertices
         if(resetFixedV) {
             fixedVert.clear();
             fixedVert.insert(0);
@@ -377,8 +340,6 @@ namespace OptCuts {
             }
             edgeLen[cohI] = (V_rest.row(cohE(cohI, 0)) - V_rest.row(cohE(cohI, 1))).norm();
         }
-        
-//        igl::cotmatrix_entries(V_rest, F, cotVals);
         
         triNormal.resize(F.rows(), 3);
         triArea.resize(F.rows());
@@ -437,12 +398,6 @@ namespace OptCuts {
         }
         
         computeLaplacianMtr();
-        
-//        //!! for edge count minimization of separation energy
-//        for(int cohI = 0; cohI < cohE.rows(); cohI++)
-//        {
-//            edgeLen[cohI] = avgEdgeLen;
-//        }
         
         bbox.block(0, 0, 1, 3) = V_rest.row(0);
         bbox.block(1, 0, 1, 3) = V_rest.row(0);
@@ -570,238 +525,6 @@ namespace OptCuts {
         computeFeatures();
     }
     
-    bool TriMesh::separateTriangle(const Eigen::VectorXd& measure, double thres)
-    {
-        assert(measure.size() == F.rows());
-        
-        // separate triangles when necessary
-        bool changed = false;
-        for(int triI = 0; triI < F.rows(); triI++) {
-            if(measure[triI] <= thres) {
-                continue;
-            }
-            
-            const Eigen::RowVector3i triVInd = F.row(triI);
-            Eigen::Vector3i needSeparate = Eigen::Vector3i::Zero();
-            std::map<std::pair<int, int>, int>::iterator edgeFinder[3];
-            for(int eI = 0; eI < 3; eI++) {
-                if(edge2Tri.find(std::pair<int, int>(triVInd[(eI + 1) % 3], triVInd[eI])) != edge2Tri.end()) {
-                    needSeparate[eI] = 1;
-                    edgeFinder[eI] = edge2Tri.find(std::pair<int, int>(triVInd[eI], triVInd[(eI + 1) % 3]));
-                }
-            }
-            if(needSeparate.sum() == 0) {
-                continue;
-            }
-            
-            changed = true;
-            if(needSeparate.sum() == 1) {
-                // duplicate the edge
-                for(int eI = 0; eI < 3; eI++) {
-                    if(needSeparate[eI]) {
-                        const int vI = triVInd[eI], vI_post = triVInd[(eI + 1) % 3];
-                        const int nV = static_cast<int>(V_rest.rows());
-                        V_rest.conservativeResize(nV + 2, 3);
-                        V_rest.row(nV) = V_rest.row(vI);
-                        V_rest.row(nV + 1) = V_rest.row(vI_post);
-                        V.conservativeResize(nV + 2, 2);
-                        V.row(nV) = V.row(vI);
-                        V.row(nV + 1) = V.row(vI_post);
-                        
-                        F(triI, eI) = nV;
-                        F(triI, (eI + 1) % 3) = nV + 1;
-                        
-                        const int nCE = static_cast<int>(cohE.rows());
-                        cohE.conservativeResize(nCE + 1, 4);
-                        cohE.row(nCE) << nV, nV + 1, vI, vI_post;
-                        cohEIndex[std::pair<int, int>(nV, nV + 1)] = nCE;
-                        cohEIndex[std::pair<int, int>(vI_post, vI)] = -nCE - 1;
-                        
-                        edge2Tri.erase(edgeFinder[eI]);
-                        edge2Tri[std::pair<int, int>(nV, nV + 1)] = triI;
-                        
-                        const int vI_pre = triVInd[(eI + 2) % 3];
-                        auto finder0 = cohEIndex.find(std::pair<int, int>(vI_post, vI_pre));
-                        if(finder0 != cohEIndex.end()) {
-                            if(finder0->second >= 0) {
-                                cohE(finder0->second, 0) = nV + 1;
-                            }
-                            else {
-                                cohE(-finder0->second - 1, 3) = nV + 1;
-                            }
-                            cohEIndex[std::pair<int, int>(nV + 1, vI_pre)] = finder0->second;
-                            cohEIndex.erase(finder0);
-                        }
-                        auto finder1 = cohEIndex.find(std::pair<int, int>(vI_pre, vI));
-                        if(finder1 != cohEIndex.end()) {
-                            if(finder1->second >= 0) {
-                                cohE(finder1->second, 1) = nV;
-                            }
-                            else {
-                                cohE(-finder1->second - 1, 2) = nV;
-                            }
-                            cohEIndex[std::pair<int, int>(vI_pre, nV)] = finder1->second;
-                            cohEIndex.erase(finder1);
-                        }
-                        
-                        break;
-                    }
-                }
-            }
-            else if(needSeparate.sum() > 1) {
-                std::vector<std::vector<int>> tri_toSep;
-                std::vector<std::pair<int, int>> boundaryEdge;
-                std::vector<int> vI_toSplit, vI_toSplit_post;
-                std::vector<bool> needSplit;
-                for(int eI = 0; eI < 3; eI++) {
-                    if(needSeparate[eI] && needSeparate[(eI + 2) % 3]) {
-                        vI_toSplit.emplace_back(triVInd[eI]);
-                        vI_toSplit_post.emplace_back(triVInd[(eI + 1) % 3]);
-                        tri_toSep.resize(tri_toSep.size() + 1);
-                        boundaryEdge.resize(boundaryEdge.size() + 1);
-                        needSplit.push_back(isBoundaryVert(vI_toSplit.back(), vI_toSplit_post.back(),
-                                                              tri_toSep.back(), boundaryEdge.back()));
-                    }
-                }
-                
-                // duplicate all vertices
-                const int vI0 = triVInd[0], vI1 = triVInd[1], vI2 = triVInd[2];
-                const int nV = static_cast<int>(V_rest.rows());
-                V_rest.conservativeResize(nV + 3, 3);
-                V_rest.row(nV) = V_rest.row(vI0);
-                V_rest.row(nV + 1) = V_rest.row(vI1);
-                V_rest.row(nV + 2) = V_rest.row(vI2);
-                V.conservativeResize(nV + 3, 2);
-                V.row(nV) = V.row(vI0);
-                V.row(nV + 1) = V.row(vI1);
-                V.row(nV + 2) = V.row(vI2);
-                
-                F.row(triI) << nV, nV + 1, nV + 2;
-                
-                // construct cohesive edges:
-                for(int eI = 0; eI < 3; eI++) {
-                    if(needSeparate[eI]) {
-                        const int nCE = static_cast<int>(cohE.rows());
-                        cohE.conservativeResize(nCE + 1, 4);
-                        const int vI = eI, vI_post = (eI + 1) % 3;
-                        cohE.row(nCE) << nV + vI, nV + vI_post, triVInd[vI], triVInd[vI_post];
-                        cohEIndex[std::pair<int, int>(nV + vI, nV + vI_post)] = nCE;
-                        cohEIndex[std::pair<int, int>(triVInd[vI_post], triVInd[vI])] = -nCE - 1;
-                        
-                        edge2Tri.erase(edgeFinder[eI]);
-                        edge2Tri[std::pair<int, int>(nV + vI, nV + vI_post)] = triI;
-                    }
-                    else {
-                        int vI = eI, vI_post = (eI + 1) % 3;
-                        auto finder = cohEIndex.find(std::pair<int, int>(triVInd[vI], triVInd[vI_post]));
-                        if(finder != cohEIndex.end()) {
-                            if(finder->second >= 0) {
-                                cohE(finder->second, 0) = nV + vI;
-                                cohE(finder->second, 1) = nV + vI_post;
-                            }
-                            else {
-                                cohE(-finder->second - 1, 3) = nV + vI;
-                                cohE(-finder->second - 1, 2) = nV + vI_post;
-                            }
-                            cohEIndex[std::pair<int, int>(nV + vI, nV + vI_post)] = finder->second;
-                            cohEIndex.erase(finder);
-                        }
-                    }
-                }
-                
-                for(int sI = 0; sI < needSplit.size(); sI++) {
-                    if(!needSplit[sI]) {
-                        continue;
-                    }
-                    
-                    assert(!tri_toSep.empty());
-                    const int nV = static_cast<int>(V_rest.rows());
-                    V_rest.conservativeResize(nV + 1, 3);
-                    V_rest.row(nV) = V_rest.row(vI_toSplit[sI]);
-                    V.conservativeResize(nV + 1, 2);
-                    V.row(nV) = V.row(vI_toSplit[sI]);
-                    for(const auto triToSepI : tri_toSep[sI]) {
-                        int i = 0;
-                        for(; i < 3; i++) {
-                            if(F(triToSepI, i) == vI_toSplit[sI]) {
-                                F(triToSepI, i) = nV;
-                                int vI_post = F(triToSepI, (i + 1) % 3);
-                                int vI_pre = F(triToSepI, (i + 2) % 3);
-                                edge2Tri[std::pair<int, int>(nV, vI_post)] = triToSepI;
-                                edge2Tri[std::pair<int, int>(vI_pre, nV)] = triToSepI;
-                                edge2Tri.erase(std::pair<int, int>(vI_toSplit[sI], vI_post));
-                                edge2Tri.erase(std::pair<int, int>(vI_pre, vI_toSplit[sI]));
-                                break;
-                            }
-                        }
-                        assert(i < 3);
-                    }
-                    auto finder = cohEIndex.find(std::pair<int, int>(vI_toSplit_post[sI], vI_toSplit[sI]));
-                    assert(finder != cohEIndex.end());
-                    if(finder->second >= 0) {
-                        cohE(finder->second, 1) = nV;
-                    }
-                    else {
-                        cohE(-finder->second - 1, 2) = nV;
-                    }
-                    cohEIndex[std::pair<int, int>(vI_toSplit_post[sI], nV)] = finder->second;
-                    cohEIndex.erase(finder);
-                    
-                    finder = cohEIndex.find(boundaryEdge[sI]);
-                    if(finder != cohEIndex.end()) {
-                        if(finder->second >= 0) {
-                            cohE(finder->second, 0) = nV;
-                        }
-                        else {
-                            cohE(-finder->second - 1, 3) = nV;
-                        }
-                        cohEIndex[std::pair<int, int>(nV, boundaryEdge[sI].second)] = finder->second;
-                        cohEIndex.erase(finder);
-                    }
-                }
-            }
-        }
-        
-        if(changed) {
-            updateFeatures();
-        }
-        
-        return changed;
-    }
-    
-    bool TriMesh::splitVertex(const Eigen::VectorXd& measure, double thres)
-    {
-        assert(measure.rows() == V.rows());
-        
-        bool modified = false;
-        for(int vI = 0; vI < measure.size(); vI++) {
-            if(measure[vI] > thres) {
-                if(isBoundaryVert(vI)) {
-                    // right now only on boundary vertices
-                    int vI_interior = -1;
-                    for(const auto& vI_neighbor : vNeighbor[vI]) {
-                        if((edge2Tri.find(std::pair<int, int>(vI, vI_neighbor)) != edge2Tri.end()) &&
-                           (edge2Tri.find(std::pair<int, int>(vI_neighbor, vI)) != edge2Tri.end()))
-                        {
-                            vI_interior = vI_neighbor;
-                            break;
-                        }
-                    }
-                    if(vI_interior >= 0) {
-//                        splitEdgeOnBoundary(std::pair<int, int>(vI, vI_interior), edge2Tri, vNeighbor, cohEIndex);
-                        modified = true;
-                    }
-                }
-            }
-        }
-        
-        if(modified) {
-            updateFeatures();
-        }
-        
-        return modified;
-    }
-    
     void TriMesh::querySplit(double lambda_t, bool propagate, bool splitInterior,
                                   double& EwDec_max, std::vector<int>& path_max, Eigen::MatrixXd& newVertPos_max,
                                   std::pair<double, double>& energyChanges_max) const
@@ -813,12 +536,8 @@ namespace OptCuts {
         std::vector<int> bestCandVerts;
         if(!propagate) {
             SymDirichletEnergy SD;
-            //            double energyVal;
-            //            SD.computeEnergyVal(*this, energyVal);
             Eigen::VectorXd divGradPerVert;
             SD.computeDivGradPerVert(*this, divGradPerVert);
-            //            Eigen::VectorXd maxUnweightedEnergyValPerVert;
-            //            SD.getMaxUnweightedEnergyValPerVert(*this, maxUnweightedEnergyValPerVert);
             
             std::map<double, int> sortedCandVerts_b, sortedCandVerts_in;
             if(splitInterior) {
@@ -838,9 +557,7 @@ namespace OptCuts {
                         }
                         if(!connectToBound) {
                             // don't split vertices connected to boundary here
-                        //                        if(maxUnweightedEnergyValPerVert[vI] > energyVal) {
                             sortedCandVerts_in[-divGradPerVert[vI] / vertWeight[vI]] = vI;
-                        //                        }
                         }
                     }
                 }
@@ -854,9 +571,7 @@ namespace OptCuts {
                     }
                     
                     if(isBoundaryVert(vI)) {
-                        //                        if(maxUnweightedEnergyValPerVert[vI] > energyVal) {
                         sortedCandVerts_b[-divGradPerVert[vI] / vertWeight[vI]] = vI;
-                        //                        }
                     }
                 }
             }
@@ -924,7 +639,7 @@ namespace OptCuts {
             }
         }
         
-        assert(!bestCandVerts.empty()); //TODO: extra filter might cause this!!!
+        assert(!bestCandVerts.empty());
         
         // evaluate local energy decrease
         std::cout << "evaluate vertex splits, " << bestCandVerts.size() << " candidate verts" << std::endl;
@@ -953,12 +668,10 @@ namespace OptCuts {
                 paths_bSplit.resize(bestCandVerts.size());
                 newVertPoses_bSplit.resize(bestCandVerts.size());
                 energyChanges_bSplit.resize(bestCandVerts.size());
-//                for(int candI = 0; candI < bestCandVerts.size(); candI++) {
                 tbb::parallel_for(0, (int)bestCandVerts.size(), 1, [&](int candI) {
                     EwDecs[candI] = computeLocalEwDec(bestCandVerts[candI], lambda_t, paths_bSplit[candI], newVertPoses_bSplit[candI],
                                                       energyChanges_bSplit[candI]);
                 });
-//                }
             }
         }
         else {
@@ -969,7 +682,6 @@ namespace OptCuts {
             paths_iSplit.resize(bestCandVerts.size());
             newVertPoses_iSplit.resize(bestCandVerts.size());
             energyChanges_iSplit.resize(bestCandVerts.size());
-//            for(int candI = 0; candI < bestCandVerts.size(); candI++) {
             tbb::parallel_for(0, (int)bestCandVerts.size(), 1, [&](int candI) {
                 EwDecs[candI] = computeLocalEwDec(bestCandVerts[candI], lambda_t, paths_iSplit[candI], newVertPoses_iSplit[candI],
                                                         energyChanges_iSplit[candI]);
@@ -977,7 +689,6 @@ namespace OptCuts {
                     EwDecs[candI] *= 0.5;
                 }
             });
-//            }
         }
             
         int candI_max = 0;
@@ -1011,8 +722,6 @@ namespace OptCuts {
                 assert(0);
                 break;
         }
-//        std::cout << path_max[0] << " " << path_max[1] << std::endl;
-//        std::cout << newVertPoses[candI_max] << std::endl;
             
         timer_step.stop();
     }
@@ -1081,7 +790,7 @@ namespace OptCuts {
                 forkVI = 1;
             }
             else {
-                //!!! only consider "zipper bottom" edge pairs for now
+                // only consider "zipper bottom" edge pairs for now
                 continue;
             }
             
@@ -1142,7 +851,6 @@ namespace OptCuts {
                 assert(inequalityConsVec.size() == triangles.size());
                 
                 // Relaxation method for linear inequalities
-//                logFile << "Relaxation method for linear inequalities" << std::endl; //DEBUG
                 int maxIter = 70;
                 const double eps_IC = 1.0e-6 * avgEdgeLen;
                 for(int iterI = 0; iterI < maxIter; iterI++) {
@@ -1158,7 +866,6 @@ namespace OptCuts {
                         }
                     }
                     
-//                    logFile << maxRes << std::endl; //DEBUG
                     if(maxRes < 0.0) {
                         // converged (non-inversion satisfied)
                         //NOTE: although this maxRes is 1 iteration behind, it is OK for a convergence check
@@ -1371,7 +1078,6 @@ namespace OptCuts {
             }
         }
         
-        //!!! use smoothest cut as initial?
         assert(vNeighbor[vJ_maxGC].size() >= 3);
         int vK_maxGC = -1;
         double gc_vK = -__DBL_MAX__;
@@ -1531,8 +1237,6 @@ namespace OptCuts {
         }
         
         cutPath(path, makeCoh);
-//        save("/Users/mincli/Desktop/meshes/test_triSoup.obj");
-//        saveAsMesh("/Users/mincli/Desktop/meshes/test_mesh.obj");
         
         if(makeCoh) {
             initSeams = cohE;
@@ -1552,7 +1256,6 @@ namespace OptCuts {
             
             // Map the boundary to a circle, preserving edge proportions
             Eigen::MatrixXd bnd_uv;
-            //            igl::map_vertices_to_circle(V, bnd, bnd_uv);
             OptCuts::IglUtils::map_vertices_to_circle(this->V_rest, bnd, bnd_uv);
             
             Eigen::MatrixXd UV_Tutte;
@@ -1651,8 +1354,6 @@ namespace OptCuts {
         std::reverse(path.begin(), path.end());
         
         cutPath(path, true);
-//        save("/Users/mincli/Desktop/meshes/test_triSoup.obj");
-//        saveAsMesh("/Users/mincli/Desktop/meshes/test_mesh.obj");
     }
     
     void TriMesh::cutPath(std::vector<int> path, bool makeCoh, int changePos,
@@ -1683,7 +1384,6 @@ namespace OptCuts {
             }
             
             for(int vI = 0; vI + 1 < path.size(); vI++) {
-                //TODO: enable change pos!
                 int vInd_s = path[vI];
                 int vInd_e = path[vI + 1];
                 assert(edge2Tri.find(std::pair<int, int>(vInd_s, vInd_e)) != edge2Tri.end());
@@ -1759,7 +1459,6 @@ namespace OptCuts {
             computeFeatures(); //TODO: only update locally
             
             for(int vI = 2; vI + 1 < path.size(); vI++) {
-                //TODO: enable change pos!
                 int vInd_s = path[vI];
                 int vInd_e = path[vI + 1];
                 assert(edge2Tri.find(std::pair<int, int>(vInd_s, vInd_e)) != edge2Tri.end());
@@ -1914,7 +1613,6 @@ namespace OptCuts {
     }
     void TriMesh::computeAbsGaussianCurv(double& absGaussianCurv) const
     {
-        //!!! it's easy to optimize this way actually...
         std::vector<double> weights(V.rows(), 0.0);
         std::vector<double> gaussianCurv(V.rows(), 2.0 * M_PI);
         for(int triI = 0; triI < F.rows(); triI++) {
@@ -1968,7 +1666,7 @@ namespace OptCuts {
     {
         assert(triI < F.rows());
         
-        const double eps = 0.0;//1.0e-20 * avgEdgeLen * avgEdgeLen;
+        const double eps = 0.0;
 
         const Eigen::Vector3i& triVInd = F.row(triI);
         
@@ -2057,7 +1755,6 @@ namespace OptCuts {
     
     void TriMesh::saveAsMesh(const std::string& filePath, bool scaleUV) const
     {
-        const double thres = 1.0e-2;
         std::vector<int> dupVI2GroupI(V.rows());
         std::vector<std::set<int>> meshVGroup(V.rows());
         std::vector<int> dupVI2GroupI_3D(V_rest.rows());
@@ -2250,10 +1947,6 @@ namespace OptCuts {
     bool TriMesh::isBoundaryVert(int vI, int vI_neighbor,
                                       std::vector<int>& tri_toSep, std::pair<int, int>& boundaryEdge, bool toBound) const
     {
-//        const auto inputEdgeTri = edge2Tri.find(toBound ? std::pair<int, int>(vI, vI_neighbor) :
-//                                                std::pair<int, int>(vI_neighbor, vI));
-//        assert(inputEdgeTri != edge2Tri.end());
-        
         tri_toSep.resize(0);
         auto finder = edge2Tri.find(toBound ? std::pair<int, int>(vI_neighbor, vI):
                                     std::pair<int, int>(vI, vI_neighbor));
@@ -2400,26 +2093,17 @@ namespace OptCuts {
                     Eigen::MatrixXd newVertPosI;
                     const double SDDec = computeLocalEDec(edge, newVertPosI);
                     
-//                    // test overlap locally (not necessary if global bijectivity is enforced)
-//                    const Eigen::RowVector2d e = V.row(vI) - V.row(nbVI);
-//                    const Eigen::RowVector2d a = newVertPosI.row(0) - V.row(nbVI);
-//                    const Eigen::RowVector2d b = newVertPosI.row(1) - V.row(nbVI);
-//                    if(IglUtils::computeRotAngle(a, e) + IglUtils::computeRotAngle(e, b) > 0.0) {
-//                    std::cout << vI << "-" << nbVI << ": " << IglUtils::computeRotAngle(a, e) + IglUtils::computeRotAngle(e, b) << std::endl;
-//                    assert(IglUtils::computeRotAngle(a, e) + IglUtils::computeRotAngle(e, b) > 0.0); //TODO: cut through may violate
-                        const double seInc = (V_rest.row(vI) - V_rest.row(nbVI)).norm() /
-                            virtualRadius * (vertWeight[vI] + vertWeight[nbVI]) / 2.0;
-                        const double curEwDec = (1.0 - lambda_t) * SDDec - lambda_t * seInc;
-                        if(curEwDec > maxEwDec) {
-                            maxEwDec = curEwDec;
-                            path_max[0] = vI;
-                            path_max[1] = nbVI;
-                            newVertPos_max = newVertPosI;
-                            energyChanges_max.first = -SDDec;
-                            energyChanges_max.second = seInc;
-                        }
-//                    }
-                    //TODO: cut through check?
+                    const double seInc = (V_rest.row(vI) - V_rest.row(nbVI)).norm() /
+                        virtualRadius * (vertWeight[vI] + vertWeight[nbVI]) / 2.0;
+                    const double curEwDec = (1.0 - lambda_t) * SDDec - lambda_t * seInc;
+                    if(curEwDec > maxEwDec) {
+                        maxEwDec = curEwDec;
+                        path_max[0] = vI;
+                        path_max[1] = nbVI;
+                        newVertPos_max = newVertPosI;
+                        energyChanges_max.first = -SDDec;
+                        energyChanges_max.second = seInc;
+                    }
                 }
             }
             return maxEwDec;
@@ -2435,7 +2119,6 @@ namespace OptCuts {
                 }
             }
             
-//            std::cout << "umbrella obtained, size " << umbrella.size() << std::endl;
             if(umbrella.size() > 10) {
                 std::cout << "large degree vert, " << umbrella.size() << " incident tris" << std::endl;
                 logFile << "large degree vert, " << umbrella.size() << " incident tris" << std::endl;
@@ -2466,50 +2149,11 @@ namespace OptCuts {
                         }
                     }
                     
-//                    // don't make sharp turn splits
-//                    if(validSplit[vI].find(std::pair<int, int>(path[0], path[2])) == validSplit[vI].end()) {
-//                        continue;
-//                    }
-                    
                     double SDDec = 0.0;
                     Eigen::MatrixXd newVertPos;
                     
                     SDDec += computeLocalEDec_in(umbrella, freeVert, path, newVertPos);
                     //TODO: share local mesh before split, also for boundary splits
-                    
-//                    if(scaffold) {
-//                        // test overlap
-//                        const double eps_ang = 1.0e-3;
-//                        const Eigen::RowVector2d p0p1 = V.row(path[1]) - V.row(path[0]);
-//                        const Eigen::RowVector2d p0nv0 = newVertPos.block(0, 0, 1, 2) - V.row(path[0]);
-//                        const Eigen::RowVector2d p0nv1 = newVertPos.block(1, 0, 1, 2) - V.row(path[0]);
-//                        const double ang_nv0p0p1 = IglUtils::computeRotAngle(p0nv0, p0p1);
-//                        const double ang_p1p0nv1 = IglUtils::computeRotAngle(p0p1, p0nv1);
-//                        if(ang_nv0p0p1 + ang_p1p0nv1 <= eps_ang) {
-//                            continue;
-//                        }
-//                        const Eigen::RowVector2d p2p1 = V.row(path[1]) - V.row(path[2]);
-//                        const Eigen::RowVector2d p2nv0 = newVertPos.block(0, 0, 1, 2) - V.row(path[2]);
-//                        const Eigen::RowVector2d p2nv1 = newVertPos.block(1, 0, 1, 2) - V.row(path[2]);
-//                        const double ang_nv1p2p1 = IglUtils::computeRotAngle(p2nv1, p2p1);
-//                        const double ang_p1p2nv0 = IglUtils::computeRotAngle(p2p1, p2nv0);
-//                        if(ang_nv1p2p1 + ang_p1p2nv0 <= eps_ang) {
-//                            continue;
-//                        }
-//                        // test on corners of non-moving vertices is unnecessary
-//                        double ang_p0p1p2 = IglUtils::computeRotAngle(-p0p1, -p2p1);
-//                        if(ang_p0p1p2 < 0.0) {
-//                            ang_p0p1p2 += 2.0 * M_PI;
-//                        }
-////                        assert(ang_p1p0nv1 + ang_nv1p2p1 < ang_p0p1p2 + eps_ang);
-//                        if(ang_p1p0nv1 + ang_nv1p2p1 >= ang_p0p1p2) {
-//                            continue;
-//                        }
-////                        assert(ang_p1p2nv0 + ang_nv0p0p1 < 2.0 * M_PI - ang_p0p1p2 + eps_ang);
-//                        if(ang_p1p2nv0 + ang_nv0p0p1 >= 2.0 * M_PI - ang_p0p1p2) {
-//                            continue;
-//                        }
-//                    }
                     
                     const double seInc = ((V_rest.row(path[0]) - V_rest.row(path[1])).norm() * (vertWeight[path[0]] + vertWeight[path[1]]) +
                                           (V_rest.row(path[1]) - V_rest.row(path[2])).norm() * (vertWeight[path[1]] + vertWeight[path[2]])) / virtualRadius / 2.0;
@@ -2622,7 +2266,7 @@ namespace OptCuts {
                 if(std::abs(curSqDist - lastSqDist) / lastSqDist < 1.0e-3) {
                     break;
                 }
-//                    //TODO: may update search dir, and accelerate
+//                    // may update search dir, and accelerate
 //                    localMesh.compute2DInwardNormal(splitPath_local[0], sepDir_oneV[0]);
 //                    localMesh.compute2DInwardNormal(localMesh.V.rows() - 1, sepDir_oneV[1]);
 //                    sepDir[0].block(splitPath_local[0] * 2, 0, 2, 1) = sepDir_oneV[0].transpose();
@@ -2643,14 +2287,11 @@ namespace OptCuts {
         Optimizer optimizer(localMesh, energyTerms, energyParams, 0, true, isBijective,
                             UV_bnds, E, bnd, true);
         optimizer.precompute();
-        //        optimizer.result.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_optimized.obj");
-        //        optimizer.scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test0_AM.obj");
         optimizer.setRelGL2Tol(1.0e-4);
         optimizer.solve(maxIter); //do not output, the other part
-        //            std::cout << "local opt " << optimizer.getIterNum() << " iters" << std::endl;
         double curE;
         optimizer.computeEnergyVal(optimizer.getResult(), optimizer.getScaffold(), curE, true);
-        const double eDec = (initE - curE) * localMesh.surfaceArea / surfaceArea; //!!! this should be written in a more general way, cause this way it only works for E_SD
+        const double eDec = (initE - curE) * localMesh.surfaceArea / surfaceArea;
         
         // get new vertex positions
         newVertPos.resize(2, 2);
@@ -2731,8 +2372,6 @@ namespace OptCuts {
         }
         TriMesh localMesh(localV_rest, localF, localV, Eigen::MatrixXi(), false);
         localMesh.resetFixedVert(fixedVert);
-//        localMesh.save("/Users/mincli/Desktop/meshes/test.obj");
-//        save("/Users/mincli/Desktop/meshes/test_full.obj");
         
         SymDirichletEnergy SD;
         double initE = 0.0;
@@ -2767,14 +2406,11 @@ namespace OptCuts {
         Optimizer optimizer(localMesh, energyTerms, energyParams, 0, true, isBijective,
                             UV_bnds, E, bnd, true);
         optimizer.precompute();
-        //        optimizer.result.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_optimized.obj");
-        //        optimizer.scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test0_AM.obj");
         optimizer.setRelGL2Tol(1.0e-4);
         optimizer.solve(maxIter); //do not output, the other part
-        //            std::cout << "local opt " << optimizer.getIterNum() << " iters" << std::endl;
         double curE;
         optimizer.computeEnergyVal(optimizer.getResult(), optimizer.getScaffold(), curE, true);
-        const double eDec = (initE - curE) * localMesh.surfaceArea / surfaceArea; //!!! this should be written in a more general way, cause this way it only works for E_SD
+        const double eDec = (initE - curE) * localMesh.surfaceArea / surfaceArea;
         
         // get new vertex positions
         newVertPos.clear();
@@ -2861,8 +2497,6 @@ namespace OptCuts {
                 // split
                 localMesh.splitEdgeOnBoundary(std::pair<int, int>(splitPath_local[0], splitPath_local[1]),
                                               Eigen::Matrix2d(), false, cutThrough);
-//                localMesh.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_afterSplit.obj");
-//                std::cout << splitPath[0] << "-" << splitPath[1] << std::endl;
                 
                 if(scaffold) {
                     // separate the splitted vertices to leave room for airmesh
@@ -2895,7 +2529,7 @@ namespace OptCuts {
                         if(std::abs(curSqDist - lastSqDist) / lastSqDist < 1.0e-3) {
                             break;
                         }
-    //                    //TODO: may update search dir, and accelerate
+    //                    // may update search dir, and accelerate
     //                    localMesh.compute2DInwardNormal(splitPath_local[0], sepDir_oneV[0]);
     //                    localMesh.compute2DInwardNormal(localMesh.V.rows() - 1, sepDir_oneV[1]);
     //                    sepDir[0].block(splitPath_local[0] * 2, 0, 2, 1) = sepDir_oneV[0].transpose();
@@ -2926,12 +2560,10 @@ namespace OptCuts {
                             if(std::abs(curSqDist - lastSqDist) / lastSqDist < 1.0e-3) {
                                 break;
                             }
-                            //                    //TODO: may update search dir, and accelerate
+                            // may update search dir, and accelerate
                         }
                         assert(localMesh.checkInversion());
                     }
-    //                std::cout << std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) << std::endl;
-//                    localMesh.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_separated.obj");
                 
                     // prepare local air mesh boundary
                     Eigen::MatrixXd UV_temp;
@@ -3031,7 +2663,7 @@ namespace OptCuts {
             }
                 
             case 3: // interior split
-                //TODO later
+                // not processed here
                 break;
                 
             default:
@@ -3045,16 +2677,12 @@ namespace OptCuts {
         Optimizer optimizer(localMesh, energyTerms, energyParams, 0, true, !!scaffold,
                             UV_bnds, E, bnd, true);
         optimizer.precompute();
-//        optimizer.scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_separated_AM.obj");
         optimizer.setRelGL2Tol(1.0e-4);
         optimizer.solve(maxIter);
-        //            std::cout << "local opt " << optimizer.getIterNum() << " iters" << std::endl;
-//        optimizer.result.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_optimized.obj");
-//        optimizer.scaffold.airMesh.save("/Users/mincli/Desktop/meshes/test" + std::to_string(splitPath[0]) + "-" + std::to_string(splitPath[1]) + "_optimized_AM.obj");
         
         double curE;
         optimizer.computeEnergyVal(optimizer.getResult(), optimizer.getScaffold(), curE, true);
-        const double eDec = (initE - curE) * localMesh.surfaceArea / surfaceArea; //!!! this should be written in a more general way, cause this way it only works for E_SD
+        const double eDec = (initE - curE) * localMesh.surfaceArea / surfaceArea;
         
         // get new vertex positions
         newVertPos.resize(2, 2);
@@ -3098,87 +2726,43 @@ namespace OptCuts {
             newVertPos.resize(2, 2);
         }
         
-//        if(cutThrough) {
-//            //!!! old mechanism with no bijectivity enforcement on local stencil
-//            
-//            double eDec = 0.0;
-//            for(int toBound = 0; toBound < 2; toBound++) {
-//                std::set<int> freeVertGID;
-//                freeVertGID.insert(vI_boundary);
-//                if(cutThrough) {
-//                    freeVertGID.insert(vI_interior);
-//                }
-//                
-//                std::vector<int> tri_toSep;
-//                std::pair<int, int> boundaryEdge;
-//                isBoundaryVert(vI_boundary, vI_interior, tri_toSep, boundaryEdge, toBound);
-//                assert(!tri_toSep.empty());
-//                if(cutThrough) {
-//                    std::vector<int> tri_interior;
-//                    std::pair<int, int> boundaryEdge_interior;
-//                    isBoundaryVert(vI_interior, vI_boundary, tri_interior, boundaryEdge_interior, !toBound);
-//                    for(const auto& triI : tri_interior) {
-//                        bool newTri = true;
-//                        for(const auto& triI_b : tri_toSep) {
-//                            if(triI_b == triI) {
-//                                newTri = false;
-//                                break;
-//                            }
-//                        }
-//                        if(newTri) {
-//                            tri_toSep.emplace_back(triI);
-//                        }
-//                    }
-//                }
-//                
-//                std::map<int, Eigen::RowVector2d> newVertPosMap;
-//                eDec += computeLocalEDec(tri_toSep, freeVertGID, newVertPosMap);
-//                newVertPos.block(toBound, 0, 1, 2) = newVertPosMap[vI_boundary];
-//                if(cutThrough) {
-//                    newVertPos.row(2 + toBound) = newVertPosMap[vI_interior];
-//                }
-//            }
-//            return eDec;
-//        }
-//        else {
-            std::set<int> freeVertGID;
-            freeVertGID.insert(vI_boundary);
-            if(cutThrough) {
-                freeVertGID.insert(vI_interior);
-            }
-            
-            std::vector<int> tri_toSep, tri_toSep1;
-            std::pair<int, int> boundaryEdge;
-            isBoundaryVert(vI_boundary, vI_interior, tri_toSep, boundaryEdge, 0);
-            assert(!tri_toSep.empty());
-            isBoundaryVert(vI_boundary, vI_interior, tri_toSep1, boundaryEdge, 1);
-            assert(!tri_toSep1.empty());
-            tri_toSep.insert(tri_toSep.end(), tri_toSep1.begin(), tri_toSep1.end());
-            if(cutThrough) {
-                for(int clockwise = 0; clockwise < 2; clockwise++) {
-                    std::vector<int> tri_interior;
-                    std::pair<int, int> boundaryEdge_interior;
-                    isBoundaryVert(vI_interior, vI_boundary, tri_interior, boundaryEdge_interior, clockwise);
-                    for(const auto& triI : tri_interior) {
-                        bool newTri = true;
-                        for(const auto& triI_b : tri_toSep) {
-                            if(triI_b == triI) {
-                                newTri = false;
-                                break;
-                            }
+        std::set<int> freeVertGID;
+        freeVertGID.insert(vI_boundary);
+        if(cutThrough) {
+            freeVertGID.insert(vI_interior);
+        }
+        
+        std::vector<int> tri_toSep, tri_toSep1;
+        std::pair<int, int> boundaryEdge;
+        isBoundaryVert(vI_boundary, vI_interior, tri_toSep, boundaryEdge, 0);
+        assert(!tri_toSep.empty());
+        isBoundaryVert(vI_boundary, vI_interior, tri_toSep1, boundaryEdge, 1);
+        assert(!tri_toSep1.empty());
+        tri_toSep.insert(tri_toSep.end(), tri_toSep1.begin(), tri_toSep1.end());
+        if(cutThrough) {
+            for(int clockwise = 0; clockwise < 2; clockwise++) {
+                std::vector<int> tri_interior;
+                std::pair<int, int> boundaryEdge_interior;
+                isBoundaryVert(vI_interior, vI_boundary, tri_interior, boundaryEdge_interior, clockwise);
+                for(const auto& triI : tri_interior) {
+                    bool newTri = true;
+                    for(const auto& triI_b : tri_toSep) {
+                        if(triI_b == triI) {
+                            newTri = false;
+                            break;
                         }
-                        if(newTri) {
-                            tri_toSep.emplace_back(triI);
-                        }
+                    }
+                    if(newTri) {
+                        tri_toSep.emplace_back(triI);
                     }
                 }
             }
-        
-            std::vector<int> splitPath(2);
-            splitPath[0] = vI_boundary;
-            splitPath[1] = vI_interior;
-            return computeLocalEDec(tri_toSep, freeVertGID, splitPath, newVertPos);
-//        }
+        }
+    
+        std::vector<int> splitPath(2);
+        splitPath[0] = vI_boundary;
+        splitPath[1] = vI_interior;
+        return computeLocalEDec(tri_toSep, freeVertGID, splitPath, newVertPos);
     }
     
     void TriMesh::splitEdgeOnBoundary(const std::pair<int, int>& edge,
@@ -3278,7 +2862,7 @@ namespace OptCuts {
         // add cohesive edge pair and update cohEIndex
         const int nCE = static_cast<int>(cohE.rows());
         cohE.conservativeResize(nCE + 1, 4);
-        cohE.row(nCE) << vI_interior, nV, vI_interior, vI_boundary; //!! is it a problem?
+        cohE.row(nCE) << vI_interior, nV, vI_interior, vI_boundary;
         cohEIndex[std::pair<int, int>(vI_interior, nV)] = nCE;
         cohEIndex[std::pair<int, int>(vI_boundary, vI_interior)] = -nCE - 1;
         auto CEIfinder = cohEIndex.find(boundaryEdge[1]);
@@ -3295,7 +2879,6 @@ namespace OptCuts {
         
         if(duplicateBoth) {
             int nV = static_cast<int>(V_rest.rows());
-//            subOptimizerInfo[1].first.insert(nV);
             V_rest.conservativeResize(nV + 1, 3);
             V_rest.row(nV) = V_rest.row(vI_interior);
             vertWeight.conservativeResize(nV + 1);
