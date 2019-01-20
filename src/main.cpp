@@ -1500,13 +1500,41 @@ int main(int argc, char *argv[])
                 
                 igl::boundary_loop(temp->F, bnd);
                 assert(bnd.size());
+                
                 Eigen::MatrixXd bnd_uv;
                 OptCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
+                
                 Eigen::SparseMatrix<double> A, M;
                 OptCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+                
                 Eigen::MatrixXd UV_Tutte;
                 igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
+                
                 triSoup.emplace_back(new OptCuts::TriMesh(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
+                
+                // try initialize one-point cut with different vertices
+                // until no inversion is detected
+                int splitVI = 0;
+                while(!triSoup.back()->checkInversion(true)) {
+                    std::cout << "element inversion detected during UV initialization " <<
+                        "due to rounding errors, trying another vertex..." << std::endl;
+                    
+                    delete temp;
+                    temp = new OptCuts::TriMesh(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
+                    temp->onePointCut(++splitVI);
+                    
+                    igl::boundary_loop(temp->F, bnd);
+                    assert(bnd.size());
+                    
+                    OptCuts::IglUtils::map_vertices_to_circle(temp->V_rest, bnd, bnd_uv);
+                    
+                    OptCuts::IglUtils::computeUniformLaplacian(temp->F, A);
+                    
+                    igl::harmonic(A, M, bnd, bnd_uv, 1, UV_Tutte);
+                    
+                    delete triSoup.back();
+                    triSoup.back() = new OptCuts::TriMesh(V, F, UV_Tutte, temp->F, false, temp->initSeamLen);
+                }
                 
                 delete temp;
                 outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda_init) + "_" + OptCuts::IglUtils::rtos(testID) +
