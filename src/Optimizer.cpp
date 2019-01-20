@@ -79,7 +79,7 @@ namespace OptCuts {
             }
         }
         
-        pardisoThreadAmt = 1; //TODO: use more threads!
+        pardisoThreadAmt = 4;
         
         scaffolding = p_scaffolding;
         UV_bnds_scaffold = UV_bnds;
@@ -373,7 +373,7 @@ namespace OptCuts {
     
     bool Optimizer::createFracture(int opType, const std::vector<int>& path, const Eigen::MatrixXd& newVertPos, bool allowPropagate)
     {
-        assert(methodType == MT_OURS);
+        assert(methodType == MT_OPTCUTS);
         
         topoIter++;
         
@@ -448,8 +448,8 @@ namespace OptCuts {
         bool changed = false;
         bool isMerge = false;
         switch(methodType) {
-            case MT_OURS_FIXED:
-            case MT_OURS: {
+            case MT_OPTCUTS_NODUAL:
+            case MT_OPTCUTS: {
                 data_findExtrema = result;
                 switch(propType) {
                     case 0: // initiation
@@ -468,7 +468,7 @@ namespace OptCuts {
                 break;
             }
                 
-            case MT_GEOMIMG:
+            case MT_EBCUTS:
                 result.geomImgCut(data_findExtrema);
                 allowPropagate = false;
                 changed = true;

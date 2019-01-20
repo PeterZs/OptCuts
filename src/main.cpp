@@ -47,7 +47,8 @@ bool autoHomotopy = true;
 std::ofstream homoTransFile;
 bool fractureMode = false;
 double fracThres = 0.0;
-bool altBase = false;
+bool topoLineSearch = true;
+int initCutOption = 0;
 bool outerLoopFinished = false;
 const int boundMeasureType = 0; // 0: E_SD, 1: L2 Stretch
 double upperBound = 4.1;
@@ -959,7 +960,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
             }
             
             switch(methodType) {
-                case OptCuts::MT_GEOMIMG: {
+                case OptCuts::MT_EBCUTS: {
                     if(measure_bound <= upperBound) {
                         logFile << "measure reaches user specified upperbound " << upperBound << std::endl;
                         
@@ -993,15 +994,15 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     break;
                 }
                     
-                case OptCuts::MT_OURS_FIXED:
-                case OptCuts::MT_OURS: {
+                case OptCuts::MT_OPTCUTS_NODUAL:
+                case OptCuts::MT_OPTCUTS: {
                     infoName = std::to_string(iterNum);
                     if(converged == 2) {
                         converged = 0;
                         return false;
                     }
                     
-                    if((methodType == OptCuts::MT_OURS) && (measure_bound <= upperBound)) {
+                    if((methodType == OptCuts::MT_OPTCUTS) && (measure_bound <= upperBound)) {
                         // save info once bound is reached for comparison
                         static bool saved = false;
                         if(!saved) {
@@ -1023,8 +1024,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     double E_se; triSoup[channel_result]->computeSeamSparsity(E_se);
                     E_se /= triSoup[channel_result]->virtualRadius;
                     const double E_SD = optimizer->getLastEnergyVal(true) / energyParams[0];
-                    const double E_w = optimizer->getLastEnergyVal(true) +
-                        (1.0 - energyParams[0]) * E_se;
+                    
                     std::cout << iterNum << ": " << E_SD << " " << E_se << " " << triSoup[channel_result]->V_rest.rows() << std::endl;
                     logFile << iterNum << ": " << E_SD << " " << E_se << " " << triSoup[channel_result]->V_rest.rows() << std::endl;
                     optimizer->flushEnergyFileOutput();
@@ -1032,7 +1032,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     homoTransFile << iterNum_lastTopo << std::endl;
                     
                     // continue to split boundary
-                    if((methodType == OptCuts::MT_OURS) &&
+                    if((methodType == OptCuts::MT_OPTCUTS) &&
                        (!updateLambda_stationaryV()))
                     {
                         // oscillation detected
@@ -1040,20 +1040,20 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     }
                     else {
                         logFile << "boundary op V " << triSoup[channel_result]->V_rest.rows() << std::endl;
-                        if(optimizer->createFracture(fracThres, false, !altBase)) {
+                        if(optimizer->createFracture(fracThres, false, topoLineSearch)) {
                             converged = false;
                         }
                         else {
                             // if no boundary op, try interior split if split is the current best boundary op
                             if((measure_bound > upperBound) &&
-                               optimizer->createFracture(fracThres, false, !altBase, true))
+                               optimizer->createFracture(fracThres, false, topoLineSearch, true))
                             {
                                 logFile << "interior split " << triSoup[channel_result]->V_rest.rows() << std::endl;
                                 converged = false;
                             }
                             else {
                                 homoTransFile << iterNum << std::endl; // mark stationaryVT
-                                if((methodType == OptCuts::MT_OURS_FIXED) ||
+                                if((methodType == OptCuts::MT_OPTCUTS_NODUAL) ||
                                    (!updateLambda_stationaryV(false, true)))
                                 {
                                     // all converged
@@ -1064,7 +1064,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                                     if(reQuery) {
                                         filterExp_in += std::log(2.0) / std::log(inSplitTotalAmt);
                                         filterExp_in = std::min(1.0, filterExp_in);
-                                        while(!optimizer->createFracture(fracThres, false, !altBase, true))
+                                        while(!optimizer->createFracture(fracThres, false, topoLineSearch, true))
                                         {
                                             filterExp_in += std::log(2.0) / std::log(inSplitTotalAmt);
                                             filterExp_in = std::min(1.0, filterExp_in);
@@ -1073,7 +1073,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                                         //TODO: set filtering param back?
                                     }
                                     else {
-                                        optimizer->createFracture(opType_queried, path_queried, newVertPos_queried, !altBase);
+                                        optimizer->createFracture(opType_queried, path_queried, newVertPos_queried, topoLineSearch);
                                     }
                                     opType_queried = -1;
                                     converged = false;
@@ -1084,7 +1084,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     break;
                 }
                     
-                case OptCuts::MT_NOCUT: {
+                case OptCuts::MT_DISTMIN: {
                     converge_preDrawFunc(viewer);
                     break;
                 }
@@ -1180,6 +1180,7 @@ int main(int argc, char *argv[])
         std::cout << "unkown mesh file format!" << std::endl;
         return -1;
     }
+    
     if(!loadSucceed) {
         std::cout << "failed to load mesh!" << std::endl;
         return -1;
@@ -1192,60 +1193,56 @@ int main(int argc, char *argv[])
 //    F = squareMesh.F;
     
     // Set lambda
-    double lambda = 0.5;
+    lambda_init = 0.999;
     if(argc > 3) {
-        lambda = std::stod(argv[3]);
-        if((lambda != lambda) || (lambda < 0.0) || (lambda > 1.0)) {
-            std::cout << "Overwrite invalid lambda " << lambda << " to 0.5" << std::endl;
-            lambda = 0.5;
+        lambda_init = std::stod(argv[3]);
+        if((lambda_init != lambda_init) || (lambda_init < 0.0) || (lambda_init >= 1.0)) {
+            std::cout << "Overwrite invalid lambda " << lambda_init << " to 0.999" << std::endl;
+            lambda_init = 0.999;
         }
     }
     else {
-        std::cout << "Use default lambda = " << lambda << std::endl;
+        std::cout << "Use default lambda = " << lambda_init << std::endl;
     }
-    lambda_init = lambda;
     
-    // Set delta
-    double delta = 4.0;
+    // Set testID
+    double testID = 1.0; // test id for naming result folder
     if(argc > 4) {
-        delta = std::stod(argv[4]);
-        if((delta != delta) || (delta < 0.0)) {
-            std::cout << "Overwrite invalid delta " << delta << " to 4" << std::endl;
-            delta = 4.0;
+        testID = std::stod(argv[4]);
+        if((testID != testID) || (testID < 0.0)) {
+            std::cout << "Overwrite invalid testID " << testID << " to 1" << std::endl;
+            testID = 1.0;
         }
     }
     else {
-        std::cout << "Use default delta = " << delta << std::endl;
+        std::cout << "Use default testID = " << testID << std::endl;
     }
     
     if(argc > 5) {
         methodType = OptCuts::MethodType(std::stoi(argv[5]));
     }
     else {
-        std::cout << "Use default method: ours." << std::endl;
+        std::cout << "Use default method: OptCuts." << std::endl;
     }
     
     std::string startDS;
     switch (methodType) {
-        case OptCuts::MT_OURS_FIXED:
-            assert(lambda < 1.0);
-            startDS = "OursFixed";
+        case OptCuts::MT_OPTCUTS_NODUAL:
+            startDS = "OptCuts_noDual";
             break;
             
-        case OptCuts::MT_OURS:
-            assert(lambda < 1.0);
-            startDS = "OursBounded";
+        case OptCuts::MT_OPTCUTS:
+            startDS = "OptCuts";
             break;
             
-        case OptCuts::MT_GEOMIMG:
-            assert(lambda < 1.0);
-            startDS = "GeomImg";
+        case OptCuts::MT_EBCUTS:
+            startDS = "EBCuts";
             bijectiveParam = false;
             break;
             
-        case OptCuts::MT_NOCUT:
-            lambda = 0.0;
-            startDS = "NoCut";
+        case OptCuts::MT_DISTMIN:
+            lambda_init = 0.0;
+            startDS = "DistMin";
             break;
             
         default:
@@ -1284,8 +1281,8 @@ int main(int argc, char *argv[])
         }
         else {
             if(upperBound <= 4.0) {
-                std::cout << "input b_d <= 4.0! use 4.05 instead." << std::endl;
-                upperBound = 4.05;
+                std::cout << "input b_d <= 4.0! use 4.1 instead." << std::endl;
+                upperBound = 4.1;
             }
             else {
                 std::cout << "use b_d = " << upperBound << std::endl;
@@ -1298,20 +1295,39 @@ int main(int argc, char *argv[])
         std::cout << "bijectivity " << (bijectiveParam ? "ON" : "OFF") << std::endl;
     }
     
-    std::string folderTail = "";
     if(argc > 8) {
-        if(argv[8][0] != '_') {
-            folderTail += '_';
-        }
-        folderTail += argv[8];
+        initCutOption = std::stoi(argv[8]);
+    }
+    switch(initCutOption) {
+        case 0:
+            std::cout << "random 2-edge initial cut for closed surface" << std::endl;
+            break;
+            
+        case 1:
+            std::cout << "farthest 2-point initial cut for closed surface" << std::endl;
+            break;
+            
+        default:
+            std::cout << "input initial cut option invalid, use default" << std::endl;
+            std::cout << "random 2-edge initial cut for closed surface" << std::endl;
+            initCutOption = 0;
+            break;
     }
     
-    if(UV.rows() != 0) {
-        
+    std::string folderTail = "";
+    if(argc > 9) {
+        if(argv[9][0] != '_') {
+            folderTail += '_';
+        }
+        folderTail += argv[9];
+    }
+    
+    if(UV.rows() != 0)
+    {
         // with input UV
         OptCuts::TriMesh *temp = new OptCuts::TriMesh(V, F, UV, FUV, false);
-        outputFolderPath += meshName + "_input_" + OptCuts::IglUtils::rtos(lambda) + "_" +
-            OptCuts::IglUtils::rtos(delta) + "_" +startDS + folderTail;
+        outputFolderPath += meshName + "_input_" + OptCuts::IglUtils::rtos(lambda_init) + "_" +
+            OptCuts::IglUtils::rtos(testID) + "_" +startDS + folderTail;
         
         std::vector<std::vector<int>> bnd_all;
         igl::boundary_loop(temp->F, bnd_all);
@@ -1384,7 +1400,7 @@ int main(int argc, char *argv[])
 //            OptCuts::IglUtils::fixedBoundaryParam_MVC(A, bnd, bnd_uv, UV_Tutte);
             
             triSoup.emplace_back(new OptCuts::TriMesh(V, F, UV_Tutte, Eigen::MatrixXi(), false));
-            outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) +
+            outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda_init) + "_" + OptCuts::IglUtils::rtos(testID) +
                 "_" + startDS + folderTail;
         }
         else {
@@ -1461,14 +1477,25 @@ int main(int argc, char *argv[])
                 OptCuts::TriMesh* ptr = new OptCuts::TriMesh(V, F, UV_Tutte, Eigen::MatrixXi(), false);
                 ptr->buildCohEfromRecord(cohEdgeRecord);
                 triSoup.emplace_back(ptr);
-                outputFolderPath += meshName + "_HighGenus_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) + "_" + startDS + folderTail;
+                outputFolderPath += meshName + "_HighGenus_" + OptCuts::IglUtils::rtos(lambda_init) + "_" + OptCuts::IglUtils::rtos(testID) + "_" + startDS + folderTail;
             }
             else {
                 OptCuts::TriMesh *temp = new OptCuts::TriMesh(V, F, Eigen::MatrixXd(), Eigen::MatrixXi(), false);
-//                temp->farthestPointCut(); // open up a boundary for Tutte embedding
-//                temp->highCurvOnePointCut();
-                temp->onePointCut();
-                rand1PInitCut = true;
+                
+                switch (initCutOption) {
+                    case 0:
+                        temp->onePointCut();
+                        rand1PInitCut = true;
+                        break;
+                        
+                    case 1:
+                        temp->farthestPointCut();
+                        break;
+                        
+                    default:
+                        assert(0);
+                        break;
+                }
                 
                 igl::boundary_loop(temp->F, bnd);
                 assert(bnd.size());
@@ -1481,7 +1508,7 @@ int main(int argc, char *argv[])
                 triSoup.emplace_back(new OptCuts::TriMesh(V, F, UV_Tutte, temp->F, false, temp->initSeamLen));
                 
                 delete temp;
-                outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda) + "_" + OptCuts::IglUtils::rtos(delta) +
+                outputFolderPath += meshName + "_Tutte_" + OptCuts::IglUtils::rtos(lambda_init) + "_" + OptCuts::IglUtils::rtos(testID) +
                                 "_" + startDS + folderTail;
             }
         }
@@ -1513,8 +1540,7 @@ int main(int argc, char *argv[])
     
     // * Our approach
     texScale = 10.0 / (triSoup[0]->bbox.row(1) - triSoup[0]->bbox.row(0)).maxCoeff();
-    assert(lambda < 1.0);
-    energyParams.emplace_back(1.0 - lambda);
+    energyParams.emplace_back(1.0 - lambda_init);
     energyTerms.emplace_back(new OptCuts::SymDirichletEnergy());
     
     optimizer = new OptCuts::Optimizer(*triSoup[0], energyTerms, energyParams, 0, false, bijectiveParam && !rand1PInitCut); // for random one point initial cut, don't need air meshes in the beginning since it's impossible for a quad to intersect itself
@@ -1523,13 +1549,9 @@ int main(int argc, char *argv[])
     triSoup.emplace_back(&optimizer->getResult());
     triSoup_backup = optimizer->getResult();
     triSoup.emplace_back(&optimizer->getData_findExtrema()); // for visualizing UV map for finding extrema
-    if(lambda > 0.0) {
+    if(lambda_init > 0.0) {
         // fracture mode
         fractureMode = true;
-        
-        if(delta == 0.0) {
-            altBase = true;
-        }
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////

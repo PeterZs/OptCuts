@@ -18,10 +18,10 @@
 
 namespace OptCuts {
     enum MethodType {
-        MT_OURS,
-        MT_GEOMIMG,
-        MT_OURS_FIXED,
-        MT_NOCUT
+        MT_OPTCUTS,
+        MT_EBCUTS,
+        MT_OPTCUTS_NODUAL,
+        MT_DISTMIN
     };
 }
 
