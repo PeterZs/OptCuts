@@ -16,6 +16,8 @@
 #include <igl/avg_edge_length.h>
 #include <igl/components.h>
 
+#include <tbb/tbb.h>
+
 extern Timer timer;
 
 namespace OptCuts {
@@ -295,13 +297,12 @@ namespace OptCuts {
     {
         vNeighbor = vNeighbor_mesh;
         vNeighbor.resize(wholeMeshSize);
-        for(int scafVI = 0; scafVI < airMesh.vNeighbor.size(); scafVI++) {
+        tbb::parallel_for(0, (int)airMesh.vNeighbor.size(), 1, [&](int scafVI) {
             auto& neighbors = vNeighbor[localVI2Global[scafVI]];
             for(const auto& nb_scafVI : airMesh.vNeighbor[scafVI]) {
                 neighbors.insert(localVI2Global[nb_scafVI]);
             }
-        }
-        //!!! can be done in parallel
+        });
     }
     
     void Scaffold::mergeFixedV(const std::set<int>& fixedV_mesh, std::set<int>& fixedV) const
@@ -334,13 +335,6 @@ namespace OptCuts {
     {
         FColor.conservativeResize(FColor.rows() + airMesh.F.rows(), 3);
         FColor.bottomRows(airMesh.F.rows()) = Eigen::MatrixXd::Ones(airMesh.F.rows(), 3);
-//        //DEBUG: for visualizing the distortion of air mesh triangles
-//        Eigen::VectorXd distortionPerElem;
-//        SymDirichletEnergy SD;
-//        SD.getEnergyValPerElem(airMesh, distortionPerElem, true);
-//        Eigen::MatrixXd color_distortionVis;
-//        OptCuts::IglUtils::mapScalarToColor(distortionPerElem, color_distortionVis, 4.0, 8.5);
-//        FColor.bottomRows(airMesh.F.rows()) = color_distortionVis;
     }
     
     void Scaffold::get1RingAirLoop(int vI,
@@ -427,8 +421,6 @@ namespace OptCuts {
             F_inc.row(fI) = airMesh.F.row(triI);
             fI++;
         }
-//        std::cout << corner[0] << "," << corner[1] << "," << corner[2] << std::endl;std::cout << F_inc << std::endl;
-//        airMesh.save("/Users/mincli/Desktop/meshes/test_AM.obj", airMesh.V_rest, F_inc, airMesh.V);
         
         // compute outer loop and ensure no vertex duplication
         std::vector<int> loop;
