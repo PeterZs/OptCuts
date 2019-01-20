@@ -28,6 +28,9 @@
 #include <ctime>
 
 
+Eigen::MatrixXd V, UV, N;
+Eigen::MatrixXi F, FUV, FN;
+
 // optimization
 OptCuts::MethodType methodType;
 std::vector<const OptCuts::TriMesh*> triSoup;
@@ -325,7 +328,7 @@ void saveInfo(bool writePNG, bool writeGIF, bool writeMesh)
 {
     saveScreenshot(outputFolderPath + infoName + ".png", 0.5, writeGIF, writePNG);
     if(writeMesh) {
-        triSoup[channel_result]->saveAsMesh(outputFolderPath + infoName + "_mesh.obj");
+        triSoup[channel_result]->saveAsMesh(outputFolderPath + infoName + "_mesh.obj", F);
     }
 }
 
@@ -752,7 +755,7 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
             if(!saved) {
                 logFile << "saving firstFeasibleS..." << std::endl;
 //                saveScreenshot(outputFolderPath + "firstFeasibleS.png", 0.5, false, true); //TODO: saved is before roll back...
-//                triSoup[channel_result]->saveAsMesh(outputFolderPath + "firstFeasibleS_mesh.obj");
+//                triSoup[channel_result]->saveAsMesh(outputFolderPath + "firstFeasibleS_mesh.obj", F);
                 secPast += difftime(time(NULL), lastStart_world);
                 saveInfoForPresent("info_firstFeasibleS.txt");
                 time(&lastStart_world);
@@ -1008,7 +1011,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                         if(!saved) {
 //                            saveScreenshot(outputFolderPath + "firstFeasible.png", 0.5, false, true);
                             //                            triSoup[channel_result]->save(outputFolderPath + infoName + "_triSoup.obj");
-//                            triSoup[channel_result]->saveAsMesh(outputFolderPath + "firstFeasible_mesh.obj");
+//                            triSoup[channel_result]->saveAsMesh(outputFolderPath + "firstFeasible_mesh.obj", F);
                             secPast += difftime(time(NULL), lastStart_world);
                             saveInfoForPresent("info_firstFeasible.txt");
                             time(&lastStart_world);
@@ -1166,8 +1169,6 @@ int main(int argc, char *argv[])
     
     std::string meshName = meshFileName.substr(0, meshFileName.find_last_of('.'));
     // Load mesh
-    Eigen::MatrixXd V, UV, N;
-    Eigen::MatrixXi F, FUV, FN;
     const std::string suffix = meshFilePath.substr(meshFilePath.find_last_of('.'));
     bool loadSucceed = false;
     if(suffix == ".off") {

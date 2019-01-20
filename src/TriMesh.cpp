@@ -1718,8 +1718,9 @@ namespace OptCuts {
         return true;
     }
     
-    void TriMesh::save(const std::string& filePath, const Eigen::MatrixXd& V, const Eigen::MatrixXi& F,
-                            const Eigen::MatrixXd UV, const Eigen::MatrixXi& FUV) const
+    void TriMesh::save(const std::string& filePath,
+                       const Eigen::MatrixXd& V, const Eigen::MatrixXi& F,
+                       const Eigen::MatrixXd UV, const Eigen::MatrixXi& FUV) const
     {
         std::ofstream out;
         out.open(filePath);
@@ -1727,12 +1728,15 @@ namespace OptCuts {
         
         for(int vI = 0; vI < V.rows(); vI++) {
             const Eigen::RowVector3d& v = V.row(vI);
-            out << "v " << v[0] << " " << v[1] << " " << v[2] << std::endl;
+            out << "v " << std::scientific << v[0] << " " <<
+                std::scientific << v[1] << " " <<
+                std::scientific << v[2] << std::endl;
         }
         
         for(int vI = 0; vI < UV.rows(); vI++) {
             const Eigen::RowVector2d& uv = UV.row(vI);
-            out << "vt " << uv[0] << " " << uv[1] << std::endl;
+            out << "vt " << std::scientific << uv[0] << " " <<
+                std::scientific << uv[1] << std::endl;
         }
         
         if(FUV.rows() == F.rows()) {
@@ -1889,6 +1893,26 @@ namespace OptCuts {
         }
         
         save(filePath, V_mesh, F_mesh, UV_mesh, FUV_mesh);
+    }
+    
+    void TriMesh::saveAsMesh(const std::string& filePath,
+                             const Eigen::MatrixXi& F0) const
+    {
+        assert(F0.rows() == F.rows());
+        assert(F0.cols() == 3);
+        
+        Eigen::MatrixXd V_mesh;
+        for(int fI = 0; fI < F0.rows(); ++fI) {
+            for(int localVI = 0; localVI < 3; ++localVI) {
+                int vI = F0(fI, localVI);
+                if(vI >= V_mesh.rows()) {
+                    V_mesh.conservativeResize(vI + 1, 3);
+                }
+                V_mesh.row(vI) = V_rest.row(F(fI, localVI));
+            }
+        }
+        
+        save(filePath, V_mesh, F0, V, F);
     }
     
     bool TriMesh::findBoundaryEdge(int vI, const std::pair<int, int>& startEdge,
