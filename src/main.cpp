@@ -2,7 +2,6 @@
 #include "IglUtils.hpp"
 #include "Optimizer.hpp"
 #include "SymDirichletEnergy.hpp"
-#include "ARAPEnergy.hpp"
 #include "GIF.hpp"
 #include "Timer.hpp"
 

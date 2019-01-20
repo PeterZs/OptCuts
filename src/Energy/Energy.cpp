@@ -40,24 +40,6 @@ namespace OptCuts {
         energyVal = energyValPerElem.sum();
     }
     
-    void Energy::getEnergyValByElemID(const TriMesh& data, int elemI, double& energyVal, bool uniformWeight) const
-    {
-        assert(0 && "please implement before use!");
-    }
-    
-    void Energy::computePrecondMtr(const TriMesh& data, Eigen::VectorXd* V,
-                                   Eigen::VectorXi* I, Eigen::VectorXi* J, bool uniformWeight) const
-    {
-        assert(0 && "please implement this method in your subclass!");
-    }
-    
-    void Energy::computeHessian(const TriMesh& data,
-                                Eigen::MatrixXd& Hessian,
-                                bool uniformWeight) const
-    {
-        assert(0 && "please implement this method in your subclass!");
-    }
-    
     void Energy::checkGradient(const TriMesh& data) const
     {
         std::cout << "checking energy gradient computation..." << std::endl;
@@ -101,7 +83,7 @@ namespace OptCuts {
         logFile << "g_finiteDiff = \n" << gradient_finiteDiff << std::endl;
     }
     
-    void Energy::checkHessian(const TriMesh& data, bool triplet) const
+    void Energy::checkHessian(const TriMesh& data, bool useTriplet) const
     {
         std::cout << "checking energy hessian computation..." << std::endl;
         
@@ -141,20 +123,17 @@ namespace OptCuts {
         }
         
         Eigen::SparseMatrix<double> hessian_symbolic;
-        if(triplet) {
-            Eigen::VectorXi I, J;
-            Eigen::VectorXd V;
-            computePrecondMtr(data, &V, &I, &J); //TODO: change name to Hessian!
-            std::vector<Eigen::Triplet<double>> triplet(V.size());
-            for(int entryI = 0; entryI < V.size(); entryI++) {
-                triplet[entryI] = Eigen::Triplet<double>(I[entryI], J[entryI], V[entryI]);
-            }
-            hessian_symbolic.resize(data.V.rows() * 2, data.V.rows() * 2);
-            hessian_symbolic.setFromTriplets(triplet.begin(), triplet.end());
+        assert(useTriplet);
+        
+        Eigen::VectorXi I, J;
+        Eigen::VectorXd V;
+        computeHessian(data, &V, &I, &J); //TODO: change name to Hessian!
+        std::vector<Eigen::Triplet<double>> triplet(V.size());
+        for(int entryI = 0; entryI < V.size(); entryI++) {
+            triplet[entryI] = Eigen::Triplet<double>(I[entryI], J[entryI], V[entryI]);
         }
-        else {
-            computeHessian(data, hessian_symbolic);
-        }
+        hessian_symbolic.resize(data.V.rows() * 2, data.V.rows() * 2);
+        hessian_symbolic.setFromTriplets(triplet.begin(), triplet.end());
         
         Eigen::SparseMatrix<double> difMtr = hessian_symbolic - hessian_finiteDiff;
         const double dif_L2 = difMtr.norm();

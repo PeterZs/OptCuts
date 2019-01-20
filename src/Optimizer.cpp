@@ -822,7 +822,7 @@ namespace OptCuts {
             for(int eI = 0; eI < energyTerms.size(); eI++) {
                 Eigen::VectorXi I, J;
                 Eigen::VectorXd V;
-                energyTerms[eI]->computePrecondMtr(data, &V, &I, &J);
+                energyTerms[eI]->computeHessian(data, &V, &I, &J);
                 V *= energyParams[eI];
                 I_mtr.conservativeResize(I_mtr.size() + I.size());
                 I_mtr.bottomRows(I.size()) = I;
@@ -836,7 +836,7 @@ namespace OptCuts {
                 SymDirichletEnergy SD;
                 Eigen::VectorXi I, J;
                 Eigen::VectorXd V;
-                SD.computePrecondMtr(scaffoldData.airMesh, &V, &I, &J, true);
+                SD.computeHessian(scaffoldData.airMesh, &V, &I, &J, true);
                 scaffoldData.augmentProxyMatrix(I_mtr, J_mtr, V_mtr, I, J, V, w_scaf / scaffold.airMesh.F.rows());
             }
         }

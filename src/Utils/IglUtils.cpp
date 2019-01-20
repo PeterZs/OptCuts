@@ -629,25 +629,6 @@ namespace OptCuts {
         }
     }
     
-    void IglUtils::differentiate_normalize(const Eigen::Vector2d& var, Eigen::Matrix2d& deriv)
-    {
-        const double x2 = var[0] * var[0];
-        const double y2 = var[1] * var[1];
-        const double mxy = -var[0] * var[1];
-        deriv << y2, mxy,
-            mxy, x2;
-        deriv /= std::pow(x2 + y2, 1.5);
-    }
-    
-    void IglUtils::differentiate_xxT(const Eigen::Vector2d& var, Eigen::Matrix<Eigen::RowVector2d, 2, 2>& deriv,
-                                     double param)
-    {
-        deriv(0, 0) = param * Eigen::RowVector2d(2 * var[0], 0.0);
-        deriv(0, 1) = param * Eigen::RowVector2d(var[1], var[0]);
-        deriv(1, 0) = param * Eigen::RowVector2d(var[1], var[0]);
-        deriv(1, 1) = param * Eigen::RowVector2d(0.0, 2 * var[1]);
-    }
-    
     double IglUtils::computeRotAngle(const Eigen::RowVector2d& from, const Eigen::RowVector2d& to)
     {
         double angle = std::acos(std::max(-1.0, std::min(1.0, from.dot(to) / from.norm() / to.norm())));
