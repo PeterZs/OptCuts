@@ -10,7 +10,7 @@ OptCuts, a new parameterization algorithm,  jointly optimizes arbitrary embeddin
 git clone --recursive https://github.com/liminchen/OptCuts
 ```
 Then in OptCuts folder there will be
-* src: source code
+* src/: source code
 * ext/: external libraries including Intel TBB (as git submodule) and libigl (an older version)
 * display/: html code for display results
 * OptCuts.xcodeproj: XCode project file
@@ -28,13 +28,13 @@ Then in OptCuts folder there will be
 cd OptCuts
 python build.py
 ```
-*Tips on linear solver: By default OptCuts is built with the linear solver in Eigen. However, we also provide interfaces for CHOLMOD and PARDISO under src/LinSysSolver/ for customization. But note that unless MKL BLAS and LAPACK are used, CHOLMOD or PARDISO built with openblas on linux performs similar to Eigen.*
+*Tips on linear solver: By default OptCuts is built with Eigen::SimplicialLDLT. However, we also provide interfaces for CHOLMOD and PARDISO under src/LinSysSolver/ for customization. But note that unless MKL BLAS and LAPACK are used, CHOLMOD or PARDISO built with openblas on linux performs similar to Eigen.*
 
 * Run
 ```
 python batch.py
 ```
-This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example. By default batch.py will launch OptCuts with a visualization window (mode 10).
+This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example with a visualization window (mode 10).
 
 *Tips on input mesh: OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of them.*
 
@@ -50,7 +50,7 @@ After finish running OptCuts, the results will be saved under output/ with separ
 ```
 python display.py
 ```
-to generate html files that will display all the completed results in output/ and open visualize/visualize.html to view them.
+to generate html files that will display all the completed results in output/ and open display/display.html to view them.
 
 ## Command Line Arguments
 Format: progName mode inputMeshPath lambda_init testID methodType distortionBound useBijectivity initialCutOption [anyStringYouLike]
@@ -103,9 +103,7 @@ global variable outputFolderPath in main.cpp for holding all output files for th
 * log.txt: debug info
 
 ## Keyboard Events:
-* '/': start/restart or pause the optimization
-In offline optimization mode (100), optimization is started with the program, 
-while in real-time optimization mode (0), optimization needs to be started by the user.
+* '/': start/restart or pause the optimization - in offline optimization mode (mode 10), optimization is started with the program, while in real-time optimization mode (mode 0), optimization needs to be started by the user.
 * '0': view input model/UV
 * '1': view current model/UV
 * 'u': toggle viewing model or UV, default is UV
