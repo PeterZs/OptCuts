@@ -39,25 +39,25 @@ OptCuts::TriMesh triSoup_backup;
 OptCuts::Optimizer* optimizer;
 std::vector<OptCuts::Energy*> energyTerms;
 std::vector<double> energyParams;
+
 bool bijectiveParam = true;
 bool rand1PInitCut = false;
 double lambda_init;
 bool optimization_on = false;
 int iterNum = 0;
-int iterNum_lastTopo = 0;
 int converged = 0;
-bool autoHomotopy = true;
 bool fractureMode = false;
 double fracThres = 0.0;
 bool topoLineSearch = true;
 int initCutOption = 0;
 bool outerLoopFinished = false;
-const int boundMeasureType = 0; // 0: E_SD, 1: L2 Stretch
 double upperBound = 4.1;
 const double convTol_upperBound = 1.0e-3;
+
 std::vector<std::pair<double, double>> energyChanges_bSplit, energyChanges_iSplit, energyChanges_merge;
 std::vector<std::vector<int>> paths_bSplit, paths_iSplit, paths_merge;
 std::vector<Eigen::MatrixXd> newVertPoses_bSplit, newVertPoses_iSplit, newVertPoses_merge;
+
 int opType_queried = -1;
 std::vector<int> path_queried;
 Eigen::MatrixXd newVertPos_queried;
@@ -79,23 +79,24 @@ bool viewUV = true; // view UV or 3D model
 double texScale = 1.0;
 bool showSeam = true;
 Eigen::MatrixXd seamColor;
-bool showBoundary = false;
 int showDistortion = 1; // 0: don't show; 1: SD energy value; 2: L2 stretch value;
 bool showTexture = true; // show checkerboard
 bool isLighting = false;
 bool showFracTail = true;
 float fracTailSize = 15.0f;
-double secPast = 0.0;
-time_t lastStart_world;
-Timer timer, timer_step;
 bool offlineMode = false;
 bool saveInfo_postDraw = false;
 std::string infoName = "";
 bool isCapture3D = false;
 int capture3DI = 0;
+
 GifWriter GIFWriter;
 const uint32_t GIFDelay = 10; //*10ms
 double GIFScale = 0.25;
+
+double secPast = 0.0;
+time_t lastStart_world;
+Timer timer, timer_step;
 
 
 void saveInfo(bool writePNG = true, bool writeGIF = true, bool writeMesh = true);
@@ -622,20 +623,7 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
     E_se /= triSoup[channel_result]->virtualRadius;
     double stretch_l2, stretch_inf, stretch_shear, compress_inf;
     triSoup[channel_result]->computeStandardStretch(stretch_l2, stretch_inf, stretch_shear, compress_inf);
-    double measure_bound;
-    switch(boundMeasureType) {
-        case 0:
-            measure_bound = E_SD;
-            break;
-            
-        case 1:
-            measure_bound = stretch_l2;
-            break;
-            
-        default:
-            assert(0 && "invalid bound measure type");
-            break;
-    }
+    double measure_bound = E_SD;
     const double eps_lambda = std::min(1.0e-3, std::abs(updateLambda(measure_bound) - energyParams[0]));
     
     //TODO?: stop when first violates bounds from feasible, don't go to best feasible. check after each merge whether distortion is violated
@@ -935,20 +923,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
             
             double stretch_l2, stretch_inf, stretch_shear, compress_inf;
             triSoup[channel_result]->computeStandardStretch(stretch_l2, stretch_inf, stretch_shear, compress_inf);
-            double measure_bound;
-            switch(boundMeasureType) {
-                case 0:
-                    measure_bound = optimizer->getLastEnergyVal(true) / energyParams[0];
-                    break;
-                    
-                case 1:
-                    measure_bound = stretch_l2;
-                    break;
-                    
-                default:
-                    assert(0 && "invalid bound measure type");
-                    break;
-            }
+            double measure_bound = optimizer->getLastEnergyVal(true) / energyParams[0];
             
             switch(methodType) {
                 case OptCuts::MT_EBCUTS: {
@@ -1093,7 +1068,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
             viewChannel = channel_result;
             viewUV = false;
             showSeam = true;
-            showBoundary = false;
             isLighting = false;
             showTexture = capture3DI % 2;
             showDistortion = 2 - capture3DI % 2;
