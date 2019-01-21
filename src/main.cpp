@@ -1155,11 +1155,12 @@ int main(int argc, char *argv[])
     if(argc > 2) {
         meshFileName = std::string(argv[2]);
     }
-    std::string meshFilePath;
-    meshFilePath = meshFileName;
+    std::string meshFilePath = meshFileName;
     meshFileName = meshFileName.substr(meshFileName.find_last_of('/') + 1);
     
+    std::string meshFolderPath = meshFilePath.substr(0, meshFilePath.find_last_of('/'));
     std::string meshName = meshFileName.substr(0, meshFileName.find_last_of('.'));
+    
     // Load mesh
     const std::string suffix = meshFilePath.substr(meshFilePath.find_last_of('.'));
     bool loadSucceed = false;
@@ -1577,7 +1578,7 @@ int main(int argc, char *argv[])
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //TEST: regional seam placement
-    std::ifstream vWFile("input/" + meshName + "_selected.txt");
+    std::ifstream vWFile(meshFolderPath + "/" + meshName + "_selected.txt");
     if(vWFile.is_open()) {
         while(!vWFile.eof()) {
             int selected;
@@ -1587,8 +1588,11 @@ int main(int argc, char *argv[])
             }
         }
         vWFile.close();
+        
+        OptCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
+        
+        std::cout << "OptCuts with regional seam placement" << std::endl;
     }
-    OptCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
     
 //    //TEST: regional seam placement, Zhongshi
 //    std::ifstream vWFile("/Users/mincli/Desktop/output_OptCuts/" + meshName + "_RSP.txt");
