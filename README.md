@@ -1,3 +1,5 @@
+![](OptCuts_teaser.jpg)
+
 # OptCuts
 ## Clone Repository
 ```
