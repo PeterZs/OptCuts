@@ -40,8 +40,9 @@ Example: FracCuts 0 /Users/mincli/Downloads/meshes/closed/bunny.obj 0.025 6 0 te
 * progName
   * OptCuts_bin
 * mode
-  * 0: real-time optimization mode, UV coordinates change in each inner iteration will be visualized
-  * 100: offline optimization mode, only UV cooridinates change after each alternation between geometry and topology step will be visualized
+  * 0: OptCuts with real-time optimization mode, UV coordinates change in each inner iteration will be visualized, need user to start/restart and pause the process via '/' key
+  * 10: OptCuts with offline optimization mode, only UV cooridinates change after each alternation between geometry and topology step will be visualized
+  * 100: OptCuts with headless mode, no visualization, only command line prints and text file output
   * 1: diagnostic mode, for unit test
   * 2: mesh processing mode, for unit test
 * inputMeshPath

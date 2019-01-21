@@ -69,6 +69,7 @@ std::ofstream logFile;
 std::string outputFolderPath = "output/";
 
 // visualization
+bool headlessMode = false;
 igl::opengl::glfw::Viewer viewer;
 const int channel_initial = 0;
 const int channel_result = 1;
@@ -284,6 +285,10 @@ void updateViewerData(void)
 
 void saveScreenshot(const std::string& filePath, double scale = 1.0, bool writeGIF = false, bool writePNG = true)
 {
+    if(headlessMode) {
+        return;
+    }
+    
     if(writeGIF) {
         scale = GIFScale;
     }
@@ -383,7 +388,7 @@ void toggleOptimization(void)
             std::cout << "optimization converged." << std::endl;
         }
         else {
-            if(iterNum == 0) {
+            if((!headlessMode) && (iterNum == 0)) {
                 GifBegin(&GIFWriter, (outputFolderPath + "anim.gif").c_str(),
                          GIFScale * (viewer.core.viewport[2] - viewer.core.viewport[0]),
                          GIFScale * (viewer.core.viewport[3] - viewer.core.viewport[1]), GIFDelay);
@@ -504,7 +509,9 @@ bool postDrawFunc(igl::opengl::glfw::Viewer& viewer)
                 capture3DI++;
             }
             else {
-                GifEnd(&GIFWriter);
+                if(!headlessMode) {
+                    GifEnd(&GIFWriter);
+                }
                 saveInfoForPresent();
                 if(offlineMode) {
                     exit(0);
@@ -1108,10 +1115,18 @@ int main(int argc, char *argv[])
             std::cout << "Optimization mode" << std::endl;
             break;
             
-        case 100: {
+        case 10: {
             // offline optimization mode
             offlineMode = true;
             std::cout << "Offline optimization mode" << std::endl;
+            break;
+        }
+        
+        case 100: {
+            // headless mode
+            offlineMode = true;
+            headlessMode = true;
+            std::cout << "Headless mode" << std::endl;
             break;
         }
             
@@ -1603,20 +1618,27 @@ int main(int argc, char *argv[])
 //    }
     ///////////////////////////////////////////////////////////////////////////////////////////////
     
-    // Setup viewer and launch
-    viewer.core.background_color << 1.0f, 1.0f, 1.0f, 0.0f;
-    viewer.callback_key_down = &key_down;
-    viewer.callback_pre_draw = &preDrawFunc;
-    viewer.callback_post_draw = &postDrawFunc;
-    viewer.data().show_lines = true;
-    viewer.core.orthographic = true;
-    viewer.core.camera_zoom *= 1.9;
-    viewer.core.animation_max_fps = 60.0;
-    viewer.data().point_size = fracTailSize;
-    viewer.data().show_overlay = true;
-    updateViewerData();
-    viewer.launch();
-    
+    if(headlessMode) {
+        while(true) {
+            preDrawFunc(viewer);
+            postDrawFunc(viewer);
+        }
+    }
+    else {
+        // Setup viewer and launch
+        viewer.core.background_color << 1.0f, 1.0f, 1.0f, 0.0f;
+        viewer.callback_key_down = &key_down;
+        viewer.callback_pre_draw = &preDrawFunc;
+        viewer.callback_post_draw = &postDrawFunc;
+        viewer.data().show_lines = true;
+        viewer.core.orthographic = true;
+        viewer.core.camera_zoom *= 1.9;
+        viewer.core.animation_max_fps = 60.0;
+        viewer.data().point_size = fracTailSize;
+        viewer.data().show_overlay = true;
+        updateViewerData();
+        viewer.launch();
+    }
     
     // Before exit
     logFile.close();
