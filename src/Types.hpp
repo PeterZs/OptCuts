@@ -14,7 +14,7 @@
 #define DIM 2
 
 //#define LINSYSSOLVER_USE_CHOLMOD
-#define LINSYSSOLVER_USE_PARDISO
+//#define LINSYSSOLVER_USE_PARDISO
 
 namespace OptCuts {
     enum MethodType {

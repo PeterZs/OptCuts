@@ -3,7 +3,7 @@ project(OptCuts)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-#find_package(OpenMP REQUIRED)
+
 # libigl
 option(LIBIGL_USE_STATIC_LIBRARY "Use libigl as static library" OFF)
 option(LIBIGL_WITH_ANTTWEAKBAR       "Use AntTweakBar"    OFF)
@@ -26,36 +26,12 @@ option(LIBIGL_WITH_XML               "Use XML"            OFF)
 
 find_package(LIBIGL REQUIRED QUIET)
 
-# Check to see if PARDISO is available
-find_library(PARDISO
-  pardiso600-INTEL1301-X86-64
-  pardiso600-GNU461-X86-64
-  pardiso600-GNU472-X86-64
-  pardiso600-GNU481-X86-64
-  pardiso600-MPI-INTEL1301-X86-64
-  pardiso600-MPI-GNU450-X86-64
-  pardiso600-MPI-GNU461-X86-64
-  pardiso600-MPI-GNU463-X86-64
-  pardiso600-MPI-GNU472-X86-64
-  pardiso600-WIN-X86-64
-  pardiso600-MACOS-X86-64
-  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ext/pardiso
-)
 
-
+# Intel TBB
 include(ext/tbb/cmake/TBBGet.cmake)
 tbb_get(TBB_ROOT tbb_root CONFIG_DIR TBB_DIR)
 find_package(TBB REQUIRED tbb)
 
-# brew install libomp
-if(NOT TARGET OpenMP::OpenMP_CXX)
-    add_library(OpenMP_TARGET INTERFACE)
-    add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
-    target_compile_options(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-    find_package(Threads REQUIRED)
-    target_link_libraries(OpenMP_TARGET INTERFACE Threads::Threads)
-    target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-endif()
 
 file(GLOB SRCFILES
   src/main.cpp
@@ -69,7 +45,7 @@ file(GLOB SRCFILES
   
   src/Utils/IglUtils.cpp
   
-  src/LinSysSolver/PardisoSolver.cpp
+  src/LinSysSolver/EigenLibSolver.cpp
 )
 
 include_directories(
@@ -81,4 +57,5 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}_bin ${SRCFILES})
-target_link_libraries(${PROJECT_NAME}_bin igl::core igl::opengl_glfw igl::triangle igl::png ${PARDISO} TBB::tbb OpenMP::OpenMP_CXX)
+
+target_link_libraries(${PROJECT_NAME}_bin igl::core igl::opengl_glfw igl::triangle igl::png TBB::tbb)
