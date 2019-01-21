@@ -32,7 +32,7 @@ python build.py
 ```
 python batch.py
 ```
-This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example. By default batch.py will launch OptCuts with a visualization window (mode 100).
+This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example. By default batch.py will launch OptCuts with a visualization window (mode 10).
 
 Note that OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of the component.
 
@@ -47,9 +47,9 @@ to generate html files that will display all the completed results in output/ an
 ## Command Line Arguments
 Format: progName mode inputMeshPath lambda_init testID methodType distortionBound useBijectivity initialCutOption [anyStringYouLike]
 
-Example: FracCuts 0 /Users/mincli/Downloads/meshes/closed/bunny.obj 0.025 6 0 test
+Example: ./build/OptCuts_bin 10 input/bimba_i_f10000.obj 0.999 1 0 4.1 1 0 firstTrial
 * progName
-  * OptCuts_bin
+  * ./build/OptCuts_bin
 * mode
   * 0: OptCuts with real-time optimization mode, UV coordinates change in each inner iteration will be visualized, need user to start/restart and pause the process via '/' key
   * 10: OptCuts with offline optimization mode, only UV cooridinates change after each alternation between geometry and topology step will be visualized
