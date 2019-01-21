@@ -28,6 +28,7 @@ Then in OptCuts folder there will be
 cd OptCuts
 python build.py
 ```
+*Tips on linear solver: By default OptCuts is built with the linear solver in Eigen. However, we also provide interfaces for CHOLMOD and PARDISO under src/LinSysSolver/ for customization. But note that unless MKL BLAS and LAPACK are used, CHOLMOD or PARDISO built with openblas on linux performs similar to Eigen.*
 
 * Run
 ```
@@ -35,7 +36,7 @@ python batch.py
 ```
 This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example. By default batch.py will launch OptCuts with a visualization window (mode 10).
 
-*Note that OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of them.*
+*Tips on input mesh: OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of them.*
 
 We also provide a python script for automatically running the two regional seam placement examples in our paper
 ```
