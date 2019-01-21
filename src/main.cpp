@@ -1576,8 +1576,8 @@ int main(int argc, char *argv[])
         fractureMode = true;
     }
     
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //TEST: regional seam placement
+    /////////////////////////////////////////////////////////////////////////////
+    // regional seam placement
     std::ifstream vWFile(meshFolderPath + "/" + meshName + "_selected.txt");
     if(vWFile.is_open()) {
         while(!vWFile.eof()) {
@@ -1589,38 +1589,12 @@ int main(int argc, char *argv[])
         }
         vWFile.close();
         
-        OptCuts::IglUtils::smoothVertField(optimizer->getResult(), optimizer->getResult().vertWeight);
+        OptCuts::IglUtils::smoothVertField(optimizer->getResult(),
+                                           optimizer->getResult().vertWeight);
         
         std::cout << "OptCuts with regional seam placement" << std::endl;
     }
-    
-//    //TEST: regional seam placement, Zhongshi
-//    std::ifstream vWFile("/Users/mincli/Desktop/output_OptCuts/" + meshName + "_RSP.txt");
-//    if(vWFile.is_open()) {
-//        double revLikelihood;
-//        for(int vI = 0; vI < optimizer->getResult().vertWeight.size(); vI++) {
-//            if(vWFile.eof()) {
-//                std::cout << "# of weights less than # of V for regional seam placement, " <<
-//                    "reset vertWeight to all 1.0" << std::endl;
-//                optimizer->getResult().vertWeight = Eigen::VectorXd::Ones(optimizer->getResult().V.rows());
-//                vWFile.close();
-//                break;
-//            }
-//            else {
-//                vWFile >> revLikelihood;
-//                if(revLikelihood < 0.0) {
-//                    revLikelihood = 0.0;
-//                }
-//                else if(revLikelihood > 1.0) {
-//                    revLikelihood = 1.0;
-//                }
-//                optimizer->getResult().vertWeight[vI] = 1.0 + 10.0 * revLikelihood;
-//            }
-//        }
-//        vWFile.close();
-//        std::cout << "regional seam placement weight loaded" << std::endl;
-//    }
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
     
     if(headlessMode) {
         while(true) {
