@@ -12,26 +12,38 @@ git clone --recursive https://github.com/liminchen/OptCuts
 Then in OptCuts folder there will be
 * src: source code
 * ext/: external libraries including Intel TBB (as git submodule) and libigl (an older version)
+* display/: html code for display results
 * OptCuts.xcodeproj: XCode project file
 * build.py: a python script to automatically building OptCuts using cmake
 * batch.py: a python script to automatically run a batch of examples provided under input/
+* display.py: a python script to automatically generate html files for display results
 * input/: input meshes
 * output/: (will be created) contains output of each input in separate subfolders
 * CMakeLists.txt and cmake/: cmake files
 
 ## Compile and Run
-* Build:
+* Build
 ```
 cd OptCuts
 python build.py
 ```
-* Run:
+
+* Run
 ```
 python batch.py
 ```
-This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000 will be processed as a "hello world" example.
+This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example.
+
+By default batch.py will launch OptCuts with a visualization window (mode 100).
 
 Note that OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of the component.
+
+* Display
+After finish running OptCuts, the results will be saved under output/ with separate folders per input. Then you can do
+```
+python display.py
+```
+to generate html files that will display all the completed results in output/ and open visualize/visualize.html to view them.
 
 ## Command Line Arguments
 Format: progName mode inputMeshPath lambda_init testID methodType distortionBound useBijectivity initialCutOption [anyStringYouLike]
