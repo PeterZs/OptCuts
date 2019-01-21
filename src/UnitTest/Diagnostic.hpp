@@ -413,7 +413,7 @@ namespace OptCuts{
                         fprintf(outFile, "var %s = [\n", resultsFolderName.c_str());
                         
                         char buf[BUFSIZ];
-                        while((!feof(dirList)) && fscanf(dirList, "%s", buf)) {
+                        while((!feof(dirList)) && fscanf(dirList, "%s\n", buf)) {
                             std::string resultName(buf);
                             std::string infoFilePath(resultsFolderPath + '/' + resultName + "/info.txt");
                             std::ifstream infoFile(infoFilePath);
