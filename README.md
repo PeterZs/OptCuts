@@ -32,13 +32,12 @@ python build.py
 ```
 python batch.py
 ```
-This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example.
-
-By default batch.py will launch OptCuts with a visualization window (mode 100).
+This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example. By default batch.py will launch OptCuts with a visualization window (mode 100).
 
 Note that OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of the component.
 
 * Display
+
 After finish running OptCuts, the results will be saved under output/ with separate folders per input. Then you can do
 ```
 python display.py
