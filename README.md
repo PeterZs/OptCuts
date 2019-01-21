@@ -1,6 +1,10 @@
 ![](OptCuts_teaser.jpg)
 
 # OptCuts
+OptCuts, a new parameterization algorithm,  jointly optimizes arbitrary embeddings for seam quality and distortion. OptCuts requires no parameter tuning; automatically generating mappings that minimize seam-lengths while satisfying user-requested distortion bounds.
+
+<http://www.cs.ubc.ca/labs/imager/tr/2018/OptCuts/>
+
 ## Clone Repository
 ```
 git clone --recursive https://github.com/liminchen/OptCuts
@@ -26,6 +30,8 @@ python build.py
 python batch.py
 ```
 This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000 will be processed as a "hello world" example.
+
+Note that OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of the component.
 
 ## Command Line Arguments
 Format: progName mode inputMeshPath lambda_init testID methodType distortionBound useBijectivity initialCutOption [anyStringYouLike]
