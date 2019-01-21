@@ -16,6 +16,7 @@ Then in OptCuts folder there will be
 * OptCuts.xcodeproj: XCode project file
 * build.py: a python script to automatically building OptCuts using cmake
 * batch.py: a python script to automatically run a batch of examples provided under input/
+* batch_RSP.py: a python script to automatically run a batch of regional seam placement examples provided under input/RSP/
 * display.py: a python script to automatically generate html files for display results
 * input/: input meshes
 * output/: (will be created) contains output of each input in separate subfolders
@@ -35,6 +36,12 @@ python batch.py
 This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example. By default batch.py will launch OptCuts with a visualization window (mode 10).
 
 Note that OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of the component.
+
+We also provide a python script for automatically running the two regional seam placement examples in our paper
+```
+python batch_RSP.py
+```
+This will run OptCuts with all the input meshes under input/RSP. To enable regional seam placement, a text file named inputMeshName_selected.txt containing the indices of all selected vertices in the salient regions must be present under the same directory of the input mesh.
 
 * Display
 
