@@ -47,7 +47,6 @@ int iterNum = 0;
 int iterNum_lastTopo = 0;
 int converged = 0;
 bool autoHomotopy = true;
-std::ofstream homoTransFile;
 bool fractureMode = false;
 double fracThres = 0.0;
 bool topoLineSearch = true;
@@ -389,8 +388,6 @@ void toggleOptimization(void)
                          GIFScale * (viewer.core.viewport[2] - viewer.core.viewport[0]),
                          GIFScale * (viewer.core.viewport[3] - viewer.core.viewport[1]), GIFDelay);
                 
-                homoTransFile.open(outputFolderPath + "homotopyTransition.txt");
-                assert(homoTransFile.is_open());
                 saveScreenshot(outputFolderPath + "0.png", 0.5, true);
             }
             std::cout << "start/resume optimization, press again to pause." << std::endl;
@@ -418,12 +415,6 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
     else {
         switch (key)
         {
-            case ' ': {
-                proceedOptimization();
-                viewChannel = channel_result;
-                break;
-            }
-                
             case '/': {
                 toggleOptimization();
                 break;
@@ -438,12 +429,6 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
             case 's':
             case 'S': {
                 showSeam = !showSeam;
-                break;
-            }
-                
-            case 'e':
-            case 'E': {
-                showBoundary = !showBoundary;
                 break;
             }
                 
@@ -735,7 +720,6 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
                 "lambda = " << energyParams[0] << std::endl;
             logFile << lastStationaryIterNum << ", " << iterNum << std::endl;
             if(iterNum_bestFeasible != iterNum) {
-                homoTransFile << iterNum_bestFeasible << std::endl;
                 optimizer->setConfig(triSoup_bestFeasible, iterNum, optimizer->getTopoIter());
                 logFile << "rolled back to best feasible in iter " << iterNum_bestFeasible << std::endl;
             }
@@ -753,14 +737,14 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
             // save info at first feasible stationaryVT for comparison
             static bool saved = false;
             if(!saved) {
-                logFile << "saving firstFeasibleS..." << std::endl;
+//                logFile << "saving firstFeasibleS..." << std::endl;
 //                saveScreenshot(outputFolderPath + "firstFeasibleS.png", 0.5, false, true); //TODO: saved is before roll back...
 //                triSoup[channel_result]->saveAsMesh(outputFolderPath + "firstFeasibleS_mesh.obj", F);
                 secPast += difftime(time(NULL), lastStart_world);
-                saveInfoForPresent("info_firstFeasibleS.txt");
+//                saveInfoForPresent("info_firstFeasibleS.txt");
                 time(&lastStart_world);
                 saved = true;
-                logFile << "firstFeasibleS saved" << std::endl;
+//                logFile << "firstFeasibleS saved" << std::endl;
             }
             
             if(measure_bound >= upperBound - convTol_upperBound) {
@@ -768,7 +752,6 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
                     " lambda = " << energyParams[0] << std::endl;
                 if(iterNum_bestFeasible != iterNum) {
                     assert(iterNum_bestFeasible >= 0);
-                    homoTransFile << iterNum_bestFeasible << std::endl;
                     optimizer->setConfig(triSoup_bestFeasible, iterNum, optimizer->getTopoIter());
                     logFile << "rolled back to best feasible in iter " << iterNum_bestFeasible << std::endl;
                 }
@@ -853,7 +836,6 @@ bool updateLambda_stationaryV(bool cancelMomentum = true, bool checkConvergence 
                 energyParams[0] = 1.0 - eps_lambda;
                 optimizer->updateEnergyData(true, false, false);
                 if(iterNum_bestFeasible != iterNum) {
-                    homoTransFile << iterNum_bestFeasible << std::endl;
                     optimizer->setConfig(triSoup_bestFeasible, iterNum, optimizer->getTopoIter());
                 }
                 return false;
@@ -923,7 +905,6 @@ void converge_preDrawFunc(igl::opengl::glfw::Viewer& viewer)
     viewer.core.is_animating = false;
     std::cout << "optimization converged, with " << secPast << "s." << std::endl;
     logFile << "optimization converged, with " << secPast << "s." << std::endl;
-    homoTransFile.close();
     outerLoopFinished = true;
 }
 
@@ -981,14 +962,12 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                         viewer.core.is_animating = false;
                         std::cout << "optimization converged, with " << secPast << "s." << std::endl;
                         logFile << "optimization converged, with " << secPast << "s." << std::endl;
-                        homoTransFile.close();
                         outerLoopFinished = true;
                     }
                     else {
                         infoName = std::to_string(iterNum);
                         
                         // continue to make geometry image cuts
-                        homoTransFile << iterNum << std::endl;
                         assert(optimizer->createFracture(fracThres, false, false));
                         converged = false;
                     }
@@ -1013,7 +992,7 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                             //                            triSoup[channel_result]->save(outputFolderPath + infoName + "_triSoup.obj");
 //                            triSoup[channel_result]->saveAsMesh(outputFolderPath + "firstFeasible_mesh.obj", F);
                             secPast += difftime(time(NULL), lastStart_world);
-                            saveInfoForPresent("info_firstFeasible.txt");
+//                            saveInfoForPresent("info_firstFeasible.txt");
                             time(&lastStart_world);
                             saved = true;
                         }
@@ -1032,7 +1011,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                     logFile << iterNum << ": " << E_SD << " " << E_se << " " << triSoup[channel_result]->V_rest.rows() << std::endl;
                     optimizer->flushEnergyFileOutput();
                     optimizer->flushGradFileOutput();
-                    homoTransFile << iterNum_lastTopo << std::endl;
                     
                     // continue to split boundary
                     if((methodType == OptCuts::MT_OPTCUTS) &&
@@ -1055,7 +1033,6 @@ bool preDrawFunc(igl::opengl::glfw::Viewer& viewer)
                                 converged = false;
                             }
                             else {
-                                homoTransFile << iterNum << std::endl; // mark stationaryVT
                                 if((methodType == OptCuts::MT_OPTCUTS_NODUAL) ||
                                    (!updateLambda_stationaryV(false, true)))
                                 {
@@ -1585,7 +1562,7 @@ int main(int argc, char *argv[])
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //TEST: regional seam placement
-    std::ifstream vWFile("/Users/mincli/Desktop/output_OptCuts/" + meshName + "_selected.txt");
+    std::ifstream vWFile("input/" + meshName + "_selected.txt");
     if(vWFile.is_open()) {
         while(!vWFile.eof()) {
             int selected;
