@@ -11,7 +11,7 @@ git clone --recursive https://github.com/liminchen/OptCuts
 ```
 Then in OptCuts folder there will be
 * src/: source code
-* ext/: external libraries including [Intel TBB](https://software.intel.com/en-us/intel-tbb) (as git [submodule](https://github.com/01org/tbb)) and [libigl](https://libigl.github.io/) (an older version, with OpenGL, GLFW, libpng, and Triangle)
+* ext/: external libraries including [Intel TBB](https://software.intel.com/en-us/intel-tbb) (as git [submodule](https://github.com/01org/tbb)) and [libigl](https://libigl.github.io/) (an older version, with [OpenGL](https://www.opengl.org/), [GLFW](https://www.glfw.org/), [libpng](http://www.libpng.org/pub/png/libpng.html), and [Triangle](https://www.cs.cmu.edu/~quake/triangle.html))
 * display/: html code for display results
 * OptCuts.xcodeproj: XCode project file
 * build.py: a python script to automatically build OptCuts using cmake
