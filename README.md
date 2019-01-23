@@ -36,6 +36,8 @@ python batch.py
 ```
 This will run OptCuts on all the triangle meshes directly under input/, where by default bimba_i_f10000.obj will be processed as a "hello world" example with a visualization window (mode 10).
 
+*Tips on initial UV map: If the input mesh does not have texture coordinates, OptCuts will automatically compute default initial UV map, or OptCuts will start with the UV map provided in the input file.*
+
 *Tips on input mesh: OptCuts takes input meshes with only one connected component. For meshes with multiple connected components, OptCuts can be independently applied on each of them.*
 
 We also provide a python script for automatically running the two regional seam placement examples in our paper
