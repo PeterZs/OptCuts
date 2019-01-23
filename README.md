@@ -18,7 +18,7 @@ Then in OptCuts folder there will be
 * batch.py: a python script to automatically run a batch of examples provided under input/
 * batch_RSP.py: a python script to automatically run a batch of regional seam placement examples provided under input/RSP/
 * display.py: a python script to automatically generate html files for display results
-* input/: input meshes
+* input/: input meshes including the 71 input meshes from our *benchmark*
 * output/: (will be created) contains output of each input in separate subfolders
 * CMakeLists.txt and cmake/: cmake files
 
