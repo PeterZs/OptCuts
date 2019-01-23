@@ -52,6 +52,19 @@ python display.py
 ```
 to generate html files that will display all the completed results in output/ and open display/display.html to view them.
 
+## Output Files
+For each input, OptCuts will create a folder under output/ to hold all the output files. The folder name will be composed of the input command line arguments, thus results with the same input and setting will be overwritten into the same folder. The output contains
+* 0.png: initial UV map, colored by distortion (blue -> green: highly distorted -> isometric)
+* anim.gif: UV map changes during optimization process, colored by distortion
+* finalResult.png: output UV map, colored by distortion
+* finalResult_mesh.obj: input model with output UV
+* 3DView0_distortion.png: input model visualized with checkerboard texture and distortion color map
+* 3DView0_seam.png: input model visualized with seams and importance if regional seam placement is requested
+* energyValPerIter.txt: energy value of Ew, Ed, Es, and lambda of each inner iteration
+* gradientPerIter.txt: energy gradient of Ed of each inner iteration
+* info.txt: parameterization results quality output for webpage visualization
+* log.txt: debug info
+
 ## Command Line Arguments
 Format: progName mode inputMeshPath lambda_init testID methodType distortionBound useBijectivity initialCutOption [anyStringYouLike]
 
@@ -88,21 +101,7 @@ Example: ./build/OptCuts_bin 10 input/bimba_i_f10000.obj 0.999 1 0 4.1 1 0 first
 * anyStringYouLike
   * optional, the appended string to the name of a folder to be created for holding all output files
 
-## Output Files
-Our program will automatically create a folder according to the input command line arguments under the path given by 
-global variable outputFolderPath in main.cpp for holding all output files for the current input:
-* 0.png: initial UV map, colored by distortion (blue -> green: highly distorted -> isometric)
-* anim.gif: UV map changes during optimization process, colored by distortion
-* finalResult.png: output UV map, colored by distortion
-* finalResult_mesh.obj: input model with output UV
-* 3DView0_distortion.png: input model visualized with checkerboard texture and distortion color map
-* 3DView0_seam.png: input model visualized with seams and importance if regional seam placement is requested
-* energyValPerIter.txt: energy value of Ew, Ed, Es, and lambda of each inner iteration
-* gradientPerIter.txt: energy gradient of Ed of each inner iteration
-* info.txt: parameterization results quality output for webpage visualization
-* log.txt: debug info
-
-## Keyboard Events:
+## Keyboard Events
 * '/': start/restart or pause the optimization - in offline optimization mode (mode 10), optimization is started with the program, while in real-time optimization mode (mode 0), optimization needs to be started by the user.
 * '0': view input model/UV
 * '1': view current model/UV
