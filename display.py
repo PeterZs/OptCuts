@@ -21,4 +21,4 @@ file.close()
 runCommand = "./build/OptCuts_bin 1 6 ./output/"
 subprocess.call([runCommand], shell=True)
 
-print("now you can open visualize/display.html to see the display")
+print("now you can open display/display.html to see the display")
